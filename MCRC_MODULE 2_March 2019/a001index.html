@@ -54,8 +54,32 @@ body { background-color:#ffffff; }
 <script src="trivantis-titlemgr.js"></script>
 <script src="trivantis-titlemgr-interact.js"></script>
 <script src="trivantis-dialog.js"></script>
-<script src="apiwrapper11.js"></script>
-<script src="scofunctions.js"></script>
+<!-- apiwrapper11.js disabled -->
+<!-- scofunctions.js disabled -->
+
+<script>
+window.API = window.API || {
+  LMSInitialize: function(){ return "true"; },
+  LMSFinish: function(){ return "true"; },
+  LMSGetValue: function(){ return ""; },
+  LMSSetValue: function(){ return "true"; },
+  LMSCommit: function(){ return "true"; },
+  LMSGetLastError: function(){ return "0"; },
+  LMSGetErrorString: function(){ return "No error"; },
+  LMSGetDiagnostic: function(){ return ""; }
+};
+window.API_1484_11 = window.API_1484_11 || {
+  Initialize: function(){ return "true"; },
+  Terminate: function(){ return "true"; },
+  GetValue: function(){ return ""; },
+  SetValue: function(){ return "true"; },
+  Commit: function(){ return "true"; },
+  GetLastError: function(){ return "0"; },
+  GetErrorString: function(){ return "No error"; },
+  GetDiagnostic: function(){ return ""; }
+};
+</script>
+
 <script>
 
 <!-- 
@@ -83,9 +107,9 @@ function init() {
   if( titleMgr ) {
     var redirPage = null
     titleMgr.bIntActs = true
-    titleMgr.bSCORM = true
+    titleMgr.bSCORM = false
     titleMgr.bAddTimeStamp = false
-    titleMgr.scVers = 1
+    titleMgr.scVers = 0
     redirPage = 'page28901.html';
 var jumpToPage = getQueryParams().jmptopg;
     redirPage = jumpToPage ? jumpToPage : redirPage;
