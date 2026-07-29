@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>You're in the Air – Mid-Mission Decisions</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{margin:0;padding:0}
+:root{
+  --cream:#FCFAEF;--mint:#E9F5EB;--blue:#0195BB;--blue-dark:#0178a0;--blue-pale:#d0eef6;--blue-mid:rgba(1,149,187,0.2);
+  --text:#1a3a4a;--muted:#5a8a9f;--border:#c5dfe8;
+  --green:#1a7a4a;--green-pale:#E9F5EB;--green-mid:rgba(26,122,74,0.3);
+  --amber:#b86c00;--amber-pale:#FFF8EC;--amber-mid:rgba(184,108,0,0.3);
+  --red:#c0392b;--red-pale:#fef2f2;--red-mid:rgba(192,57,43,0.3);
+  --r:12px;--safe-bottom:env(safe-area-inset-bottom,0px);
+}
+html{font-size:16px;-webkit-tap-highlight-color:transparent}
+body{font-family:'Sora',sans-serif;background:var(--cream);color:var(--text);min-height:100dvh;overscroll-behavior:none}
+
+/* ── HEADER ── */
+.page-header{background:#fff;border-bottom:2px solid var(--border);padding:1.5rem 1.2rem 1.2rem;position:relative;overflow:hidden}
+.page-header::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--blue)}
+.hdr-eyebrow{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--blue);margin-bottom:0.55rem;display:flex;align-items:center;gap:0.5rem}
+.hdr-eyebrow::before{content:'';width:20px;height:2px;background:var(--blue)}
+.hdr-h1{font-family:'Sora',sans-serif;font-size:clamp(1.4rem,4vw,2rem);font-weight:800;line-height:1.1;color:var(--text);margin-bottom:0.5rem;letter-spacing:-0.01em}
+.hdr-h1 em{color:var(--blue);font-style:normal}
+.hdr-sub{font-size:0.82rem;color:#555;line-height:1.65;max-width:58ch;border-left:3px solid var(--blue);padding-left:0.85rem;margin-bottom:1rem}
+
+/* ── SCENARIO COUNTER ── */
+.counter-row{display:flex;align-items:center;gap:0.75rem}
+.counter-dots{display:flex;gap:0.45rem}
+.cdot{width:10px;height:10px;border-radius:50%;background:var(--border);transition:all 0.3s}
+.cdot.done-correct{background:var(--green)}
+.cdot.done-wrong{background:var(--red)}
+.cdot.active{background:var(--blue);transform:scale(1.3)}
+.counter-label{font-family:'DM Mono',monospace;font-size:0.68rem;font-weight:700;color:var(--muted)}
+
+/* ── MAIN ── */
+.main{padding:1.2rem 1rem calc(2rem + var(--safe-bottom));max-width:720px;margin:0 auto}
+
+/* ── SCREEN STATES ── */
+.screen{display:none}
+.screen.active{display:block}
+
+/* ── SCENARIO CARD ── */
+.scenario-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:1rem;box-shadow:0 2px 16px rgba(1,149,187,0.07);animation:nodeIn 0.35s cubic-bezier(.4,0,.2,1)}
+@keyframes nodeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* Drone view header */
+.drone-view{
+  background:linear-gradient(160deg,#0d2a35 0%,#0a3d4f 60%,#0c4a5e 100%);
+  padding:1.2rem 1.2rem 1rem;
+  position:relative;overflow:hidden;
+  min-height:110px;display:flex;flex-direction:column;justify-content:flex-end;
+}
+.drone-view::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,0.015) 40px,rgba(255,255,255,0.015) 41px),
+             repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(255,255,255,0.015) 40px,rgba(255,255,255,0.015) 41px);
+}
+.drone-view::after{
+  content:'';position:absolute;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  width:140px;height:140px;
+  border:1px solid rgba(1,149,187,0.3);
+  border-radius:50%;
+}
+.hud-row{position:relative;z-index:2;display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem}
+.hud-dot{width:7px;height:7px;border-radius:50%;background:#ef4444;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.hud-rec{font-family:'DM Mono',monospace;font-size:0.58rem;font-weight:700;color:#ef4444;letter-spacing:0.1em}
+.hud-time{font-family:'DM Mono',monospace;font-size:0.58rem;color:rgba(255,255,255,0.5);margin-left:auto}
+.hud-alt{font-family:'DM Mono',monospace;font-size:0.58rem;color:rgba(1,219,255,0.7)}
+.scenario-num{position:relative;z-index:2;font-family:'DM Mono',monospace;font-size:0.55rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(1,219,255,0.6);margin-bottom:0.3rem}
+.scenario-situation{position:relative;z-index:2;font-size:0.95rem;font-weight:800;color:#fff;line-height:1.25}
+.situation-icon{font-size:1.4rem;margin-right:0.4rem}
+
+/* Body */
+.scenario-body{padding:1rem 1.2rem 1.2rem}
+.situation-detail{font-size:0.82rem;color:var(--muted);line-height:1.65;margin-bottom:0.85rem;padding:0.7rem 0.85rem;background:var(--cream);border-radius:8px;border-left:3px solid var(--blue)}
+.situation-detail strong{color:var(--text);font-weight:700}
+.question{font-size:0.88rem;font-weight:800;color:var(--text);margin-bottom:0.85rem;line-height:1.3}
+
+/* ── CHOICE BUTTONS ── */
+.choices{display:flex;flex-direction:column;gap:0.55rem}
+.choice-btn{
+  display:flex;align-items:flex-start;gap:0.75rem;
+  padding:0.85rem 1rem;
+  border-radius:10px;border:2px solid var(--border);
+  background:#fff;cursor:pointer;
+  font-family:'Sora',sans-serif;
+  transition:all 0.15s;touch-action:manipulation;
+  text-align:left;
+}
+.choice-btn:hover{border-color:var(--blue);background:var(--blue-pale)}
+.choice-btn:active{transform:scale(0.98)}
+.choice-btn.selected-correct{border-color:var(--green);background:var(--green-pale);pointer-events:none}
+.choice-btn.selected-wrong{border-color:var(--red);background:var(--red-pale);pointer-events:none}
+.choice-btn.reveal-correct{border-color:var(--green);background:var(--green-pale);pointer-events:none}
+.choice-btn.dimmed{opacity:0.4;pointer-events:none}
+.choice-icon{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;flex-shrink:0;
+  background:var(--cream);border:1.5px solid var(--border);
+  transition:all 0.15s;
+}
+.choice-btn.selected-correct .choice-icon{background:var(--green);border-color:var(--green)}
+.choice-btn.selected-wrong .choice-icon{background:var(--red);border-color:var(--red)}
+.choice-btn.reveal-correct .choice-icon{background:var(--green);border-color:var(--green)}
+.choice-text{flex:1;min-width:0}
+.choice-label{font-size:0.85rem;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:0.1rem}
+.choice-sub{font-size:0.7rem;color:var(--muted);line-height:1.4}
+
+/* ── FEEDBACK ── */
+.feedback{
+  display:none;
+  margin-top:0.9rem;
+  border-radius:10px;padding:0.85rem 1rem;
+  animation:popIn 0.3s cubic-bezier(.34,1.3,.64,1);
+}
+.feedback.show{display:block}
+@keyframes popIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
+.feedback.correct{background:var(--green-pale);border:1.5px solid var(--green-mid)}
+.feedback.wrong{background:var(--red-pale);border:1.5px solid var(--red-mid)}
+.fb-title{font-size:0.82rem;font-weight:800;margin-bottom:0.3rem}
+.feedback.correct .fb-title{color:var(--green)}
+.feedback.wrong .fb-title{color:var(--red)}
+.fb-body{font-size:0.76rem;color:#333;line-height:1.6}
+.fb-law{display:inline-block;margin-top:0.5rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.06em;background:var(--blue-pale);border:1px solid var(--blue-mid);color:var(--blue);padding:0.15rem 0.5rem;border-radius:3px}
+
+/* ── NEXT BTN ── */
+.next-btn{
+  display:none;width:100%;margin-top:0.85rem;
+  padding:0.85rem;border-radius:var(--r);
+  background:var(--blue);color:#fff;border:none;
+  font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;
+  cursor:pointer;transition:all 0.15s;touch-action:manipulation;
+}
+.next-btn.show{display:block}
+.next-btn:hover{background:var(--blue-dark)}
+.next-btn:active{transform:scale(0.98)}
+
+/* ── RESULTS SCREEN ── */
+.results-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:1.6rem 1.4rem;text-align:center;animation:nodeIn 0.4s cubic-bezier(.4,0,.2,1)}
+.results-emoji{font-size:2.8rem;margin-bottom:0.5rem}
+.results-title{font-size:1.2rem;font-weight:800;color:var(--text);margin-bottom:0.3rem}
+.results-score{font-family:'DM Mono',monospace;font-size:2.8rem;font-weight:700;margin:0.3rem 0;line-height:1}
+.results-label{font-size:0.72rem;color:var(--muted);margin-bottom:0.8rem}
+.results-verdict{font-size:0.82rem;color:#444;line-height:1.65;max-width:48ch;margin:0 auto 1.2rem;padding:0.75rem 0.9rem;border-radius:8px;border-left:3px solid var(--blue);background:var(--cream);text-align:left}
+
+/* Breakdown */
+.breakdown{margin-bottom:1.2rem;text-align:left}
+.bd-label{font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem}
+.bd-item{display:flex;align-items:flex-start;gap:0.6rem;padding:0.6rem 0;border-bottom:1px solid var(--border)}
+.bd-item:last-child{border-bottom:none}
+.bd-num{font-family:'DM Mono',monospace;font-size:0.62rem;font-weight:700;min-width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.bd-num.ok{background:var(--green-pale);color:var(--green);border:1px solid var(--green-mid)}
+.bd-num.fail{background:var(--red-pale);color:var(--red);border:1px solid var(--red-mid)}
+.bd-text{flex:1;min-width:0}
+.bd-situation{font-size:0.76rem;font-weight:700;color:var(--text);line-height:1.2;margin-bottom:0.1rem}
+.bd-answer{font-size:0.68rem;color:var(--muted)}
+.bd-result{font-size:0.95rem;flex-shrink:0}
+
+.retry-btn{width:100%;padding:0.82rem;border-radius:var(--r);background:var(--blue);color:#fff;border:none;font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;cursor:pointer;transition:all 0.15s;touch-action:manipulation;margin-bottom:0.5rem}
+.retry-btn:hover{background:var(--blue-dark)}
+.retry-btn:active{transform:scale(0.98)}
+
+@media(max-width:480px){
+  .choices{gap:0.45rem}
+  .choice-btn{padding:0.75rem 0.85rem}
+  .hdr-h1{font-size:1.35rem}
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="hdr-eyebrow">RPAS · On-Job Conduct</div>
+  <div class="hdr-h1">You're <em>in the Air</em> —<br>What Do You Do?</div>
+  <p class="hdr-sub">Mid-mission situations that require an instant decision. For each scenario, choose the right response: <strong>Continue, Adjust, or Abort.</strong></p>
+  <div class="counter-row">
+    <div class="counter-dots">
+      <div class="cdot active" id="cdot0"></div>
+      <div class="cdot" id="cdot1"></div>
+      <div class="cdot" id="cdot2"></div>
+      <div class="cdot" id="cdot3"></div>
+      <div class="cdot" id="cdot4"></div>
+    </div>
+    <span class="counter-label" id="counterLabel">Scenario 1 of 5</span>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ── SCENARIO SCREEN ── -->
+  <div class="screen active" id="screenScenario">
+    <div class="scenario-card" id="scenarioCard">
+
+      <div class="drone-view">
+        <div class="hud-row">
+          <div class="hud-dot"></div>
+          <span class="hud-rec">REC</span>
+          <span class="hud-time" id="hudTime">04:32</span>
+          <span class="hud-alt" id="hudAlt">ALT 45m</span>
+        </div>
+        <div class="scenario-num" id="scenarioNum">SCENARIO 01 / 05</div>
+        <div class="scenario-situation" id="scenarioSituation"></div>
+      </div>
+
+      <div class="scenario-body">
+        <div class="situation-detail" id="situationDetail"></div>
+        <div class="question" id="questionText"></div>
+        <div class="choices" id="choicesContainer"></div>
+        <div class="feedback" id="feedbackBox">
+          <div class="fb-title" id="fbTitle"></div>
+          <div class="fb-body" id="fbBody"></div>
+          <span class="fb-law" id="fbLaw"></span>
+        </div>
+        <button class="next-btn" id="nextBtn" onclick="nextScenario()">Next scenario →</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── RESULTS SCREEN ── -->
+  <div class="screen" id="screenResults">
+    <div class="results-card">
+      <div class="results-emoji" id="resultsEmoji">📊</div>
+      <div class="results-title" id="resultsTitle"></div>
+      <div class="results-score" id="resultsScore"></div>
+      <div class="results-label">correct decisions</div>
+      <div class="results-verdict" id="resultsVerdict"></div>
+      <div class="breakdown">
+        <div class="bd-label">Your decisions</div>
+        <div id="breakdownList"></div>
+      </div>
+      <button class="retry-btn" onclick="restart()">↺ &nbsp;Fly again</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SCENARIOS = [
+  {
+    num: '01',
+    alt: 'ALT 45m',
+    time: '04:32',
+    icon: '🚶',
+    situation: 'A pedestrian walks into frame',
+    detail: 'You\'re filming a commercial development site from 45m. A <strong>pedestrian cuts across the edge of frame</strong> — clearly identifiable, facing the camera for about 3 seconds before walking out of shot.',
+    question: 'You\'re in the middle of a key product shot. What do you do?',
+    choices: [
+      {
+        id: 'continue',
+        icon: '▶️',
+        label: 'Continue filming',
+        sub: 'The pedestrian is only briefly in frame and will pass — keep recording.',
+        correct: false,
+        feedback: {
+          title: '❌ Not the right call',
+          body: 'Even brief, incidental capture of an identifiable person creates a privacy obligation. You\'ve now captured personal information without consent. Under APP 3, you should only collect personal information that is reasonably necessary for your purpose. A passing pedestrian is not part of your brief.',
+          law: 'APP 3 · Collection of personal information'
+        }
+      },
+      {
+        id: 'adjust',
+        icon: '↕️',
+        label: 'Pause recording, wait, then resume',
+        sub: 'Stop the recording until the pedestrian is clear of frame, then continue.',
+        correct: true,
+        feedback: {
+          title: '✅ Correct — this is the right call',
+          body: 'Pausing until the person is clear of frame avoids collecting their personal information unnecessarily. This demonstrates reasonable care under APP 11 and the principle of minimal data collection. You protect the individual\'s privacy and keep your footage clean for the client.',
+          law: 'APP 11 · Security & APP 3 · Minimal collection'
+        }
+      },
+      {
+        id: 'abort',
+        icon: '🛑',
+        label: 'Abort the mission entirely',
+        sub: 'Land immediately — the shot is compromised.',
+        correct: false,
+        feedback: {
+          title: '⚠️ Overcorrection — not necessary here',
+          body: 'Aborting is excessive for a single pedestrian passing through frame. A brief pause and resume is proportionate and appropriate. Reserve an abort decision for situations where privacy risk cannot be mitigated by a simple adjustment — for example, a persistent crowd, a sensitive location, or an ongoing confrontation.',
+          law: 'APP 11 · Proportionate response'
+        }
+      }
+    ]
+  },
+  {
+    num: '02',
+    alt: 'ALT 30m',
+    time: '11:08',
+    icon: '🏡',
+    situation: 'A neighbour appears in their backyard',
+    detail: 'You\'re conducting an approved survey of an agricultural property at 30m altitude. The neighbouring residential block is just inside your flight path. You can see <strong>a resident sunbathing in their backyard</strong> — clearly identifiable in your live feed.',
+    question: 'Their property was not part of your brief. What do you do?',
+    choices: [
+      {
+        id: 'continue',
+        icon: '▶️',
+        label: 'Continue — you\'re over approved airspace',
+        sub: 'Your client approved this flight path. The neighbour is incidental.',
+        correct: false,
+        feedback: {
+          title: '❌ Airspace approval ≠ privacy consent',
+          body: 'Being legally permitted to fly in airspace does not give you the right to capture personal information from someone who has not consented. Under APP 3, collecting identifiable imagery of a person in a private residential setting — their home, their backyard — requires a lawful basis that you don\'t have here. Regulatory approval covers your aircraft, not your camera.',
+          law: 'APP 3 · Collection · Privacy Act 1988 s 6'
+        }
+      },
+      {
+        id: 'adjust',
+        icon: '↕️',
+        label: 'Adjust your flight path immediately',
+        sub: 'Bank away from the residential block and redirect to avoid the backyard.',
+        correct: true,
+        feedback: {
+          title: '✅ Correct — adjust and document',
+          body: 'Redirecting away from the residential property is the right response. You remove the capture risk, protect the neighbour\'s privacy, and stay within your brief. Importantly, note the adjustment in your flight log. If questioned later, documented evidence of your decision to protect privacy demonstrates professional conduct and good faith compliance.',
+          law: 'APP 11 · Security · On-job conduct log'
+        }
+      },
+      {
+        id: 'abort',
+        icon: '🛑',
+        label: 'Abort — you can\'t complete the survey safely',
+        sub: 'Land and advise the client the job needs a revised flight plan.',
+        correct: false,
+        feedback: {
+          title: '⚠️ Abort is not required if you can adjust',
+          body: 'If you can redirect the drone to avoid the residential block while still completing the survey, that\'s the proportionate and professional response. Abort only if there\'s no viable path that keeps you clear of the property. Always tell the client what happened and update the flight plan for the next visit — but don\'t abort when an adjustment resolves the issue.',
+          law: 'APP 11 · Proportionate response'
+        }
+      }
+    ]
+  },
+  {
+    num: '03',
+    alt: 'ALT 60m',
+    time: '09:15',
+    icon: '🏫',
+    situation: 'An unexpected school comes into shot',
+    detail: 'You\'re filming an infrastructure project and have banked slightly east due to wind. <strong>A primary school has come into your frame</strong> — you can see children in a playground below. This school was not on your pre-flight map review.',
+    question: 'Children are now in your footage. What is the right decision?',
+    choices: [
+      {
+        id: 'continue',
+        icon: '▶️',
+        label: 'Continue — they\'re at distance and incidental',
+        sub: 'You can\'t identify individuals from 60m. No real privacy risk.',
+        correct: false,
+        feedback: {
+          title: '❌ Children require a higher standard of care',
+          body: 'Distance does not eliminate your obligation. Children in educational settings attract a heightened standard of privacy protection. Even footage that may not clearly identify individuals can constitute collection of personal information if the context (a named school, a specific date/time, children in a playground) could link back to identifiable people. The risk of harm is too significant to continue.',
+          law: 'APP 3 · Sensitive information · Children\'s privacy'
+        }
+      },
+      {
+        id: 'adjust',
+        icon: '↕️',
+        label: 'Bank immediately away from the school',
+        sub: 'Correct your course to remove the school from your field of view entirely.',
+        correct: true,
+        feedback: {
+          title: '✅ Correct — immediate course correction',
+          body: 'Correcting your heading to remove the school from frame is the right move. Schools and children are among the most sensitive categories under the Privacy Act. You should also stop the current recording, review the footage, and delete any segments containing the school grounds. Document the incident in your flight log. If footage cannot be adequately redacted, delete the affected clip.',
+          law: 'APP 3 · Sensitive locations · APP 11 · Post-flight review'
+        }
+      },
+      {
+        id: 'abort',
+        icon: '🛑',
+        label: 'Abort the mission and land immediately',
+        sub: 'A school appearing in shot is a serious enough privacy risk to stop the job.',
+        correct: false,
+        feedback: {
+          title: '⚠️ Adjustment is sufficient — abort is not required',
+          body: 'If you can immediately redirect away from the school, an abort is disproportionate. The priority is to stop capturing the school — bank away, delete the affected segment, and continue. However, if the school is unavoidably within your required operating area or you cannot complete the job without overflying it, then abort and revise your flight plan before returning.',
+          law: 'APP 11 · Proportionate response'
+        }
+      }
+    ]
+  },
+  {
+    num: '04',
+    alt: 'ALT 25m',
+    time: '14:50',
+    icon: '📱',
+    situation: 'Someone is filming YOU with their phone',
+    detail: 'You\'re operating over a permitted construction site. A bystander on the public footpath below has started <strong>filming you and your drone with their smartphone</strong>, then shouts up asking what you\'re filming. They appear agitated.',
+    question: 'How do you respond while maintaining your operation?',
+    choices: [
+      {
+        id: 'continue',
+        icon: '▶️',
+        label: 'Ignore them and continue — you have permits',
+        sub: 'You\'re operating legally. Their concern doesn\'t affect your authorisation.',
+        correct: false,
+        feedback: {
+          title: '❌ Ignoring a privacy concern is never the right call',
+          body: 'Having a permit doesn\'t mean you can ignore someone asserting a privacy interest. Under best practice and the Privacy Act, you should acknowledge people who raise concerns about being filmed. Ignoring the situation risks escalation, a formal complaint to the OAIC, or reputational damage. People have a right to know if they\'re being filmed, and a professional response builds trust.',
+          law: 'APP 5 · Notification of collection · On-job conduct'
+        }
+      },
+      {
+        id: 'adjust',
+        icon: '↕️',
+        label: 'Gain altitude, land safely, then speak to them',
+        sub: 'Move to a safe height, complete the immediate shot if critical, then land and address their concern.',
+        correct: true,
+        feedback: {
+          title: '✅ Correct — safety first, then communication',
+          body: 'Gaining altitude keeps the drone safe while you assess the situation. Landing and speaking to the person is the professional response. Explain who commissioned the work, what is being filmed, and confirm that footage of the public footpath (where they may be standing) will be reviewed and deleted. Carry your consent forms and RPAS documentation — being able to show these on the spot resolves most confrontations.',
+          law: 'APP 5 · Notification · Document your actions'
+        }
+      },
+      {
+        id: 'abort',
+        icon: '🛑',
+        label: 'Abort immediately — safety risk on site',
+        sub: 'An agitated person below creates a safety hazard. Land at once.',
+        correct: false,
+        feedback: {
+          title: '⚠️ Abort if safety is at risk — otherwise adjust',
+          body: 'If the person is attempting to interfere with your operation or creating a genuine safety risk, abort and land. However, someone filming you and asking questions from a public footpath is not itself a safety risk — it\'s a privacy concern to be managed through communication. Reserve abort for genuine safety events. Aborting every time someone questions your operation is impractical and unnecessary.',
+          law: 'CASA safety rules · APP 5 · Proportionate response'
+        }
+      }
+    ]
+  },
+  {
+    num: '05',
+    alt: 'ALT 50m',
+    time: '07:22',
+    icon: '🏥',
+    situation: 'A medical facility appears on your horizon',
+    detail: 'Flying a 3km transect survey, you notice <strong>a private hospital directly ahead</strong> — not marked on your pre-flight map. Your flight plan would take you directly over the building and its ambulance bay. You can already see vehicles in the car park.',
+    question: 'A hospital is one of the most sensitive locations possible. What do you do?',
+    choices: [
+      {
+        id: 'continue',
+        icon: '▶️',
+        label: 'Continue on your planned transect',
+        sub: 'Your pre-flight planning was approved. Stick to the plan.',
+        correct: false,
+        feedback: {
+          title: '❌ Pre-flight approval does not cover unexpected sensitive sites',
+          body: 'If your pre-flight review missed a hospital, that\'s a planning error — not a free pass to overfly it. Hospitals, ambulance bays, and medical car parks are among the highest-risk locations for capturing sensitive personal information. Vehicle plates in a hospital car park, patient movements, or emergency vehicles could all constitute collection of sensitive health-related information. Do not overfly.',
+          law: 'APP 3 · Sensitive information · NDB Scheme risk assessment'
+        }
+      },
+      {
+        id: 'adjust',
+        icon: '↕️',
+        label: 'Divert your flight path around the facility',
+        sub: 'Bank away to avoid the hospital entirely and resume your transect on the other side.',
+        correct: false,
+        feedback: {
+          title: '⚠️ Divert AND abort this leg — don\'t resume',
+          body: 'Diverting is the right instinct, but simply resuming the transect on the other side isn\'t enough if the hospital falls within your survey area. You need to abort this leg of the flight, review footage already captured for any hospital content, delete affected segments, and redesign your flight plan before returning. A hospital requires maximum avoidance — not just a temporary detour.',
+          law: 'APP 11 · Sensitive locations · NDB Scheme'
+        }
+      },
+      {
+        id: 'abort',
+        icon: '🛑',
+        label: 'Abort this leg, review footage, revise flight plan',
+        sub: 'Land, delete any footage showing the hospital, and redesign before continuing.',
+        correct: true,
+        feedback: {
+          title: '✅ Correct — this is an abort situation',
+          body: 'Hospitals are one of the few locations where an immediate abort is the right call. The risk of capturing sensitive health information — even incidentally — is too high to continue. Land safely, review and delete any footage from the approach, and revise your flight plan with a buffer zone around the facility. Document the incident, advise your client of the constraint, and obtain a revised brief before returning.',
+          law: 'APP 3 · Sensitive information · APP 11 · NDB Scheme'
+        }
+      }
+    ]
+  }
+];
+
+let currentIdx = 0;
+const userAnswers = [];
+
+function renderScenario(idx) {
+  const s = SCENARIOS[idx];
+  document.getElementById('scenarioNum').textContent = 'SCENARIO ' + s.num + ' / 0' + SCENARIOS.length;
+  document.getElementById('hudAlt').textContent = s.alt;
+  document.getElementById('hudTime').textContent = s.time;
+  document.getElementById('scenarioSituation').innerHTML = '<span class="situation-icon">' + s.icon + '</span>' + s.situation;
+  document.getElementById('situationDetail').innerHTML = s.detail;
+  document.getElementById('questionText').textContent = s.question;
+
+  const container = document.getElementById('choicesContainer');
+  container.innerHTML = '';
+  s.choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.id = 'choice-' + c.id;
+    btn.onclick = () => selectChoice(idx, c.id);
+    btn.innerHTML = `
+      <div class="choice-icon">${c.icon}</div>
+      <div class="choice-text">
+        <div class="choice-label">${c.label}</div>
+        <div class="choice-sub">${c.sub}</div>
+      </div>`;
+    container.appendChild(btn);
+  });
+
+  // Reset feedback and next btn
+  const fb = document.getElementById('feedbackBox');
+  fb.className = 'feedback';
+  document.getElementById('fbTitle').textContent = '';
+  document.getElementById('fbBody').textContent = '';
+  document.getElementById('fbLaw').textContent = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  // Animate card
+  const card = document.getElementById('scenarioCard');
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = '';
+
+  // Update dots
+  SCENARIOS.forEach((_, i) => {
+    const dot = document.getElementById('cdot' + i);
+    dot.className = 'cdot';
+    if (i < idx) {
+      dot.classList.add(userAnswers[i] ? 'done-correct' : 'done-wrong');
+    } else if (i === idx) {
+      dot.classList.add('active');
+    }
+  });
+  document.getElementById('counterLabel').textContent = 'Scenario ' + (idx + 1) + ' of ' + SCENARIOS.length;
+}
+
+function selectChoice(scenarioIdx, choiceId) {
+  const s = SCENARIOS[scenarioIdx];
+  const choice = s.choices.find(c => c.id === choiceId);
+  const isCorrect = choice.correct;
+
+  userAnswers[scenarioIdx] = isCorrect;
+
+  // Style buttons
+  s.choices.forEach(c => {
+    const btn = document.getElementById('choice-' + c.id);
+    if (c.id === choiceId) {
+      btn.classList.add(isCorrect ? 'selected-correct' : 'selected-wrong');
+    } else if (c.correct && !isCorrect) {
+      btn.classList.add('reveal-correct');
+    } else {
+      btn.classList.add('dimmed');
+    }
+  });
+
+  // Show feedback
+  const fb = document.getElementById('feedbackBox');
+  fb.className = 'feedback show ' + (isCorrect ? 'correct' : 'wrong');
+  document.getElementById('fbTitle').textContent = choice.feedback.title;
+  document.getElementById('fbBody').textContent = choice.feedback.body;
+  document.getElementById('fbLaw').textContent = choice.feedback.law;
+  fb.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+
+  // Show next / finish button
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.className = 'next-btn show';
+  nextBtn.textContent = scenarioIdx < SCENARIOS.length - 1 ? 'Next scenario →' : 'See my results →';
+}
+
+function nextScenario() {
+  currentIdx++;
+  if (currentIdx >= SCENARIOS.length) {
+    showResults();
+  } else {
+    renderScenario(currentIdx);
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+}
+
+function showResults() {
+  document.getElementById('screenScenario').className = 'screen';
+  document.getElementById('screenResults').className = 'screen active';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+
+  const correct = userAnswers.filter(Boolean).length;
+  const total = SCENARIOS.length;
+  const pct = Math.round(correct / total * 100);
+
+  const emoji = correct === total ? '🏆' : correct >= 4 ? '✈️' : correct >= 3 ? '⚠️' : '🔴';
+  const title = correct === total ? 'Perfect flight!' : correct >= 4 ? 'Strong decisions!' : correct >= 3 ? 'Room to improve' : 'Back to the briefing';
+  const scoreColor = correct === total ? 'var(--green)' : correct >= 3 ? 'var(--blue)' : 'var(--red)';
+  const verdict = correct === total
+    ? 'You made the right call in every situation. Your instincts around privacy, proportionality, and documentation are exactly what responsible RPAS operations require.'
+    : correct >= 4
+    ? 'Mostly strong calls. Review any incorrect answers — the key principles are proportionate response, avoiding unnecessary data collection, and knowing when to adjust versus abort.'
+    : correct >= 3
+    ? 'Some correct decisions, but there are gaps. Focus on the difference between adjusting your flight (the most common correct answer) and aborting — and remember that children and medical facilities always require the highest standard of care.'
+    : 'Several decisions didn\'t meet the standard. Review the Privacy Act principles around collection (APP 3), security (APP 11), and proportionate response before flying again.';
+
+  document.getElementById('resultsEmoji').textContent = emoji;
+  document.getElementById('resultsTitle').textContent = title;
+  document.getElementById('resultsScore').textContent = correct + '/' + total;
+  document.getElementById('resultsScore').style.color = scoreColor;
+  document.getElementById('resultsVerdict').textContent = verdict;
+
+  // Update all dots
+  SCENARIOS.forEach((_, i) => {
+    const dot = document.getElementById('cdot' + i);
+    dot.className = 'cdot ' + (userAnswers[i] ? 'done-correct' : 'done-wrong');
+  });
+  document.getElementById('counterLabel').textContent = correct + ' / ' + total + ' correct';
+
+  // Breakdown
+  const list = document.getElementById('breakdownList');
+  list.innerHTML = SCENARIOS.map((s, i) => {
+    const ok = userAnswers[i];
+    const chosen = s.choices.find(c => {
+      // find what they chose — we can derive from the correct status
+      if (ok) return c.correct;
+      return !c.correct; // just show "incorrect choice made"
+    });
+    const correctChoice = s.choices.find(c => c.correct);
+    return `<div class="bd-item">
+      <div class="bd-num ${ok ? 'ok' : 'fail'}">${i+1}</div>
+      <div class="bd-text">
+        <div class="bd-situation">${s.icon} ${s.situation}</div>
+        <div class="bd-answer">${ok ? '✅ ' + correctChoice.label : '❌ Correct: ' + correctChoice.label}</div>
+      </div>
+      <div class="bd-result">${ok ? '✅' : '❌'}</div>
+    </div>`;
+  }).join('');
+}
+
+function restart() {
+  currentIdx = 0;
+  userAnswers.length = 0;
+  document.getElementById('screenResults').className = 'screen';
+  document.getElementById('screenScenario').className = 'screen active';
+  renderScenario(0);
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// Init
+renderScenario(0);
+</script>
+</body>
+</html>

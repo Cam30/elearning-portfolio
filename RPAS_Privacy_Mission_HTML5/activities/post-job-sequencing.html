@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Post-Job Workflow Sequencing – RPAS Privacy</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{margin:0;padding:0}
+:root{
+  --cream:#FCFAEF;--mint:#E9F5EB;
+  --blue:#0195BB;--blue-dark:#0178a0;--blue-pale:#d0eef6;--blue-mid:rgba(1,149,187,0.2);
+  --text:#1a3a4a;--muted:#5a8a9f;--border:#c5dfe8;
+  --green:#1a7a4a;--green-pale:#E9F5EB;--green-mid:rgba(26,122,74,0.3);
+  --red:#c0392b;--red-pale:#fef2f2;--red-mid:rgba(192,57,43,0.3);
+  --amber:#b86c00;--amber-pale:#FFF8EC;--amber-mid:rgba(184,108,0,0.3);
+  --r:12px;--safe-bottom:env(safe-area-inset-bottom,0px);
+}
+html{font-size:16px;-webkit-tap-highlight-color:transparent}
+body{font-family:'Sora',sans-serif;background:var(--cream);color:var(--text);min-height:100dvh;overscroll-behavior:none}
+
+/* ── HEADER ── */
+.page-header{background:#fff;border-bottom:2px solid var(--border);padding:1.5rem 1.2rem 1.2rem;position:relative;overflow:hidden}
+.page-header::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--blue)}
+.hdr-eyebrow{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--blue);margin-bottom:0.55rem;display:flex;align-items:center;gap:0.5rem}
+.hdr-eyebrow::before{content:'';width:20px;height:2px;background:var(--blue)}
+.hdr-h1{font-size:clamp(1.35rem,4vw,1.85rem);font-weight:800;line-height:1.1;color:var(--text);margin-bottom:0.5rem;letter-spacing:-0.01em}
+.hdr-h1 em{color:var(--blue);font-style:normal}
+.hdr-sub{font-size:0.82rem;color:#555;line-height:1.65;max-width:58ch;border-left:3px solid var(--blue);padding-left:0.85rem;margin-bottom:1rem}
+
+/* ── PROGRESS ── */
+.progress-wrap{background:#fff;border:1px solid var(--border);border-radius:10px;padding:0.65rem 1rem;display:flex;align-items:center;gap:0.85rem}
+.prog-label{font-size:0.62rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.prog-dots{display:flex;gap:0.4rem;flex:1}
+.prog-dot{width:10px;height:10px;border-radius:50%;background:var(--border);transition:all 0.3s}
+.prog-dot.active{background:var(--blue);transform:scale(1.2)}
+.prog-dot.done{background:var(--green)}
+.prog-dot.wrong{background:var(--red)}
+.prog-count{font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:700;color:var(--muted);white-space:nowrap}
+
+/* ── MAIN ── */
+.main{padding:1.2rem 1rem calc(2rem + var(--safe-bottom));max-width:720px;margin:0 auto}
+
+/* ── SCREEN ── */
+.screen{display:none}
+.screen.active{display:block}
+
+/* ── CHALLENGE CARD ── */
+.challenge-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:1rem;box-shadow:0 2px 16px rgba(1,149,187,0.07);animation:nodeIn 0.35s cubic-bezier(.4,0,.2,1)}
+@keyframes nodeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* Challenge header */
+.challenge-hdr{background:linear-gradient(135deg,#0d2a35,#0a3d4f);padding:1rem 1.2rem;position:relative;overflow:hidden}
+.challenge-hdr::after{content:'';position:absolute;top:-20px;right:-20px;width:100px;height:100px;border:1.5px solid rgba(1,149,187,0.2);border-radius:50%}
+.ch-num{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(1,219,255,0.5);margin-bottom:0.3rem}
+.ch-title{font-size:0.95rem;font-weight:800;color:#fff;line-height:1.25;margin-bottom:0.5rem}
+.ch-context{font-size:0.75rem;color:rgba(255,255,255,0.55);line-height:1.5;max-width:52ch}
+
+/* Challenge body */
+.challenge-body{padding:1.1rem 1.2rem 1.2rem}
+
+/* ── QUESTION LABEL ── */
+.q-label{font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.6rem;display:flex;align-items:center;gap:0.5rem}
+.q-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── SEQUENCE ZONE ── */
+.seq-instruction{font-size:0.8rem;font-weight:700;color:var(--text);margin-bottom:0.9rem;line-height:1.4}
+.seq-instruction span{color:var(--blue)}
+
+/* Drop zone — numbered slots */
+.drop-zone{display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1rem}
+.drop-slot{
+  display:flex;align-items:center;gap:0.7rem;
+  min-height:60px;
+  border:2px dashed var(--border);
+  border-radius:10px;
+  padding:0.5rem 0.75rem;
+  transition:all 0.2s;
+  background:var(--cream);
+  position:relative;
+}
+.drop-slot.drag-over{border-color:var(--blue);background:var(--blue-pale);border-style:solid}
+.drop-slot.filled{border-style:solid;border-color:var(--border);background:#fff}
+.drop-slot.correct{border-color:var(--green);background:var(--green-pale)}
+.drop-slot.wrong{border-color:var(--red);background:var(--red-pale)}
+.slot-num{
+  font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:700;
+  min-width:26px;height:26px;border-radius:50%;
+  background:var(--border);color:var(--muted);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all 0.3s;
+}
+.drop-slot.filled .slot-num{background:var(--blue);color:#fff}
+.drop-slot.correct .slot-num{background:var(--green);color:#fff}
+.drop-slot.wrong .slot-num{background:var(--red);color:#fff}
+.slot-placeholder{font-size:0.75rem;color:var(--muted);font-style:italic}
+.slot-card-preview{flex:1;min-width:0}
+
+/* ── CARD BANK ── */
+.bank-label{font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.55rem;display:flex;align-items:center;gap:0.5rem}
+.bank-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.card-bank{
+  display:flex;flex-direction:column;gap:0.45rem;
+  min-height:60px;
+  border:1.5px solid var(--border);border-radius:10px;
+  padding:0.6rem;
+  background:var(--cream);
+}
+.card-bank.drag-over{border-color:var(--blue);background:var(--blue-pale)}
+
+/* ── DRAGGABLE STEP CARD ── */
+.step-card{
+  display:flex;align-items:center;gap:0.7rem;
+  background:#fff;
+  border:1.5px solid var(--border);
+  border-radius:9px;
+  padding:0.7rem 0.85rem;
+  cursor:grab;
+  transition:all 0.15s;
+  user-select:none;-webkit-user-select:none;
+  touch-action:none;
+  position:relative;
+}
+.step-card:hover{border-color:var(--blue);box-shadow:0 2px 10px rgba(1,149,187,0.12)}
+.step-card.dragging{opacity:0.4;transform:scale(0.98);cursor:grabbing}
+.step-card.locked{cursor:default;pointer-events:none}
+.step-card.locked.correct{border-color:var(--green)}
+.step-card.locked.wrong{border-color:var(--red)}
+.drag-handle{color:var(--muted);font-size:0.85rem;flex-shrink:0;letter-spacing:-1px}
+.step-icon{font-size:1.1rem;flex-shrink:0}
+.step-body{flex:1;min-width:0}
+.step-title{font-size:0.82rem;font-weight:700;color:var(--text);line-height:1.3}
+.step-sub{font-size:0.68rem;color:var(--muted);margin-top:0.12rem;line-height:1.4}
+.step-result{font-size:0.9rem;flex-shrink:0;opacity:0;transition:opacity 0.3s}
+.step-card.locked .step-result{opacity:1}
+
+/* ── CHECK BUTTON ── */
+.check-btn{
+  width:100%;padding:0.85rem;border-radius:var(--r);
+  background:var(--blue);color:#fff;border:none;
+  font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;
+  cursor:pointer;transition:all 0.15s;touch-action:manipulation;
+  margin-bottom:0.6rem;
+}
+.check-btn:hover{background:var(--blue-dark)}
+.check-btn:active{transform:scale(0.98)}
+.check-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+
+/* ── FEEDBACK PANEL ── */
+.feedback-panel{display:none;border-radius:10px;padding:0.9rem 1rem;margin-bottom:0.7rem;animation:popIn 0.3s cubic-bezier(.34,1.3,.64,1)}
+.feedback-panel.show{display:block}
+@keyframes popIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
+.feedback-panel.correct{background:var(--green-pale);border:1.5px solid var(--green-mid)}
+.feedback-panel.wrong{background:var(--red-pale);border:1.5px solid var(--red-mid)}
+.feedback-panel.partial{background:var(--amber-pale);border:1.5px solid var(--amber-mid)}
+.fp-title{font-size:0.85rem;font-weight:800;margin-bottom:0.35rem}
+.feedback-panel.correct .fp-title{color:var(--green)}
+.feedback-panel.wrong .fp-title,.feedback-panel.partial .fp-title{color:var(--red)}
+.feedback-panel.partial .fp-title{color:var(--amber)}
+.fp-body{font-size:0.76rem;color:#333;line-height:1.65}
+.fp-law{display:inline-block;margin-top:0.5rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.06em;background:var(--blue-pale);border:1px solid var(--blue-mid);color:var(--blue);padding:0.15rem 0.5rem;border-radius:3px}
+
+/* ── NEXT BTN ── */
+.next-btn{display:none;width:100%;padding:0.82rem;border-radius:var(--r);background:var(--blue);color:#fff;border:none;font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;cursor:pointer;transition:all 0.15s;touch-action:manipulation}
+.next-btn.show{display:block}
+.next-btn:hover{background:var(--blue-dark)}
+.next-btn:active{transform:scale(0.98)}
+
+/* ── RESULTS ── */
+.results-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:1.6rem 1.4rem;text-align:center;animation:nodeIn 0.4s cubic-bezier(.4,0,.2,1)}
+.results-emoji{font-size:2.8rem;margin-bottom:0.5rem}
+.results-title{font-size:1.15rem;font-weight:800;color:var(--text);margin-bottom:0.3rem}
+.results-score{font-family:'DM Mono',monospace;font-size:2.8rem;font-weight:700;margin:0.3rem 0;line-height:1}
+.results-label{font-size:0.72rem;color:var(--muted);margin-bottom:0.9rem}
+.results-verdict{font-size:0.82rem;color:#444;line-height:1.65;max-width:48ch;margin:0 auto 1.3rem;padding:0.75rem 0.9rem;border-radius:8px;border-left:3px solid var(--blue);background:var(--cream);text-align:left}
+.bd-label{font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem;text-align:left}
+.bd-row{display:flex;gap:0.5rem;padding:0.55rem 0;border-bottom:1px solid var(--border);align-items:flex-start;text-align:left}
+.bd-row:last-child{border-bottom:none}
+.bd-icon{font-size:0.95rem;flex-shrink:0;margin-top:1px}
+.bd-info{flex:1;min-width:0}
+.bd-title{font-size:0.76rem;font-weight:700;color:var(--text);line-height:1.2;margin-bottom:0.1rem}
+.bd-detail{font-size:0.67rem;color:var(--muted);line-height:1.4}
+.retry-btn{width:100%;padding:0.82rem;border-radius:var(--r);background:var(--blue);color:#fff;border:none;font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;cursor:pointer;transition:all 0.15s;touch-action:manipulation;margin-top:1.2rem}
+.retry-btn:hover{background:var(--blue-dark)}
+.retry-btn:active{transform:scale(0.98)}
+
+/* ── MOBILE TOUCH DRAG GHOST ── */
+.drag-ghost{
+  position:fixed;pointer-events:none;z-index:9999;
+  opacity:0.9;transform:scale(1.04) rotate(1.5deg);
+  box-shadow:0 8px 24px rgba(0,0,0,0.18);
+  border-radius:9px;
+  background:#fff;border:2px solid var(--blue);
+  padding:0.7rem 0.85rem;
+  display:flex;align-items:center;gap:0.7rem;
+  font-family:'Sora',sans-serif;
+  width:280px;
+}
+@media(max-width:480px){
+  .hdr-h1{font-size:1.3rem}
+  .challenge-body{padding:0.9rem}
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="hdr-eyebrow">RPAS · Post-Job Workflow</div>
+  <div class="hdr-h1">Put the Steps in the <em>Right Order</em></div>
+  <p class="hdr-sub">After every drone job, privacy compliance depends on doing things in the correct sequence. Drag each step into the right position — order matters.</p>
+  <div class="progress-wrap">
+    <span class="prog-label">Challenge</span>
+    <div class="prog-dots" id="progDots"></div>
+    <span class="prog-count" id="progCount">1 of 3</span>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- SCENARIO SCREEN -->
+  <div class="screen active" id="screenChallenge">
+    <div class="challenge-card" id="challengeCard">
+      <div class="challenge-hdr">
+        <div class="ch-num" id="chNum">CHALLENGE 01 / 03</div>
+        <div class="ch-title" id="chTitle"></div>
+        <div class="ch-context" id="chContext"></div>
+      </div>
+      <div class="challenge-body">
+        <div class="q-label">Arrange in correct order</div>
+        <div class="seq-instruction" id="seqInstruction"></div>
+        <div class="drop-zone" id="dropZone"></div>
+        <div class="bank-label">Steps to place</div>
+        <div class="card-bank" id="cardBank"></div>
+        <div class="feedback-panel" id="feedbackPanel">
+          <div class="fp-title" id="fpTitle"></div>
+          <div class="fp-body" id="fpBody"></div>
+          <span class="fp-law" id="fpLaw"></span>
+        </div>
+        <button class="check-btn" id="checkBtn" onclick="checkOrder()" disabled>Check my order →</button>
+        <button class="next-btn" id="nextBtn" onclick="nextChallenge()">Next challenge →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div class="screen" id="screenResults">
+    <div class="results-card">
+      <div class="results-emoji" id="rEmoji"></div>
+      <div class="results-title" id="rTitle"></div>
+      <div class="results-score" id="rScore"></div>
+      <div class="results-label">challenges correct</div>
+      <div class="results-verdict" id="rVerdict"></div>
+      <div class="bd-label">Your results</div>
+      <div id="bdList"></div>
+      <button class="retry-btn" onclick="restart()">↺ &nbsp;Try again</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Touch drag ghost -->
+<div class="drag-ghost" id="dragGhost" style="display:none">
+  <span id="ghostIcon" style="font-size:1.1rem"></span>
+  <span id="ghostText" style="font-size:0.8rem;font-weight:700;color:#1a3a4a;line-height:1.3"></span>
+</div>
+
+<script>
+const CHALLENGES = [
+  {
+    title: 'When do you delete raw footage?',
+    context: 'Jake has just landed after a property survey. He has raw footage on his drone\'s SD card — including some incidental captures of neighbouring properties.',
+    instruction: 'Drag these 5 steps into the correct post-flight order:',
+    steps: [
+      { id:'a', icon:'🎬', title:'Review all raw footage', sub:'Watch back everything captured during the flight' },
+      { id:'b', icon:'✂️', title:'Redact or delete sensitive content', sub:'Blur faces, plates, and private property not in scope' },
+      { id:'c', icon:'📤', title:'Share approved footage with client', sub:'Deliver only the project-relevant, redacted deliverables' },
+      { id:'d', icon:'✅', title:'Obtain client sign-off', sub:'Confirm the client has received and approved the deliverables' },
+      { id:'e', icon:'🗑️', title:'Delete all remaining raw footage', sub:'Permanently delete raw files — only retain the final approved output' },
+    ],
+    correctOrder: ['a','b','c','d','e'],
+    feedback: {
+      correct: {
+        title: '✅ Correct order — well sequenced',
+        body: 'Raw footage must not be deleted before the client has approved the deliverables — but it must be deleted after. Under APP 11, you cannot hold personal information longer than necessary. Once your client has signed off and confirmed receipt, raw files containing incidental personal data — neighbouring properties, bystanders, licence plates — must be permanently deleted. Keeping raw footage "just in case" is a privacy liability.',
+        law: 'APP 11 · Security of personal information · Data minimisation'
+      },
+      wrong: {
+        title: '❌ Incorrect sequence',
+        body: 'The key rule: review and redact before you share, get sign-off before you delete raw files, and delete raw files after — not before — client approval. Deleting raw footage before the client approves risks not being able to fulfil your brief. Keeping it after approval breaches your minimisation obligation under APP 11.',
+        law: 'APP 11 · Security of personal information · Data minimisation'
+      }
+    }
+  },
+  {
+    title: 'Before or after client approval — when do you notify?',
+    context: 'During a review, Jake discovers he accidentally captured a child in a residential backyard adjacent to the survey site. The footage is identifiable.',
+    instruction: 'Put these 6 steps in the correct order for handling an accidental privacy capture:',
+    steps: [
+      { id:'a', icon:'⏸️', title:'Stop sharing any footage immediately', sub:'Pause all delivery until the issue is assessed' },
+      { id:'b', icon:'🔍', title:'Review and isolate the affected clip', sub:'Identify exactly what was captured and who may be identifiable' },
+      { id:'c', icon:'📋', title:'Assess whether a notifiable data breach has occurred', sub:'Is there likely serious harm? Does the NDB Scheme apply?' },
+      { id:'d', icon:'✂️', title:'Delete the affected footage', sub:'Permanently remove the identifiable clip and log the deletion' },
+      { id:'e', icon:'📣', title:'Notify affected individuals and the OAIC if required', sub:'If a notifiable breach — notify within 30 days' },
+      { id:'f', icon:'📤', title:'Resume delivery of remaining approved footage', sub:'Share only the clean, in-scope deliverables with the client' },
+    ],
+    correctOrder: ['a','b','c','d','e','f'],
+    feedback: {
+      correct: {
+        title: '✅ Correct — this is the compliant response sequence',
+        body: 'Stopping delivery comes first — you can\'t un-share footage. Then review and assess whether the NDB Scheme applies. Delete the affected material, fulfil any notification obligations, and only then resume delivery. The 30-day NDB notification clock starts the moment you become aware of a likely breach — so assessment must happen immediately.',
+        law: 'NDB Scheme · Privacy Act s 26WL · APP 11'
+      },
+      wrong: {
+        title: '❌ Sequence error — order is critical here',
+        body: 'Resuming delivery or deleting footage before you\'ve assessed the breach is dangerous. You must stop, assess, and determine your NDB obligations before taking further action. Deleting footage without logging it could also be interpreted as concealment. The correct sequence: stop → assess → delete → notify → resume.',
+        law: 'NDB Scheme · Privacy Act s 26WL · APP 11'
+      }
+    }
+  },
+  {
+    title: 'Building the post-job paper trail',
+    context: 'Jake has completed a job cleanly — good footage, no privacy incidents. Now he needs to close the job correctly with a proper documentation trail.',
+    instruction: 'Arrange these 5 documentation steps in the correct order:',
+    steps: [
+      { id:'a', icon:'📝', title:'Complete and sign your flight log', sub:'Record date, location, duration, altitude, and any notable events' },
+      { id:'b', icon:'📁', title:'Organise and label final footage files', sub:'Create a clear folder structure with project name, date, and type' },
+      { id:'c', icon:'📄', title:'Record what data was collected and retained', sub:'Log what footage exists, what was deleted, and why' },
+      { id:'d', icon:'🖊️', title:'Get client signature on data handling agreement', sub:'Confirm who owns the footage and the agreed deletion date' },
+      { id:'e', icon:'🗓️', title:'Set a calendar reminder for the deletion date', sub:'Schedule the deletion as agreed in the contract — don\'t rely on memory' },
+    ],
+    correctOrder: ['a','b','c','d','e'],
+    feedback: {
+      correct: {
+        title: '✅ Correct — this is a professional close-out sequence',
+        body: 'The flight log is completed immediately after landing while details are fresh. Files are organised before the data agreement is signed — you need to know what exists before committing to what will be deleted. The data agreement locks in the deletion date, and the calendar reminder ensures you actually honour it. This sequence creates a defensible paper trail if you\'re ever questioned under the Privacy Act.',
+        law: 'APP 11 · On-job documentation · Data handling agreement'
+      },
+      wrong: {
+        title: '❌ Sequence error',
+        body: 'Documentation order matters for legal defensibility. The flight log must be completed first — before you organise files or contact the client — so it reflects what actually happened, not a tidied-up version. The data agreement should be signed once you know what footage exists, and the deletion reminder must follow the agreed date in that agreement.',
+        law: 'APP 11 · On-job documentation · Data handling agreement'
+      }
+    }
+  }
+];
+
+let currentIdx = 0;
+const results = []; // true/false per challenge
+let slotContents = []; // step id in each slot (null = empty)
+let bankContents = []; // step ids remaining in bank
+let dragSrc = null; // { from: 'bank'|'slot', index: number, stepId: string }
+
+// ── INIT ──
+function initChallenge(idx) {
+  const c = CHALLENGES[idx];
+  const n = c.steps.length;
+  slotContents = Array(n).fill(null);
+  bankContents = [...c.correctOrder].sort(() => Math.random() - 0.5); // shuffle
+
+  // Header
+  document.getElementById('chNum').textContent = 'CHALLENGE 0' + (idx+1) + ' / 0' + CHALLENGES.length;
+  document.getElementById('chTitle').textContent = c.title;
+  document.getElementById('chContext').textContent = c.context;
+  document.getElementById('seqInstruction').innerHTML = c.instruction.replace('Drag','<span>Drag</span>');
+
+  // Animate card
+  const card = document.getElementById('challengeCard');
+  card.style.animation='none'; card.offsetHeight; card.style.animation='';
+
+  renderDropZone();
+  renderBank();
+  updateCheckBtn();
+
+  // Reset feedback & next
+  document.getElementById('feedbackPanel').className = 'feedback-panel';
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('checkBtn').style.display = 'block';
+
+  // Progress dots
+  const dotsEl = document.getElementById('progDots');
+  dotsEl.innerHTML = CHALLENGES.map((_,i) => {
+    let cls = 'prog-dot';
+    if(i < idx) cls += results[i] ? ' done' : ' wrong';
+    else if(i === idx) cls += ' active';
+    return `<div class="${cls}"></div>`;
+  }).join('');
+  document.getElementById('progCount').textContent = (idx+1) + ' of ' + CHALLENGES.length;
+}
+
+// ── RENDER DROP ZONE ──
+function renderDropZone() {
+  const c = CHALLENGES[currentIdx];
+  const dz = document.getElementById('dropZone');
+  dz.innerHTML = '';
+  for(let i=0;i<c.steps.length;i++) {
+    const slot = document.createElement('div');
+    slot.className = 'drop-slot' + (slotContents[i] ? ' filled' : '');
+    slot.dataset.slotIndex = i;
+    slot.innerHTML = `<div class="slot-num">${i+1}</div>`;
+    if(slotContents[i]) {
+      const step = c.steps.find(s=>s.id===slotContents[i]);
+      slot.appendChild(makeCardEl(step, 'slot', i, false));
+    } else {
+      const ph = document.createElement('span');
+      ph.className = 'slot-placeholder';
+      ph.textContent = 'Drop step here';
+      slot.appendChild(ph);
+    }
+    // Drop events
+    slot.addEventListener('dragover', onDragOverSlot);
+    slot.addEventListener('dragleave', onDragLeave);
+    slot.addEventListener('drop', e => onDropSlot(e, i));
+    // Touch drop target
+    slot.addEventListener('touchend', e => onTouchEndSlot(e, i), {passive:false});
+    dz.appendChild(slot);
+  }
+}
+
+// ── RENDER BANK ──
+function renderBank() {
+  const c = CHALLENGES[currentIdx];
+  const bank = document.getElementById('cardBank');
+  bank.innerHTML = '';
+  if(bankContents.length === 0) {
+    const empty = document.createElement('div');
+    empty.style.cssText = 'text-align:center;font-size:0.72rem;color:var(--muted);padding:0.75rem;font-style:italic';
+    empty.textContent = 'All steps placed — check your order below';
+    bank.appendChild(empty);
+  } else {
+    bankContents.forEach((id, bi) => {
+      const step = c.steps.find(s=>s.id===id);
+      bank.appendChild(makeCardEl(step, 'bank', bi, false));
+    });
+  }
+  bank.addEventListener('dragover', onDragOverBank);
+  bank.addEventListener('dragleave', onDragLeave);
+  bank.addEventListener('drop', onDropBank);
+}
+
+// ── MAKE CARD ELEMENT ──
+function makeCardEl(step, from, index, locked) {
+  const card = document.createElement('div');
+  card.className = 'step-card' + (locked ? ' locked' : '');
+  card.draggable = !locked;
+  card.dataset.stepId = step.id;
+  card.dataset.from = from;
+  card.dataset.index = index;
+  card.innerHTML = `
+    ${!locked ? '<span class="drag-handle">⠿⠿</span>' : ''}
+    <span class="step-icon">${step.icon}</span>
+    <div class="step-body">
+      <div class="step-title">${step.title}</div>
+      <div class="step-sub">${step.sub}</div>
+    </div>
+    <span class="step-result"></span>`;
+
+  if(!locked) {
+    card.addEventListener('dragstart', e => onDragStart(e, from, index, step.id));
+    card.addEventListener('dragend', onDragEnd);
+    card.addEventListener('touchstart', e => onTouchStart(e, from, index, step.id), {passive:false});
+    card.addEventListener('touchmove', onTouchMove, {passive:false});
+    card.addEventListener('touchend', e => onTouchEndCard(e), {passive:false});
+  }
+  return card;
+}
+
+// ── DRAG (DESKTOP) ──
+function onDragStart(e, from, index, stepId) {
+  dragSrc = {from, index, stepId};
+  e.dataTransfer.effectAllowed = 'move';
+  setTimeout(()=>e.target.classList.add('dragging'), 0);
+}
+function onDragEnd(e) { e.target.classList.remove('dragging'); }
+function onDragOverSlot(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function onDragOverBank(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function onDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+
+function onDropSlot(e, targetSlot) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if(!dragSrc) return;
+  moveCard(dragSrc.from, dragSrc.index, dragSrc.stepId, 'slot', targetSlot);
+  dragSrc = null;
+}
+function onDropBank(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if(!dragSrc) return;
+  moveCard(dragSrc.from, dragSrc.index, dragSrc.stepId, 'bank', -1);
+  dragSrc = null;
+}
+
+// ── TOUCH (MOBILE) ──
+let touchDragSrc = null;
+let touchGhost = null;
+let touchOffX = 0, touchOffY = 0;
+
+function onTouchStart(e, from, index, stepId) {
+  if(e.touches.length !== 1) return;
+  const t = e.touches[0];
+  const rect = e.currentTarget.getBoundingClientRect();
+  touchOffX = t.clientX - rect.left;
+  touchOffY = t.clientY - rect.top;
+  touchDragSrc = {from, index, stepId};
+
+  const step = CHALLENGES[currentIdx].steps.find(s=>s.id===stepId);
+  const ghost = document.getElementById('dragGhost');
+  document.getElementById('ghostIcon').textContent = step.icon;
+  document.getElementById('ghostText').textContent = step.title;
+  ghost.style.display = 'flex';
+  ghost.style.left = (t.clientX - touchOffX) + 'px';
+  ghost.style.top = (t.clientY - touchOffY) + 'px';
+  e.currentTarget.style.opacity = '0.4';
+  touchGhost = e.currentTarget;
+}
+
+function onTouchMove(e) {
+  if(!touchDragSrc) return;
+  e.preventDefault();
+  const t = e.touches[0];
+  const ghost = document.getElementById('dragGhost');
+  ghost.style.left = (t.clientX - touchOffX) + 'px';
+  ghost.style.top = (t.clientY - touchOffY) + 'px';
+
+  // Highlight drop targets
+  document.querySelectorAll('.drop-slot, .card-bank').forEach(el => {
+    const r = el.getBoundingClientRect();
+    const over = t.clientX >= r.left && t.clientX <= r.right && t.clientY >= r.top && t.clientY <= r.bottom;
+    el.classList.toggle('drag-over', over);
+  });
+}
+
+function onTouchEndCard(e) {
+  if(!touchDragSrc) return;
+  document.getElementById('dragGhost').style.display = 'none';
+  document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+  if(touchGhost) touchGhost.style.opacity = '';
+  touchDragSrc = null; touchGhost = null;
+}
+
+function onTouchEndSlot(e, targetSlot) {
+  if(!touchDragSrc) return;
+  e.preventDefault();
+  document.getElementById('dragGhost').style.display = 'none';
+  document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+  if(touchGhost) touchGhost.style.opacity = '';
+  const src = touchDragSrc;
+  touchDragSrc = null; touchGhost = null;
+  moveCard(src.from, src.index, src.stepId, 'slot', targetSlot);
+}
+
+// ── MOVE LOGIC ──
+function moveCard(fromLoc, fromIndex, stepId, toLoc, toSlot) {
+  // Remove from source
+  if(fromLoc === 'bank') {
+    bankContents = bankContents.filter(id => id !== stepId);
+  } else if(fromLoc === 'slot') {
+    slotContents[fromIndex] = null;
+  }
+
+  // Place in destination
+  if(toLoc === 'slot') {
+    // If slot already occupied, send existing occupant back to bank
+    if(slotContents[toSlot]) {
+      bankContents.push(slotContents[toSlot]);
+    }
+    slotContents[toSlot] = stepId;
+  } else { // back to bank
+    if(!bankContents.includes(stepId)) bankContents.push(stepId);
+  }
+
+  renderDropZone();
+  renderBank();
+  updateCheckBtn();
+}
+
+function updateCheckBtn() {
+  const allFilled = slotContents.every(s => s !== null);
+  document.getElementById('checkBtn').disabled = !allFilled;
+}
+
+// ── CHECK ORDER ──
+function checkOrder() {
+  const c = CHALLENGES[currentIdx];
+  const isCorrect = slotContents.every((id, i) => id === c.correctOrder[i]);
+  results[currentIdx] = isCorrect;
+
+  // Mark slots
+  const slots = document.querySelectorAll('.drop-slot');
+  slots.forEach((slot, i) => {
+    const correct = slotContents[i] === c.correctOrder[i];
+    slot.classList.add(correct ? 'correct' : 'wrong');
+    slot.querySelector('.slot-num').style.cssText = '';
+    // Mark the card inside
+    const card = slot.querySelector('.step-card');
+    if(card) {
+      card.classList.add('locked', correct ? 'correct' : 'wrong');
+      card.querySelector('.step-result').textContent = correct ? '✅' : '❌';
+    }
+  });
+
+  // Show feedback
+  const fb = document.getElementById('feedbackPanel');
+  const fbData = isCorrect ? c.feedback.correct : c.feedback.wrong;
+  fb.className = 'feedback-panel show ' + (isCorrect ? 'correct' : 'wrong');
+  document.getElementById('fpTitle').textContent = fbData.title;
+  document.getElementById('fpBody').textContent = fbData.body;
+  document.getElementById('fpLaw').textContent = fbData.law;
+
+  // Update progress dot
+  initProgressDots();
+
+  document.getElementById('checkBtn').style.display = 'none';
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.className = 'next-btn show';
+  nextBtn.textContent = currentIdx < CHALLENGES.length - 1 ? 'Next challenge →' : 'See my results →';
+
+  fb.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function initProgressDots() {
+  const dotsEl = document.getElementById('progDots');
+  dotsEl.innerHTML = CHALLENGES.map((_,i) => {
+    let cls = 'prog-dot';
+    if(i <= currentIdx && results[i] !== undefined) cls += results[i] ? ' done' : ' wrong';
+    else if(i === currentIdx) cls += ' active';
+    return `<div class="${cls}"></div>`;
+  }).join('');
+}
+
+function nextChallenge() {
+  currentIdx++;
+  if(currentIdx >= CHALLENGES.length) {
+    showResults();
+  } else {
+    initChallenge(currentIdx);
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+}
+
+function showResults() {
+  document.getElementById('screenChallenge').className = 'screen';
+  document.getElementById('screenResults').className = 'screen active';
+  window.scrollTo({top:0, behavior:'smooth'});
+
+  const correct = results.filter(Boolean).length;
+  const total = CHALLENGES.length;
+  const emoji = correct === total ? '🏆' : correct === 2 ? '✈️' : '⚠️';
+  const title = correct === total ? 'Perfect sequencing!' : correct === 2 ? 'Mostly there!' : 'Review the workflow';
+  const color = correct === total ? 'var(--green)' : correct >= 2 ? 'var(--blue)' : 'var(--red)';
+  const verdict = correct === total
+    ? 'You sequenced all three post-job workflows correctly. You understand that order isn\'t arbitrary — it\'s what makes your privacy compliance defensible under the Privacy Act and NDB Scheme.'
+    : correct === 2
+    ? 'Two out of three correct. Review the challenge you got wrong — the key principle is always assess before you act, and delete only after approval and notification obligations are met.'
+    : 'Sequencing errors can create real compliance risk. The core rule: review → redact → share → get approval → delete. Notification obligations must be met before you move on.';
+
+  document.getElementById('rEmoji').textContent = emoji;
+  document.getElementById('rTitle').textContent = title;
+  document.getElementById('rScore').textContent = correct + '/' + total;
+  document.getElementById('rScore').style.color = color;
+  document.getElementById('rVerdict').textContent = verdict;
+
+  // Update all dots
+  document.getElementById('progDots').innerHTML = CHALLENGES.map((_,i) => {
+    return `<div class="prog-dot ${results[i] ? 'done' : 'wrong'}"></div>`;
+  }).join('');
+  document.getElementById('progCount').textContent = correct + ' / ' + total + ' correct';
+
+  // Breakdown
+  document.getElementById('bdList').innerHTML = CHALLENGES.map((c,i) => {
+    return `<div class="bd-row">
+      <div class="bd-icon">${results[i] ? '✅' : '❌'}</div>
+      <div class="bd-info">
+        <div class="bd-title">${c.title}</div>
+        <div class="bd-detail">${results[i] ? 'Correct sequence' : 'Incorrect sequence — review the correct order above'}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function restart() {
+  currentIdx = 0;
+  results.length = 0;
+  document.getElementById('screenResults').className = 'screen';
+  document.getElementById('screenChallenge').className = 'screen active';
+  initChallenge(0);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// Boot
+initChallenge(0);
+</script>
+</body>
+</html>

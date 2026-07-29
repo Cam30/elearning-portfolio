@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drone Operator Case Study | Advertising Campaign</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --navy:#0a1628;--navy-mid:#0e2040;--navy-light:#162d50;
+    --sky:#1a6fa8;--sky-bright:#2196d4;
+    --amber:#f0a500;--amber-light:#ffc93c;
+    --red:#d94040;--red-light:#f05454;
+    --green:#1e9e6b;
+    --white:#f0f4f8;--muted:#8aa0bb;--text:#c8d8ea;
+    --lt-bg:#f4f5f7;--lt-border:#dde1e7;
+    --lt-text:#1a1a2e;--lt-muted:#555e70;--lt-teal:#1a7fa8;
+  }
+  body{font-family:'Barlow',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center}
+  .module{width:100%;max-width:860px;min-height:100vh;display:flex;flex-direction:column}
+  .page{display:none;flex-direction:column;min-height:100vh;padding-bottom:32px;animation:fadeIn 0.4s ease}
+  .page.active{display:flex}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 32px;border-bottom:1px solid rgba(26,111,168,0.3);background:var(--navy-mid)}
+  .course-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--sky-bright)}
+  .page-counter{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1.5px;color:var(--muted)}
+  .progress-track{height:3px;background:rgba(255,255,255,0.08)}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--sky),var(--sky-bright));transition:width 0.5s ease}
+
+  .hero{padding:36px 32px 28px;background:var(--navy-mid);border-bottom:1px solid rgba(26,111,168,0.2);position:relative;overflow:hidden}
+  .hero::after{content:'';position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(26,111,168,0.12) 0%,transparent 70%);pointer-events:none}
+  .page-tag{display:inline-flex;align-items:center;gap:8px;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin-bottom:12px}
+  .page-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--amber)}
+  .hero h1{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;line-height:1.05;color:var(--white);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
+  .hero h1 span{color:var(--sky-bright)}
+  .hero-sub{font-size:13.5px;font-weight:300;color:var(--muted);max-width:560px;line-height:1.6}
+
+  .content{padding:28px 32px 0;flex:1;display:flex;flex-direction:column;gap:20px}
+  .section-heading{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.07)}
+
+  .incident-card{background:linear-gradient(135deg,var(--navy-light) 0%,rgba(26,111,168,0.12) 100%);border:1px solid rgba(26,111,168,0.35);border-left:4px solid var(--sky-bright);border-radius:8px;padding:22px}
+  .incident-card h2{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--sky-bright);margin-bottom:12px}
+  .incident-card p{font-size:14.5px;line-height:1.75;font-weight:300}
+  .incident-card p+p{margin-top:10px}
+  .incident-card strong{color:var(--white);font-weight:600}
+
+  .factor-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  .factor-pill{background:var(--navy-mid);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:14px 16px}
+  .factor-pill .icon{font-size:18px;margin-bottom:6px}
+  .factor-pill strong{display:block;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--white);margin-bottom:3px}
+  .factor-pill span{font-size:12px;color:var(--muted);font-weight:300;line-height:1.5}
+
+  .info-box{background:rgba(26,111,168,0.08);border:1px solid rgba(26,111,168,0.25);border-left:4px solid var(--sky-bright);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start}
+  .info-box p{font-size:13.5px;color:var(--muted);line-height:1.6;font-weight:300}
+  .info-box p strong{color:var(--white)}
+
+  .check-item{display:flex;align-items:flex-start;gap:14px;background:var(--navy-mid);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px 18px}
+  .check-box{width:22px;height:22px;border-radius:4px;border:2px solid var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;color:var(--green);font-size:13px}
+  .check-body strong{display:block;font-size:14px;font-weight:600;color:var(--white);margin-bottom:2px}
+  .check-body span{font-size:13px;color:var(--muted);font-weight:300;line-height:1.55}
+
+  .conclusion{background:linear-gradient(135deg,rgba(26,111,168,0.15) 0%,rgba(10,22,40,0) 100%);border:1px solid rgba(26,111,168,0.3);border-radius:8px;padding:22px}
+  .conclusion h2{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;text-transform:uppercase;color:var(--white);margin-bottom:12px}
+  .conclusion p{font-size:13.5px;line-height:1.75;font-weight:300}
+  .conclusion p+p{margin-top:10px}
+  .conclusion strong{color:var(--white);font-weight:600}
+
+  /* light page 2 */
+  .page-light{background:var(--lt-bg)}
+  .page-light .topbar{background:var(--lt-teal);border-bottom:none}
+  .page-light .course-label{color:#fff;opacity:0.85}
+  .page-light .page-counter{color:#fff;opacity:0.7}
+  .page-light .progress-track{background:rgba(0,0,0,0.1)}
+  .page-light .progress-fill{background:rgba(255,255,255,0.6)}
+  .lt-header{background:var(--lt-teal);padding:28px 40px 24px}
+  .lt-header h1{font-family:'Barlow',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:4px}
+  .lt-header p{font-size:13px;color:rgba(255,255,255,0.8);font-weight:300}
+  .lt-content{padding:32px 40px 0;flex:1;display:flex;flex-direction:column;gap:0;background:var(--lt-bg)}
+  .lt-item{padding:18px 0;border-bottom:1px solid var(--lt-border);display:flex;gap:20px;align-items:flex-start}
+  .lt-item:last-child{border-bottom:none}
+  .lt-num{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--lt-teal);line-height:1;flex-shrink:0;min-width:28px;margin-top:2px}
+  .lt-item-body h3{font-size:15px;font-weight:700;color:var(--lt-text);margin-bottom:6px}
+  .lt-item-body p{font-size:13.5px;color:var(--lt-muted);line-height:1.7;font-weight:400}
+  .lt-item-body p strong{color:var(--lt-text);font-weight:600}
+  .lt-item-body p em{font-style:italic}
+  .lt-note{margin-top:24px;background:#fff;border:1px solid var(--lt-border);border-left:4px solid var(--lt-teal);border-radius:4px;padding:14px 18px;font-size:13px;color:var(--lt-muted);line-height:1.65}
+  .lt-note strong{color:var(--lt-text)}
+
+  .nav-bar{display:flex;justify-content:space-between;align-items:center;padding:24px 32px 0;margin-top:auto}
+  .page-light .nav-bar{padding:24px 40px 0;background:var(--lt-bg)}
+  .nav-btn{display:flex;align-items:center;gap:8px;padding:11px 22px;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all 0.2s}
+  .btn-prev{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.1)}
+  .btn-prev:hover{background:rgba(255,255,255,0.05);color:var(--text)}
+  .page-light .btn-prev{color:var(--lt-muted);border:1px solid var(--lt-border)}
+  .page-light .btn-prev:hover{background:var(--lt-border)}
+  .btn-next{background:linear-gradient(135deg,var(--sky),var(--sky-bright));color:#fff;box-shadow:0 4px 16px rgba(26,111,168,0.4)}
+  .btn-next:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,111,168,0.5)}
+  .btn-next:disabled{background:rgba(255,255,255,0.08);color:var(--muted);cursor:default;transform:none;box-shadow:none}
+  .page-light .btn-next{background:var(--lt-teal);box-shadow:0 4px 14px rgba(26,111,168,0.25)}
+  .nav-dots{display:flex;gap:8px;align-items:center}
+  .nav-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.15);transition:all 0.3s;cursor:pointer;border:none}
+  .nav-dot.active{background:var(--sky-bright);width:22px;border-radius:4px}
+  .page-light .nav-dot{background:rgba(0,0,0,0.15)}
+  .page-light .nav-dot.active{background:var(--lt-teal);width:22px;border-radius:4px}
+  .complete-badge{display:flex;align-items:center;gap:8px;padding:9px 16px;background:rgba(30,158,107,0.1);border:1px solid rgba(30,158,107,0.3);border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--green)}
+
+  @media(max-width:600px){
+    .hero h1{font-size:26px}
+    .content,.hero,.topbar{padding-left:20px;padding-right:20px}
+    .lt-header,.lt-content{padding-left:20px;padding-right:20px}
+    .nav-bar{padding:20px 20px 0}
+    .factor-grid{grid-template-columns:1fr}
+    .lt-num{font-size:22px;min-width:22px}
+  }
+</style>
+</head>
+<body>
+<div class="module">
+
+  <!-- ══════════ PAGE 1 ══════════ -->
+  <div class="page active" id="page-1">
+    <div class="topbar">
+      <span class="course-label">⬡ Drone Operator Compliance Series</span>
+      <span class="page-counter">Page 1 of 3</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:33%"></div></div>
+    <div class="hero">
+      <div class="page-tag"><span class="dot"></span> Case Study</div>
+      <h1>The Advertising<br><span>Campaign Incident</span></h1>
+      <p class="hero-sub">A commercial drone campaign across three urban locations — and the layered legal exposures that arise when the brief demands real, unscripted crowd footage.</p>
+    </div>
+    <div class="content">
+
+      <div class="incident-card">
+        <h2>📋 Incident Summary</h2>
+        <p>Your production company is engaged by a major beverage brand to produce a drone-assisted advertising campaign across three urban locations: a <strong>rooftop venue</strong>, a <strong>beach promenade</strong>, and a <strong>busy CBD laneway</strong>.</p>
+        <p>The brief requires <strong>'authentic crowd energy'</strong> — identifiable members of the public reacting to the product. Paid talent is on set, but the client insists the background crowd must be <strong>'real and unscripted'</strong>. No consent is obtained from background individuals.</p>
+      </div>
+
+      <div>
+        <p class="section-heading">Three Compounding Risk Factors</p>
+        <div class="factor-grid">
+          <div class="factor-pill">
+            <div class="icon">🎯</div>
+            <strong>Intentional Capture</strong>
+            <span>Unlike incidental capture, the brief specifically requires identifiable real people. This is deliberate collection — not inadvertent.</span>
+          </div>
+          <div class="factor-pill">
+            <div class="icon">📣</div>
+            <strong>Commercial Publication</strong>
+            <span>Footage of unconsenting individuals will appear in a paid advertising campaign — implying product affiliation without consent.</span>
+          </div>
+          <div class="factor-pill">
+            <div class="icon">📍</div>
+            <strong>Three Locations</strong>
+            <span>Each location — rooftop, beach, laneway — has separate permission, permit, and privacy obligations that stack independently.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <div style="font-size:18px;flex-shrink:0;margin-top:1px;">💡</div>
+        <p><strong>A client brief does not create a legal permission.</strong> The instruction to capture 'real and unscripted' crowd footage does not override your obligations under privacy law or the Australian Consumer Law. Those obligations transfer to you the moment the drone is in the air.</p>
+      </div>
+
+    </div>
+    <div class="nav-bar">
+      <button class="nav-btn btn-prev" disabled>← Back</button>
+      <div class="nav-dots">
+        <button class="nav-dot active" onclick="goTo(1)"></button>
+        <button class="nav-dot" onclick="goTo(2)"></button>
+        <button class="nav-dot" onclick="goTo(3)"></button>
+      </div>
+      <button class="nav-btn btn-next" onclick="goTo(2)">Next →</button>
+    </div>
+  </div>
+
+  <!-- ══════════ PAGE 2 — LIGHT ══════════ -->
+  <div class="page page-light" id="page-2">
+    <div class="topbar">
+      <span class="course-label">⬡ Drone Operator Compliance Series</span>
+      <span class="page-counter">Page 2 of 3</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:66%"></div></div>
+
+    <div class="lt-header">
+      <h1>Case study: legal breach risk</h1>
+      <p>The legal risk exposure in this case study includes:</p>
+    </div>
+
+    <div class="lt-content">
+
+      <div class="lt-item">
+        <div class="lt-num">1</div>
+        <div class="lt-item-body">
+          <h3>Privacy Act 1988 — Intentional Collection Without Consent (APP Entities)</h3>
+          <p>Where the production company is an <strong>APP entity</strong> (annual turnover &gt;$3M), deliberately capturing identifiable members of the public for commercial advertising engages <strong>APP 3</strong> — personal information may only be collected if reasonably necessary and by lawful, fair means. Collection of identifiable images for brand advertising without consent is not reasonably necessary for any function that justifies bypassing that requirement. The OAIC may issue a <strong>compliance notice</strong>, an <strong>infringement notice</strong>, or <strong>commence proceedings</strong> under the <em>Privacy and Other Legislation Amendment Act 2024</em>.</p>
+        </div>
+      </div>
+
+      <div class="lt-item">
+        <div class="lt-num">2</div>
+        <div class="lt-item-body">
+          <h3>Statutory Tort — Serious Invasion of Privacy (All Operators)</h3>
+          <p>Any identifiable individual appearing in the published advertisement may sue directly under the <strong>statutory tort for serious invasion of privacy</strong> (commenced <strong>10 June 2025</strong>). The tort applies regardless of APP entity status. Unlike earlier case studies where recklessness was the contested threshold, this scenario involves <strong>intentional capture</strong> — the brief explicitly required real, identifiable people. Intentional conduct satisfies the fault element directly. <strong>No proof of damage is required.</strong></p>
+        </div>
+      </div>
+
+      <div class="lt-item">
+        <div class="lt-num">3</div>
+        <div class="lt-item-body">
+          <h3>Australian Consumer Law — Implied Endorsement (s18 &amp; s29 ACL)</h3>
+          <p>Publishing footage of identifiable, unconsenting members of the public in a brand advertisement may constitute <strong>misleading or deceptive conduct under s18 of the ACL</strong> if a reasonable person would infer those individuals endorse or are affiliated with the product. Where the conduct also amounts to a false representation about endorsement or affiliation, <strong>s29 is engaged</strong> — which carries significant civil penalties. S18 and s29 are commonly pleaded together. Liability runs primarily to the brand client as the advertiser. The production company may be exposed as an accessory where it knew the essential facts that rendered the conduct misleading — that is, that identifiable unconsenting individuals would be featured in brand advertising implying their affiliation.</p>
+        </div>
+      </div>
+
+      <!-- SCENARIO CONSEQUENCE REVEAL -->
+      <div class="lt-reveal-wrap">
+
+        <div class="lt-reveal-prompt">
+          <p>The production company delivers the footage as shot — identifiable crowd, no releases, no blurring. The advertisement goes live. What happens next?</p>
+          <button class="lt-reveal-btn" onclick="toggleReveal(this)">
+            Show me the outcome
+            <span class="lt-btn-icon">+</span>
+          </button>
+        </div>
+
+        <div class="lt-outcomes" id="lt-outcomes">
+
+          <div class="lt-outcome-item">
+            <div class="lt-outcome-num">1</div>
+            <div class="lt-outcome-body">
+              <h4>Privacy Act — OAIC Investigation</h4>
+              <p>A complainant lodges a report with the OAIC. The production company, as an APP entity, cannot demonstrate that collection of identifiable crowd footage was reasonably necessary or consented to. <strong>A compliance notice is issued requiring the footage to be withdrawn and a remediation plan filed.</strong> Infringement proceedings follow.</p>
+            </div>
+          </div>
+
+          <div class="lt-outcome-item">
+            <div class="lt-outcome-num">2</div>
+            <div class="lt-outcome-body">
+              <h4>Statutory Tort — Direct Claim</h4>
+              <p>An identifiable individual recognised in the advertisement commences proceedings under the statutory tort. <strong>The capture was intentional — the brief required it.</strong> The fault element is satisfied immediately. The claimant does not need to prove harm. Injunctive relief halts the campaign pending resolution.</p>
+            </div>
+          </div>
+
+          <div class="lt-outcome-item">
+            <div class="lt-outcome-num">3</div>
+            <div class="lt-outcome-body">
+              <h4>ACL — Implied Endorsement Complaint</h4>
+              <p>A complaint is lodged that unconsenting individuals appear to endorse the brand. The ACCC investigates under <strong>s18 and s29 of the ACL</strong> — commonly pleaded together where conduct is both misleading and constitutes a false representation about endorsement. <strong>The production company's accessorial exposure turns on whether it knew the essential facts</strong> — that identifiable unconsenting people would be featured implying affiliation. The campaign is pulled. Remedies and penalties are assessed against the brand client.</p>
+            </div>
+          </div>
+
+          <div class="lt-reset-note">
+            <button class="lt-reset-btn" onclick="resetReveal()">↺ Reset</button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  <style>
+    .lt-reveal-wrap{margin-top:4px}
+    .lt-reveal-prompt{background:#fff;border:1px solid var(--lt-border);border-left:4px solid var(--lt-teal);border-radius:6px;padding:18px 20px}
+    .lt-reveal-prompt p{font-size:14px;font-weight:600;color:var(--lt-text);line-height:1.5;margin-bottom:14px}
+    .lt-reveal-btn{display:inline-flex;align-items:center;gap:8px;background:var(--lt-teal);color:#fff;border:none;border-radius:5px;padding:10px 20px;font-size:13.5px;font-weight:600;cursor:pointer;transition:background 0.2s,transform 0.1s;font-family:'Barlow',sans-serif}
+    .lt-reveal-btn:hover{background:#155f80;transform:translateY(-1px)}
+    .lt-btn-icon{font-size:16px;display:inline-block;transition:transform 0.3s}
+    .lt-btn-icon.open{transform:rotate(45deg)}
+    .lt-outcomes{display:none;flex-direction:column;gap:10px;margin-top:10px;animation:slideDown 0.35s ease}
+    .lt-outcomes.open{display:flex}
+    @keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+    .lt-outcome-item{background:#fff;border:1px solid var(--lt-border);border-radius:6px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start}
+    .lt-outcome-num{width:28px;height:28px;border-radius:50%;background:#fff0f0;border:2px solid #d94040;color:#d94040;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-family:'Barlow Condensed',sans-serif}
+    .lt-outcome-body h4{font-size:12px;font-weight:700;color:var(--lt-text);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;font-family:'Barlow Condensed',sans-serif}
+    .lt-outcome-body p{font-size:13px;color:var(--lt-muted);line-height:1.65}
+    .lt-outcome-body p strong{color:var(--lt-text);font-weight:600}
+    .lt-reset-note{text-align:right;padding-top:4px}
+    .lt-reset-btn{background:none;border:none;font-size:12px;color:#8a9ab0;cursor:pointer;text-decoration:underline;font-family:'Barlow',sans-serif}
+    .lt-reset-btn:hover{color:var(--lt-teal)}
+  </style>
+
+  <script>
+    function toggleReveal(btn){
+      var outcomes=document.getElementById('lt-outcomes');
+      var icon=btn.querySelector('.lt-btn-icon');
+      var isOpen=outcomes.classList.contains('open');
+      if(isOpen){
+        outcomes.classList.remove('open');
+        icon.classList.remove('open');
+        btn.innerHTML='Show me the outcome <span class="lt-btn-icon">+</span>';
+      } else {
+        outcomes.classList.add('open');
+        icon.classList.add('open');
+        btn.innerHTML='Hide outcomes <span class="lt-btn-icon open">+</span>';
+      }
+    }
+    function resetReveal(){
+      var outcomes=document.getElementById('lt-outcomes');
+      var btn=document.querySelector('.lt-reveal-btn');
+      outcomes.classList.remove('open');
+      btn.innerHTML='Show me the outcome <span class="lt-btn-icon">+</span>';
+      document.querySelector('.lt-reveal-prompt').scrollIntoView({behavior:'smooth'});
+    }
+  </script>
+
+    <div class="nav-bar">
+      <button class="nav-btn btn-prev" onclick="goTo(1)">← Back</button>
+      <div class="nav-dots">
+        <button class="nav-dot" onclick="goTo(1)"></button>
+        <button class="nav-dot active" onclick="goTo(2)"></button>
+        <button class="nav-dot" onclick="goTo(3)"></button>
+      </div>
+      <button class="nav-btn btn-next" onclick="goTo(3)">Next →</button>
+    </div>
+  </div>
+
+  <!-- ══════════ PAGE 3 ══════════ -->
+  <div class="page" id="page-3">
+    <div class="topbar">
+      <span class="course-label">⬡ Drone Operator Compliance Series</span>
+      <span class="page-counter">Page 3 of 3</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+    <div class="hero">
+      <div class="page-tag"><span class="dot"></span> Practical Guidance</div>
+      <h1>Implications for<br><span>Drone Pilots</span></h1>
+      <p class="hero-sub">What this scenario requires of every operator accepting a commercial advertising brief.</p>
+    </div>
+    <div class="content">
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+
+        <div class="check-item">
+          <div class="check-box">✓</div>
+          <div class="check-body">
+            <strong>Push back on briefs that require unconsented crowd capture</strong>
+            <span>A client instruction to film 'real and unscripted' identifiable members of the public for brand advertising is not operationally neutral. Raise the legal issue before the shoot, not after. If the client insists, require written indemnity covering privacy and ACL claims before your drone takes off.</span>
+          </div>
+        </div>
+
+        <div class="check-item">
+          <div class="check-box">✓</div>
+          <div class="check-body">
+            <strong>Obtain location-specific permissions for each site</strong>
+            <span>A rooftop venue, beach promenade, and CBD laneway each require separate authorisation — venue owner consent, council filming permit, and CASA clearance. These are independent obligations. CASA clearance does not satisfy council permit requirements, and neither satisfies privacy law.</span>
+          </div>
+        </div>
+
+        <div class="check-item">
+          <div class="check-box">✓</div>
+          <div class="check-body">
+            <strong>Use signage and opt-out protocols at each location</strong>
+            <span>For shoots in public spaces, prominent signage notifying bystanders that filming is occurring for commercial purposes — with a clear opt-out process — is the minimum best practice standard. It does not eliminate exposure but documents a reasonable step taken.</span>
+          </div>
+        </div>
+
+        <div class="check-item">
+          <div class="check-box">✓</div>
+          <div class="check-body">
+            <strong>Do not deliver footage featuring identifiable unconsenting individuals for broadcast</strong>
+            <span>Your obligation to review footage before delivery applies here as it does in every other case study. Flag all frames showing identifiable background individuals and require the client to obtain releases or blur faces before publication. Do not make that editorial decision yourself.</span>
+          </div>
+        </div>
+
+        <div class="check-item">
+          <div class="check-box">✓</div>
+          <div class="check-body">
+            <strong>Ensure your contract allocates ACL and privacy liability explicitly</strong>
+            <span>Your service agreement must specify who is responsible for obtaining consent, who bears liability for publication decisions, and who indemnifies whom in the event of an ACL or privacy claim. A verbal brief does not protect you. A contract that is silent on these points does not either.</span>
+          </div>
+        </div>
+
+        <div class="check-item">
+          <div class="check-box">✓</div>
+          <div class="check-body">
+            <strong>Scale your public liability coverage for multi-location commercial shoots</strong>
+            <span>Three urban locations, a major brand client, and intentional crowd capture is a high-density, high-exposure operation. Review your coverage limit before the shoot — not after a claim is filed.</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="conclusion">
+        <h2>Conclusion</h2>
+        <p>A client brief is not a legal authority. The instruction to capture 'authentic crowd energy' does not create consent, does not satisfy APP 3, and does not insulate the production company or the operator from the statutory tort or the ACL.</p>
+        <p>This scenario is legally distinct from earlier case studies because the capture is <strong>intentional</strong>. There is no recklessness argument to navigate — the fault element of the statutory tort is satisfied the moment the drone films identifiable people at the client's direction for commercial use without their consent.</p>
+        <p>Two rules govern every commercial advertising brief.</p>
+        <p><strong>The brief defines the creative — not the legal permissions.</strong> What the client wants and what the law permits are separate questions. Resolve both before launch.</p>
+        <p><strong>Consent is not an afterthought.</strong> For identifiable individuals in commercial advertising, it is a pre-production requirement — not a post-production problem to blur away.</p>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;">
+        <div class="complete-badge">✔ Module Complete</div>
+      </div>
+
+    </div>
+    <div class="nav-bar">
+      <button class="nav-btn btn-prev" onclick="goTo(2)">← Back</button>
+      <div class="nav-dots">
+        <button class="nav-dot" onclick="goTo(1)"></button>
+        <button class="nav-dot" onclick="goTo(2)"></button>
+        <button class="nav-dot active" onclick="goTo(3)"></button>
+      </div>
+      <button class="nav-btn btn-next" disabled>Complete ✓</button>
+    </div>
+  </div>
+
+</div>
+<script>
+  function goTo(n){
+    document.querySelectorAll('.page').forEach((p,i)=>p.classList.toggle('active',i+1===n));
+    document.querySelectorAll('.nav-dot').forEach((d,i)=>d.classList.toggle('active',i+1===n));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+</script>
+</body>
+</html>

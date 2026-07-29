@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Engineer case. Active worksite inspection</title>
+  <style>
+    :root{--b:#0195bb;--i:#1a1a1a;--g:#f8f8f8;--c:#fcfaef;--m:#e9f5eb;--l:#d6dde0}
+    *{box-sizing:border-box}body{margin:0;background:var(--g);color:var(--i);font:16px/1.55 Arial,sans-serif;border-top:8px solid var(--b)}
+    main{max-width:920px;margin:auto;padding:clamp(1.2rem,4vw,3.5rem)}.k{font-size:.72rem;color:var(--b);font-weight:800;letter-spacing:.14em}
+    h1{font-size:clamp(2rem,5vw,4rem);line-height:1;margin:.5rem 0}h2{font-size:1.25rem}.brief{background:white;border-left:7px solid var(--b);padding:1rem 1.2rem;margin:1.5rem 0}
+    .step{display:none}.step.active{display:block}.options{display:grid;gap:.7rem}.options button{padding:1rem;text-align:left;background:white;border:2px solid var(--l);font-weight:700;cursor:pointer}
+    .options button:hover,.options button:focus{border-color:var(--b)}.feedback{display:none;margin-top:1rem;padding:1rem;background:var(--c);border:1px solid #e8e0c8}.feedback.show{display:block}
+    .feedback strong{display:block;margin-bottom:.3rem}.next{display:none;margin-top:1rem;background:var(--b);color:white;border:0;padding:.8rem 1rem;font-weight:800;cursor:pointer}.next.show{display:inline-block}
+    .principles{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem}.principles div{background:var(--m);border:1px solid #c3dfc8;padding:1rem}
+    @media(max-width:650px){.principles{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<main>
+  <div class="k">ENGINEER TRACK · FORMATIVE CASE</div>
+  <h1>The bridge inspection</h1>
+  <div class="brief"><strong>Situation.</strong> Your drone is inspecting a bridge above an active maintenance crew. The camera captures identifiable workers, vehicle registrations and a contractor tablet displaying project information. The flight team did not give workers a capture notice.</div>
+
+  <section class="step active" data-step="1">
+    <h2>Decision 1. What is your first operational response?</h2>
+    <div class="options">
+      <button data-good="false">Continue. The inspection is authorised by the project manager.</button>
+      <button data-good="true">Adjust or pause capture, record the incident and notify the responsible project/privacy contact.</button>
+      <button data-good="false">Delete every file immediately without recording what happened.</button>
+    </div>
+    <div class="feedback"></div><button class="next">Next decision</button>
+  </section>
+
+  <section class="step" data-step="2">
+    <h2>Decision 2. The footage has already synced to a cloud inspection platform. What now?</h2>
+    <div class="options">
+      <button data-good="false">Assume the platform contract makes the upload safe.</button>
+      <button data-good="true">Contain access, check the data-handling plan and vendor terms, and assess who can access or receive the footage.</button>
+      <button data-good="false">Share the raw link with the whole project team so they can decide.</button>
+    </div>
+    <div class="feedback"></div><button class="next">Reveal shared principles</button>
+  </section>
+
+  <section class="step" data-step="3">
+    <h2>Shared field principles</h2>
+    <div class="principles">
+      <div><strong>Minimise</strong><br>Capture only what the inspection needs. Reframe, mask or restrict unnecessary detail.</div>
+      <div><strong>Notify</strong><br>Plan worker and contractor notice before operating over an active worksite.</div>
+      <div><strong>Control</strong><br>Define access, storage, third-party use, retention and deletion before upload.</div>
+    </div>
+    <p><strong>Important.</strong> Workplace surveillance and privacy obligations vary by jurisdiction and context. Escalate uncertainty. Do not treat project authorisation as blanket privacy consent.</p>
+  </section>
+</main>
+<script>
+  const steps=[...document.querySelectorAll('.step')];
+  document.querySelectorAll('.options button').forEach(button=>button.addEventListener('click',()=>{
+    const panel=button.closest('.step'),feedback=panel.querySelector('.feedback'),good=button.dataset.good==='true';
+    panel.querySelectorAll('.options button').forEach(b=>b.disabled=true);
+    feedback.innerHTML=good
+      ?'<strong>Sound judgement</strong>You contained the privacy risk and preserved an auditable response. Project authority does not remove the need to minimise capture and control access.'
+      :'<strong>Reconsider the consequence</strong>This choice either expands access, destroys the response trail, or assumes authority equals privacy permission. Contain, document and escalate first.';
+    feedback.classList.add('show');panel.querySelector('.next').classList.add('show');
+  }));
+  document.querySelectorAll('.next').forEach((b,i)=>b.addEventListener('click',()=>{steps[i].classList.remove('active');steps[i+1].classList.add('active');scrollTo(0,0)}));
+</script>
+</body>
+</html>

@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RPAS Mission Planner – Privacy by Design</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --cream:#FCFAEF;
+  --mint:#E9F5EB;
+  --blue:#0195BB;
+  --blue-dark:#0178a0;
+  --blue-light:#33adcc;
+  --blue-pale:#d0eef6;
+  --text:#1a3a4a;
+  --muted:#5a8a9f;
+  --border:#c5dfe8;
+  --risk-low:#0195BB;
+  --risk-med:#f59e0b;
+  --risk-high:#ef4444;
+  --r:12px;
+}
+
+html{font-size:15px}
+body{
+  font-family:'Sora',sans-serif;
+  background:var(--cream);
+  color:var(--text);
+  min-height:100vh;
+  padding:0;
+}
+
+/* ── HEADER ── */
+.course-header{
+  background:var(--blue);
+  color:#fff;
+  padding:1rem 2rem;
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  border-bottom:3px solid var(--blue-dark);
+}
+.course-header .tag{
+  font-size:0.65rem;
+  font-weight:700;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  background:rgba(255,255,255,0.2);
+  padding:0.25rem 0.7rem;
+  border-radius:999px;
+}
+.course-header h1{
+  font-size:1rem;
+  font-weight:600;
+  margin-left:auto;
+  opacity:0.85;
+}
+
+/* ── INTRO BANNER ── */
+.intro{
+  background:var(--mint);
+  border-bottom:2px solid var(--border);
+  padding:1.5rem 2rem;
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  gap:1.5rem;
+}
+.intro h2{
+  font-size:1.4rem;
+  font-weight:800;
+  line-height:1.2;
+  color:var(--blue-dark);
+}
+.intro p{
+  font-size:0.85rem;
+  color:var(--muted);
+  margin-top:0.4rem;
+  line-height:1.6;
+  max-width:55ch;
+}
+.risk-meter-wrap{
+  text-align:center;
+  min-width:130px;
+}
+.risk-label-top{
+  font-size:0.65rem;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:0.4rem;
+}
+.risk-dial{
+  width:110px;height:110px;
+  position:relative;
+  margin:0 auto;
+}
+.risk-dial svg{
+  width:100%;height:100%;
+  transform:rotate(-90deg);
+}
+.dial-bg{stroke:#e0eff4;stroke-width:10;fill:none}
+.dial-fill{
+  stroke:var(--blue);
+  stroke-width:10;
+  fill:none;
+  stroke-linecap:round;
+  stroke-dasharray:251;
+  stroke-dashoffset:251;
+  transition:stroke-dashoffset 0.6s cubic-bezier(.4,0,.2,1), stroke 0.4s;
+}
+.dial-center{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+.dial-score{
+  font-size:1.6rem;
+  font-weight:800;
+  line-height:1;
+  color:var(--blue);
+  transition:color 0.4s;
+  font-family:'DM Mono',monospace;
+}
+.dial-sublabel{
+  font-size:0.55rem;
+  font-weight:700;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.risk-level-badge{
+  margin-top:0.5rem;
+  font-size:0.7rem;
+  font-weight:700;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  padding:0.2rem 0.8rem;
+  border-radius:999px;
+  background:var(--blue-pale);
+  color:var(--blue);
+  transition:all 0.4s;
+  display:inline-block;
+}
+
+/* ── MAIN LAYOUT ── */
+.activity-wrap{
+  display:grid;
+  grid-template-columns:280px 1fr;
+  gap:0;
+  min-height:calc(100vh - 180px);
+}
+
+/* ── SIDEBAR TOOLBOX ── */
+.toolbox{
+  background:#fff;
+  border-right:2px solid var(--border);
+  padding:1.2rem;
+  overflow-y:auto;
+}
+.toolbox-title{
+  font-size:0.65rem;
+  font-weight:700;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:0.8rem;
+  padding-bottom:0.5rem;
+  border-bottom:1px solid var(--border);
+}
+.tool-group{
+  margin-bottom:1.2rem;
+}
+.tool-group-label{
+  font-size:0.7rem;
+  font-weight:700;
+  color:var(--blue);
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  margin-bottom:0.5rem;
+  display:flex;
+  align-items:center;
+  gap:0.4rem;
+}
+.tool-card{
+  background:var(--cream);
+  border:2px solid var(--border);
+  border-radius:var(--r);
+  padding:0.6rem 0.8rem;
+  margin-bottom:0.4rem;
+  cursor:grab;
+  font-size:0.8rem;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+  transition:all 0.15s;
+  user-select:none;
+  position:relative;
+}
+.tool-card:hover{
+  border-color:var(--blue);
+  background:var(--blue-pale);
+  transform:translateX(2px);
+}
+.tool-card.dragging{
+  opacity:0.4;
+  cursor:grabbing;
+}
+.tool-card .risk-pip{
+  width:8px;height:8px;
+  border-radius:50%;
+  flex-shrink:0;
+  margin-left:auto;
+}
+.pip-low{background:var(--risk-low)}
+.pip-med{background:var(--risk-med)}
+.pip-high{background:var(--risk-high)}
+.tool-icon{font-size:1rem}
+
+/* ── MISSION CANVAS ── */
+.canvas-area{
+  padding:1.2rem 1.5rem;
+  background:var(--cream);
+}
+.canvas-title{
+  font-size:0.65rem;
+  font-weight:700;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:0.8rem;
+}
+
+.mission-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  grid-template-rows:auto auto;
+  gap:1rem;
+}
+
+/* ── DROP ZONES ── */
+.drop-zone{
+  background:#fff;
+  border:2px dashed var(--border);
+  border-radius:var(--r);
+  min-height:150px;
+  padding:0.8rem;
+  transition:all 0.2s;
+  position:relative;
+}
+.drop-zone.wide{
+  grid-column:span 2;
+}
+.drop-zone.full{
+  grid-column:span 3;
+}
+.drop-zone.drag-over{
+  border-color:var(--blue);
+  background:var(--blue-pale);
+  transform:scale(1.01);
+}
+.drop-zone-header{
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+  margin-bottom:0.6rem;
+}
+.drop-zone-icon{font-size:1.1rem}
+.drop-zone-title{
+  font-size:0.75rem;
+  font-weight:700;
+  color:var(--text);
+  letter-spacing:0.02em;
+}
+.drop-zone-hint{
+  font-size:0.7rem;
+  color:var(--muted);
+  font-style:italic;
+  margin-top:0.3rem;
+}
+.drop-zone-items{
+  display:flex;
+  flex-wrap:wrap;
+  gap:0.4rem;
+  min-height:60px;
+}
+.drop-zone-empty{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:60px;
+  border-radius:8px;
+  border:1.5px dashed var(--border);
+  color:var(--muted);
+  font-size:0.72rem;
+  font-weight:500;
+}
+
+/* ── PLACED CARDS ── */
+.placed-card{
+  background:var(--blue-pale);
+  border:1.5px solid var(--blue);
+  border-radius:8px;
+  padding:0.35rem 0.6rem;
+  font-size:0.72rem;
+  font-weight:600;
+  color:var(--blue-dark);
+  display:flex;
+  align-items:center;
+  gap:0.35rem;
+  cursor:pointer;
+  transition:all 0.15s;
+  animation:popIn 0.25s cubic-bezier(.34,1.56,.64,1);
+}
+.placed-card:hover{
+  background:#fde8e8;
+  border-color:#ef4444;
+  color:#b91c1c;
+}
+.placed-card:hover::after{
+  content:'✕';
+  font-size:0.65rem;
+  margin-left:0.2rem;
+}
+.placed-card.risk-high-card{
+  background:#fef2f2;
+  border-color:#ef4444;
+  color:#b91c1c;
+}
+.placed-card.risk-med-card{
+  background:#fffbeb;
+  border-color:#f59e0b;
+  color:#92400e;
+}
+
+@keyframes popIn{
+  from{opacity:0;transform:scale(0.85)}
+  to{opacity:1;transform:scale(1)}
+}
+
+/* ── MAP ZONE (geofence visual) ── */
+.map-zone{
+  background:#e8f4f8;
+  border:2px dashed var(--border);
+  border-radius:var(--r);
+  min-height:200px;
+  position:relative;
+  overflow:hidden;
+  cursor:default;
+  grid-column:span 2;
+}
+.map-zone.drag-over{
+  border-color:var(--blue);
+  background:var(--blue-pale);
+}
+.map-bg{
+  position:absolute;
+  inset:0;
+  opacity:0.15;
+}
+.map-grid{
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(var(--blue) 1px, transparent 1px),
+    linear-gradient(90deg, var(--blue) 1px, transparent 1px);
+  background-size:30px 30px;
+  opacity:0.12;
+}
+.map-overlay{
+  position:relative;
+  z-index:2;
+  padding:0.8rem;
+  height:100%;
+}
+.map-zones-placed{
+  display:flex;
+  flex-wrap:wrap;
+  gap:0.4rem;
+  margin-top:2rem;
+}
+.geofence-bubble{
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0.65rem;
+  font-weight:700;
+  text-align:center;
+  padding:0.5rem;
+  animation:popIn 0.3s cubic-bezier(.34,1.56,.64,1);
+  cursor:pointer;
+  transition:all 0.2s;
+}
+.geofence-bubble.risk-low-geo{
+  background:rgba(1,149,187,0.15);
+  border:2px solid var(--blue);
+  color:var(--blue-dark);
+  width:80px;height:80px;
+}
+.geofence-bubble.risk-med-geo{
+  background:rgba(245,158,11,0.15);
+  border:2px dashed #f59e0b;
+  color:#92400e;
+  width:90px;height:90px;
+}
+.geofence-bubble.risk-high-geo{
+  background:rgba(239,68,68,0.15);
+  border:2px dashed #ef4444;
+  color:#b91c1c;
+  width:100px;height:100px;
+}
+.geofence-bubble:hover{
+  opacity:0.6;
+}
+
+/* ── FEEDBACK PANEL ── */
+.feedback-panel{
+  background:#fff;
+  border-top:2px solid var(--border);
+  padding:1.2rem 1.5rem;
+}
+.feedback-title{
+  font-size:0.65rem;
+  font-weight:700;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:0.8rem;
+}
+.feedback-items{
+  display:flex;
+  flex-wrap:wrap;
+  gap:0.5rem;
+}
+.feedback-item{
+  display:flex;
+  align-items:flex-start;
+  gap:0.5rem;
+  background:var(--cream);
+  border-left:3px solid var(--blue);
+  border-radius:0 8px 8px 0;
+  padding:0.5rem 0.7rem;
+  font-size:0.75rem;
+  line-height:1.4;
+  color:var(--text);
+  flex:1;
+  min-width:200px;
+  animation:slideIn 0.3s ease;
+}
+.feedback-item.warn{border-left-color:#f59e0b}
+.feedback-item.danger{border-left-color:#ef4444;background:#fef2f2}
+.feedback-item.good{border-left-color:var(--blue);background:var(--blue-pale)}
+
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ── RESET BTN ── */
+.actions{
+  padding:1rem 1.5rem;
+  display:flex;
+  justify-content:flex-end;
+  gap:0.7rem;
+  background:var(--cream);
+  border-top:1px solid var(--border);
+}
+.btn{
+  padding:0.55rem 1.2rem;
+  border-radius:8px;
+  font-family:'Sora',sans-serif;
+  font-size:0.8rem;
+  font-weight:700;
+  cursor:pointer;
+  border:2px solid transparent;
+  transition:all 0.15s;
+}
+.btn-outline{
+  background:transparent;
+  border-color:var(--border);
+  color:var(--muted);
+}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+.btn-primary{
+  background:var(--blue);
+  color:#fff;
+  border-color:var(--blue);
+}
+.btn-primary:hover{background:var(--blue-dark)}
+
+/* score result overlay */
+.result-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(1,120,160,0.85);
+  backdrop-filter:blur(4px);
+  z-index:100;
+  align-items:center;
+  justify-content:center;
+}
+.result-overlay.show{display:flex}
+.result-box{
+  background:#fff;
+  border-radius:20px;
+  padding:2.5rem;
+  max-width:480px;
+  width:90%;
+  text-align:center;
+  box-shadow:0 24px 64px rgba(0,0,0,0.2);
+  animation:popIn 0.4s cubic-bezier(.34,1.56,.64,1);
+}
+.result-emoji{font-size:3rem;margin-bottom:0.8rem}
+.result-title{
+  font-size:1.3rem;
+  font-weight:800;
+  color:var(--text);
+  margin-bottom:0.5rem;
+}
+.result-score-big{
+  font-size:3rem;
+  font-weight:800;
+  font-family:'DM Mono',monospace;
+  margin:0.5rem 0;
+}
+.result-text{font-size:0.85rem;color:var(--muted);line-height:1.6;margin-bottom:1.2rem}
+.result-breakdown{
+  display:flex;
+  flex-direction:column;
+  gap:0.4rem;
+  margin-bottom:1.5rem;
+  text-align:left;
+}
+.breakdown-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:0.78rem;
+  color:var(--text);
+  border-bottom:1px solid var(--border);
+  padding-bottom:0.3rem;
+}
+.breakdown-row .val{font-weight:700;font-family:'DM Mono',monospace}
+</style>
+</head>
+<body>
+
+<!-- COURSE HEADER -->
+<div class="course-header">
+  <span class="tag">🚁 Privacy by Design</span>
+  <span style="font-size:0.85rem;opacity:0.7">Module 3 · Activity</span>
+  <h1>RPAS and Privacy</h1>
+</div>
+
+<!-- INTRO BANNER -->
+<div class="intro">
+  <div>
+    <h2>Mission Planner: Configure Your Privacy Risk</h2>
+    <p>Drag options from the toolbox onto your mission plan. Each choice affects your live <strong>Privacy Risk Score</strong>. Configure the flight path, geofence zones, data storage, and post-mission handling — then submit to see your full assessment.</p>
+  </div>
+  <div class="risk-meter-wrap">
+    <div class="risk-label-top">Privacy Risk Score</div>
+    <div class="risk-dial">
+      <svg viewBox="0 0 90 90">
+        <circle class="dial-bg" cx="45" cy="45" r="40"/>
+        <circle class="dial-fill" id="dialFill" cx="45" cy="45" r="40"/>
+      </svg>
+      <div class="dial-center">
+        <span class="dial-score" id="dialScore">0</span>
+        <span class="dial-sublabel">/ 100</span>
+      </div>
+    </div>
+    <div class="risk-level-badge" id="riskBadge">No Risk Yet</div>
+  </div>
+</div>
+
+<!-- ACTIVITY WRAP -->
+<div class="activity-wrap">
+
+  <!-- TOOLBOX -->
+  <aside class="toolbox">
+    <div class="toolbox-title">🧰 Mission Options — Drag to Configure</div>
+
+    <div class="tool-group">
+      <div class="tool-group-label">✈️ Flight Path</div>
+      <div class="tool-card" draggable="true" data-id="fp1" data-zone="flightpath" data-risk="0" data-label="Programmed waypoints only" data-feedback="good:Programmed waypoints keep the flight within planned boundaries — a low-risk approach.">
+        <span class="tool-icon">🗺️</span> Programmed waypoints only
+        <span class="risk-pip pip-low"></span>
+      </div>
+      <div class="tool-card" draggable="true" data-id="fp2" data-zone="flightpath" data-risk="15" data-label="Manual flight near residential" data-feedback="warn:Manual flight near residential areas increases the risk of accidental capture of private spaces and individuals.">
+        <span class="tool-icon">🏠</span> Manual near residential
+        <span class="risk-pip pip-med"></span>
+      </div>
+      <div class="tool-card" draggable="true" data-id="fp3" data-zone="flightpath" data-risk="30" data-label="Freehand over mixed public/private" data-feedback="danger:Freehand flight over mixed zones creates high risk — no clear boundary between public and private airspace.">
+        <span class="tool-icon">⚠️</span> Freehand over mixed zones
+        <span class="risk-pip pip-high"></span>
+      </div>
+    </div>
+
+    <div class="tool-group">
+      <div class="tool-group-label">📡 Geofence Zone</div>
+      <div class="tool-card" draggable="true" data-id="gf1" data-zone="geofence" data-risk="0" data-label="Custom geofence (site boundary)" data-feedback="good:Custom geofencing to the exact site boundary is best practice under Privacy-by-Design — prevents accidental overflight.">
+        <span class="tool-icon">🟢</span> Custom site-boundary fence
+        <span class="risk-pip pip-low"></span>
+      </div>
+      <div class="tool-card" draggable="true" data-id="gf2" data-zone="geofence" data-risk="10" data-label="Default drone no-fly zones only" data-feedback="warn:Relying only on default no-fly zones misses local sensitive areas like schools and private land adjacent to your site.">
+        <span class="tool-icon">🟡</span> Default no-fly zones only
+        <span class="risk-pip pip-med"></span>
+      </div>
+      <div class="tool-card" draggable="true" data-id="gf3" data-zone="geofence" data-risk="25" data-label="No geofence configured" data-feedback="danger:No geofence is a serious risk. Without virtual boundaries, inadvertent capture of private property is highly likely and legally exposing.">
+        <span class="tool-icon">🔴</span> No geofence configured
+        <span class="risk-pip pip-high"></span>
+      </div>
+    </div>
+
+    <div class="tool-group">
+      <div class="tool-group-label">💾 Data Storage</div>
+      <div class="tool-card" draggable="true" data-id="ds1" data-zone="storage" data-risk="0" data-label="Encrypted drive, access-controlled" data-feedback="good:Encrypted storage with access controls is the gold standard. Even if a drive is lost, data remains protected.">
+        <span class="tool-icon">🔐</span> Encrypted + access-controlled
+        <span class="risk-pip pip-low"></span>
+      </div>
+      <div class="tool-card" draggable="true" data-id="ds2" data-zone="storage" data-risk="12" data-label="Personal cloud (Dropbox/Google)" data-feedback="warn:Personal cloud storage lacks enterprise-grade controls. Third parties may access data, and retention policies are unclear.">
+        <span class="tool-icon">☁️</span> Personal cloud (Dropbox etc.)
+        <span class="risk-pip pip-med"></span>
+      </div>
+      <div class="tool-card" draggable="true" data-id="ds3" data-zone="storage" data-risk="28" data-label="Unencrypted SD card, shared folder" data-feedback="danger:Unencrypted SD cards and shared folders are the highest-risk storage option — identical to the breach scenario in your reading.">
+        <span class="tool-icon">💥</span> Unencrypted SD / shared folder
+        <span class="risk-pip pip-high"></span>
+      </div>
+    </div>
+
+    <div class="tool-group">
+      <div class="tool-group-label">✂️ Post-Mission Review</div>
+      <div class="tool-card" draggable="true" data-id="pm1" data-zone="postmission" data-risk="0" data-label="Full review + blur faces & plates" data-feedback="good:Thorough post-editing with blurring of faces and plates fulfils your obligation to minimise identifiable data before sharing.">
+        <span class="tool-icon">🎬</span> Full review + blur faces/plates
+        <span class="risk-pip pip-low"></span>
+      </div>
+      <div class="tool-card" draggable="true" data-id="pm2" data-zone="postmission" data-risk="10" data-label="Quick scan, no editing" data-feedback="warn:A quick scan without editing leaves identifiable individuals and vehicles in footage — a risk once footage is shared or stored.">
+        <span class="tool-icon">👁️</span> Quick scan, no editing
+        <span class="risk-pip pip-med"></span>
+      </div>
+      <div class="tool-card" draggable="true" data-id="pm3" data-zone="postmission" data-risk="20" data-label="No review — direct to client" data-feedback="danger:Sending raw, unreviewed footage directly to a client is a serious privacy breach risk — you have no idea what was captured.">
+        <span class="tool-icon">🚫</span> No review — direct to client
+        <span class="risk-pip pip-high"></span>
+      </div>
+    </div>
+
+    <div class="tool-group">
+      <div class="tool-group-label">🗓️ Data Retention</div>
+      <div class="tool-card" draggable="true" data-id="ret1" data-zone="retention" data-risk="0" data-label="Delete after project deadline" data-feedback="good:Time-bound deletion aligned to project scope is exactly what the Privacy Act expects — collect only what is needed, for only as long as needed.">
+        <span class="tool-icon">🗑️</span> Delete after project deadline
+        <span class="risk-pip pip-low"></span>
+      </div>
+      <div class="tool-card" draggable="true" data-id="ret2" data-zone="retention" data-risk="8" data-label="Retain 12 months (no policy)" data-feedback="warn:Retaining data for a fixed period without a documented policy creates legal ambiguity if questioned by a regulator or subject.">
+        <span class="tool-icon">📆</span> Retain 12 months (no policy)
+        <span class="risk-pip pip-med"></span>
+      </div>
+      <div class="tool-card" draggable="true" data-id="ret3" data-zone="retention" data-risk="18" data-label="Retained indefinitely" data-feedback="danger:Indefinite retention is a direct breach of Australian Privacy Principle 11 — you must not keep data longer than necessary.">
+        <span class="tool-icon">♾️</span> Retained indefinitely
+        <span class="risk-pip pip-high"></span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CANVAS -->
+  <main>
+    <div class="canvas-area">
+      <div class="canvas-title">🗺️ Your Mission Configuration — Drop options below</div>
+
+      <div class="mission-grid">
+
+        <!-- Flight Path -->
+        <div class="drop-zone" id="zone-flightpath" data-zone="flightpath">
+          <div class="drop-zone-header">
+            <span class="drop-zone-icon">✈️</span>
+            <span class="drop-zone-title">Flight Path</span>
+          </div>
+          <div class="drop-zone-items" id="items-flightpath">
+            <div class="drop-zone-empty">Drop flight path here</div>
+          </div>
+        </div>
+
+        <!-- Geofence Map Zone -->
+        <div class="map-zone drop-zone" id="zone-geofence" data-zone="geofence">
+          <div class="map-grid"></div>
+          <div class="map-overlay">
+            <div class="drop-zone-header">
+              <span class="drop-zone-icon">📡</span>
+              <span class="drop-zone-title">Geofence Zone</span>
+            </div>
+            <!-- SVG map sketch -->
+            <svg style="position:absolute;right:12px;top:10px;opacity:0.18;width:120px" viewBox="0 0 120 100">
+              <rect x="10" y="40" width="30" height="25" fill="#0195BB" rx="2"/>
+              <rect x="50" y="30" width="20" height="35" fill="#0195BB" rx="2"/>
+              <rect x="80" y="45" width="28" height="20" fill="#0195BB" rx="2"/>
+              <rect x="15" y="25" width="18" height="16" fill="#0195BB" rx="1"/>
+              <line x1="0" y1="65" x2="120" y2="65" stroke="#0195BB" stroke-width="3"/>
+              <polygon points="55,0 60,12 65,0" fill="#0195BB"/>
+              <line x1="60" y1="0" x2="60" y2="28" stroke="#0195BB" stroke-width="1.5" stroke-dasharray="3,2"/>
+            </svg>
+            <div class="map-zones-placed" id="items-geofence">
+              <div class="drop-zone-empty" style="width:100%">Drop geofence configuration here</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Storage -->
+        <div class="drop-zone" id="zone-storage" data-zone="storage">
+          <div class="drop-zone-header">
+            <span class="drop-zone-icon">💾</span>
+            <span class="drop-zone-title">Data Storage</span>
+          </div>
+          <div class="drop-zone-items" id="items-storage">
+            <div class="drop-zone-empty">Drop storage method here</div>
+          </div>
+        </div>
+
+        <!-- Post-Mission Review -->
+        <div class="drop-zone" id="zone-postmission" data-zone="postmission">
+          <div class="drop-zone-header">
+            <span class="drop-zone-icon">✂️</span>
+            <span class="drop-zone-title">Post-Mission Review</span>
+          </div>
+          <div class="drop-zone-items" id="items-postmission">
+            <div class="drop-zone-empty">Drop review method here</div>
+          </div>
+        </div>
+
+        <!-- Retention -->
+        <div class="drop-zone wide" id="zone-retention" data-zone="retention">
+          <div class="drop-zone-header">
+            <span class="drop-zone-icon">🗓️</span>
+            <span class="drop-zone-title">Data Retention Policy</span>
+          </div>
+          <div class="drop-zone-items" id="items-retention">
+            <div class="drop-zone-empty">Drop retention policy here</div>
+          </div>
+        </div>
+
+      </div><!-- /mission-grid -->
+    </div><!-- /canvas-area -->
+
+    <!-- FEEDBACK -->
+    <div class="feedback-panel">
+      <div class="feedback-title">📋 Live Privacy Feedback</div>
+      <div class="feedback-items" id="feedbackItems">
+        <div style="font-size:0.8rem;color:var(--muted);font-style:italic">Your privacy feedback will appear here as you configure your mission...</div>
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="actions">
+      <button class="btn btn-outline" onclick="resetAll()">↺ Reset Mission</button>
+      <button class="btn btn-primary" onclick="submitMission()">Submit Mission Assessment →</button>
+    </div>
+  </main>
+</div>
+
+<!-- RESULT OVERLAY -->
+<div class="result-overlay" id="resultOverlay">
+  <div class="result-box">
+    <div class="result-emoji" id="resultEmoji">🎉</div>
+    <div class="result-title" id="resultTitle">Mission Assessment Complete</div>
+    <div class="result-score-big" id="resultScoreBig" style="color:var(--blue)">0</div>
+    <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.8rem">Privacy Risk Score</div>
+    <div class="result-text" id="resultText"></div>
+    <div class="result-breakdown" id="resultBreakdown"></div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:0.5rem" onclick="resetAll();document.getElementById('resultOverlay').classList.remove('show')">↺ Try Again with Different Choices</button>
+    <button class="btn btn-outline" style="width:100%" onclick="document.getElementById('resultOverlay').classList.remove('show')">✕ Close</button>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+const state = {};            // zone → {id, label, risk, feedback}
+const zoneMax = {};          // each zone accepts exactly 1 card
+
+// ── DRAG ──
+let draggingCard = null;
+
+document.querySelectorAll('.tool-card').forEach(card => {
+  card.addEventListener('dragstart', e => {
+    draggingCard = card;
+    card.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'copy';
+  });
+  card.addEventListener('dragend', () => {
+    card.classList.remove('dragging');
+    draggingCard = null;
+  });
+});
+
+document.querySelectorAll('.drop-zone').forEach(zone => {
+  zone.addEventListener('dragover', e => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    zone.classList.add('drag-over');
+  });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    if (!draggingCard) return;
+
+    const zoneName = zone.dataset.zone;
+    const cardZone = draggingCard.dataset.zone;
+    if (cardZone !== zoneName) {
+      showZoneMismatch(zone);
+      return;
+    }
+
+    placeCard(zoneName, {
+      id: draggingCard.dataset.id,
+      label: draggingCard.dataset.label,
+      risk: parseInt(draggingCard.dataset.risk),
+      feedback: draggingCard.dataset.feedback
+    });
+  });
+});
+
+function showZoneMismatch(zone) {
+  zone.style.borderColor = '#ef4444';
+  zone.style.background = '#fef2f2';
+  setTimeout(() => {
+    zone.style.borderColor = '';
+    zone.style.background = '';
+  }, 600);
+}
+
+// ── PLACE CARD ──
+function placeCard(zoneName, data) {
+  state[zoneName] = data;
+  renderZone(zoneName);
+  updateScore();
+  updateFeedback();
+}
+
+function renderZone(zoneName) {
+  const container = document.getElementById('items-' + zoneName);
+  const data = state[zoneName];
+  if (!data) {
+    container.innerHTML = '<div class="drop-zone-empty">Drop here</div>';
+    return;
+  }
+
+  const riskClass = data.risk === 0 ? '' : data.risk < 15 ? 'risk-med-card' : 'risk-high-card';
+
+  // geofence zone gets bubble treatment
+  if (zoneName === 'geofence') {
+    const bubbleClass = data.risk === 0 ? 'risk-low-geo' : data.risk < 15 ? 'risk-med-geo' : 'risk-high-geo';
+    container.innerHTML = `
+      <div class="geofence-bubble ${bubbleClass}" onclick="removeCard('${zoneName}')" title="Click to remove">
+        ${data.label.split(' ').slice(0,3).join('<br>')}
+      </div>`;
+  } else {
+    container.innerHTML = `
+      <div class="placed-card ${riskClass}" onclick="removeCard('${zoneName}')" title="Click to remove">
+        ${data.label}
+      </div>`;
+  }
+}
+
+function removeCard(zoneName) {
+  delete state[zoneName];
+  renderZone(zoneName);
+  updateScore();
+  updateFeedback();
+}
+
+// ── SCORE ──
+function updateScore() {
+  const total = Object.values(state).reduce((s, d) => s + d.risk, 0);
+  const score = Math.min(total, 100);
+
+  // dial
+  const circumference = 251;
+  const offset = circumference - (score / 100) * circumference;
+  document.getElementById('dialFill').style.strokeDashoffset = offset;
+
+  // color
+  let color, levelText;
+  if (score < 25) {
+    color = '#0195BB'; levelText = 'Low Risk';
+  } else if (score < 55) {
+    color = '#f59e0b'; levelText = 'Medium Risk';
+  } else {
+    color = '#ef4444'; levelText = 'High Risk';
+  }
+
+  document.getElementById('dialFill').style.stroke = color;
+  document.getElementById('dialScore').textContent = score;
+  document.getElementById('dialScore').style.color = color;
+
+  const badge = document.getElementById('riskBadge');
+  badge.textContent = levelText;
+  badge.style.background = color + '22';
+  badge.style.color = color;
+}
+
+// ── FEEDBACK ──
+function updateFeedback() {
+  const container = document.getElementById('feedbackItems');
+  const items = Object.values(state);
+  if (items.length === 0) {
+    container.innerHTML = '<div style="font-size:0.8rem;color:var(--muted);font-style:italic">Your privacy feedback will appear here as you configure your mission...</div>';
+    return;
+  }
+
+  container.innerHTML = items.map(d => {
+    const [type, text] = d.feedback.split(':');
+    return `<div class="feedback-item ${type}"><span>${type === 'good' ? '✅' : type === 'warn' ? '⚠️' : '🔴'}</span><span><strong>${d.label}:</strong> ${text}</span></div>`;
+  }).join('');
+}
+
+// ── SUBMIT ──
+function submitMission() {
+  const zones = ['flightpath','geofence','storage','postmission','retention'];
+  const missing = zones.filter(z => !state[z]);
+  if (missing.length > 0) {
+    alert(`Please configure all 5 mission elements before submitting.\n\nMissing: ${missing.join(', ')}`);
+    return;
+  }
+
+  const score = Math.min(Object.values(state).reduce((s,d) => s + d.risk, 0), 100);
+  const overlay = document.getElementById('resultOverlay');
+
+  let emoji, title, text, color;
+  if (score < 20) {
+    emoji = '🏆'; title = 'Excellent Privacy-by-Design!'; color = '#0195BB';
+    text = 'Your mission configuration demonstrates exemplary Privacy-by-Design thinking. You\'ve applied geofencing, secure storage, post-editing review, and time-bound data deletion — exactly what the Australian Privacy Principles require.';
+  } else if (score < 45) {
+    emoji = '⚠️'; title = 'Moderate Risk — Room to Improve'; color = '#f59e0b';
+    text = 'Your mission has some good elements but contains at least one medium-risk choice that could expose personal information. Review the feedback items and consider how you would adjust your mission plan.';
+  } else {
+    emoji = '🔴'; title = 'High Privacy Risk Detected'; color = '#ef4444';
+    text = 'Your current mission configuration presents significant privacy risks. If this were a real operation, you could be in breach of the Privacy Act 1988. Review each element carefully — consider the data breach scenario from your reading.';
+  }
+
+  document.getElementById('resultEmoji').textContent = emoji;
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultScoreBig').textContent = score;
+  document.getElementById('resultScoreBig').style.color = color;
+  document.getElementById('resultText').textContent = text;
+
+  const breakdown = Object.entries(state).map(([zone, d]) => {
+    const label = {flightpath:'Flight Path',geofence:'Geofence',storage:'Storage',postmission:'Post-Mission',retention:'Retention'}[zone];
+    const riskCol = d.risk === 0 ? '#0195BB' : d.risk < 15 ? '#f59e0b' : '#ef4444';
+    return `<div class="breakdown-row"><span>${label}: <em>${d.label}</em></span><span class="val" style="color:${riskCol}">+${d.risk}</span></div>`;
+  }).join('');
+  document.getElementById('resultBreakdown').innerHTML = breakdown + `<div class="breakdown-row" style="font-weight:700;border:none;margin-top:0.3rem"><span>Total Privacy Risk Score</span><span class="val" style="color:${color}">${score}/100</span></div>`;
+
+  overlay.classList.add('show');
+}
+
+// ── RESET ──
+function resetAll() {
+  ['flightpath','geofence','storage','postmission','retention'].forEach(z => {
+    delete state[z];
+    renderZone(z);
+  });
+  updateScore();
+  updateFeedback();
+}
+</script>
+</body>
+</html>

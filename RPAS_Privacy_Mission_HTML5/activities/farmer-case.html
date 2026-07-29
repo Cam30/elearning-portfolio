@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drone Data Privacy – Case Study Module</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #21262d;
+    --accent: #f0a500;
+    --accent2: #e05c2e;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --danger: #da3633;
+    --danger-soft: #1a0a08;
+    --safe: #238636;
+    --tag-bg: #1f2937;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 0 60px 0;
+  }
+
+  /* ── NAV ── */
+  .nav {
+    width: 100%;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 32px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .nav-pages {
+    display: flex;
+    gap: 6px;
+  }
+
+  .page-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .page-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .page-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+  }
+
+  /* ── PAGES ── */
+  .page {
+    display: none;
+    width: 100%;
+    max-width: 880px;
+    padding: 48px 32px 0;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .page.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── PAGE HEADER ── */
+  .page-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .page-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 38px;
+    line-height: 1.05;
+    letter-spacing: -0.5px;
+    margin-bottom: 28px;
+    text-transform: uppercase;
+  }
+
+  .page-title span { color: var(--accent); }
+
+  /* ── DIVIDER ── */
+  .rule {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  /* ── SCENARIO CARD ── */
+  .scenario-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    padding: 24px 28px;
+    margin-bottom: 24px;
+  }
+
+  .scenario-card p {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--text);
+  }
+
+  .scenario-card strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ── INCIDENT SUMMARY ── */
+  .incident-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .incident-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+  }
+
+  .incident-item .label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .incident-item .value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .incident-item .value.flag {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ── RISK TABLE ── */
+  .risk-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 28px;
+    font-size: 14px;
+  }
+
+  .risk-table th {
+    background: var(--tag-bg);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .risk-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  .risk-table tr:last-child td { border-bottom: none; }
+
+  .risk-table tr:nth-child(odd) td { background: rgba(255,255,255,0.02); }
+
+  .badge {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+  }
+
+  .badge-high { background: rgba(218,54,51,0.15); color: var(--danger); border: 1px solid rgba(218,54,51,0.3); }
+  .badge-med  { background: rgba(240,165,0,0.15);  color: var(--accent);  border: 1px solid rgba(240,165,0,0.3); }
+  .badge-low  { background: rgba(35,134,54,0.15);  color: #3fb950;        border: 1px solid rgba(35,134,54,0.3); }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  /* ── IMPLICATION BLOCKS ── */
+  .impl-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .impl-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    padding: 16px 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .impl-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+    min-width: 28px;
+  }
+
+  .impl-body strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .impl-body p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── CONCLUSION ── */
+  .conclusion {
+    background: linear-gradient(135deg, #1a1000 0%, #0d1117 100%);
+    border: 1px solid rgba(240,165,0,0.25);
+    padding: 28px 32px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .conclusion::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  .conclusion .section-label { color: var(--accent); margin-bottom: 14px; }
+
+  .conclusion p {
+    font-size: 15px;
+    line-height: 1.75;
+    color: #c9d1d9;
+  }
+
+  /* ── NEXT BUTTON ── */
+  .btn-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 24px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+  }
+
+  .btn-primary { background: var(--accent); color: #000; }
+  .btn-primary:hover { background: #ffb82e; }
+  .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+  .btn-ghost:hover { border-color: var(--text); color: var(--text); }
+
+  /* ── PROGRESS ── */
+  .progress-bar {
+    width: 100%;
+    height: 2px;
+    background: var(--border);
+    position: relative;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+
+  @media (max-width: 600px) {
+    .incident-grid { grid-template-columns: 1fr; }
+    .page-title { font-size: 28px; }
+    .nav { padding: 12px 16px; }
+    .page { padding: 32px 16px 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="progress" style="width:33%"></div></div>
+
+<nav class="nav">
+  <div class="nav-logo">Drone Ops — Data Privacy</div>
+  <div class="nav-pages">
+    <button class="page-btn active" onclick="goTo(1)">01 Case Study</button>
+    <button class="page-btn" onclick="goTo(2)">02 Legal Risk</button>
+    <button class="page-btn" onclick="goTo(3)">03 Implications</button>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════
+     PAGE 1 – CASE STUDY & INCIDENT SUMMARY
+════════════════════════════════════════ -->
+<div class="page active" id="page-1">
+
+  <div class="page-eyebrow">Module 4 · Case Study</div>
+  <h1 class="page-title">Farm Data,<br><span>Platform Control</span></h1>
+
+  <div class="section-label">Scenario</div>
+  <div class="scenario-card">
+    <p>
+      You operate a <strong>2,400-hectare</strong> mixed grain and livestock property. Six months ago you subscribed to <strong>DroneAg Pro</strong> — a precision farming platform that uses your drone to collect and analyse crop health data. A neighbouring farmer alerts you: DroneAg Pro's updated Terms of Service, buried in a <strong>47-page document</strong>, now include a clause permitting the platform to share <em>'aggregated and de-identified farm data'</em> with <em>'selected industry partners and government agencies.'</em>
+    </p>
+  </div>
+
+  <hr class="rule">
+
+  <div class="section-label">Incident Summary</div>
+  <div class="incident-grid">
+    <div class="incident-item">
+      <div class="label">Operator</div>
+      <div class="value">Commercial agricultural — 2,400 ha mixed grain/livestock</div>
+    </div>
+    <div class="incident-item">
+      <div class="label">Platform</div>
+      <div class="value">DroneAg Pro (precision farming SaaS)</div>
+    </div>
+    <div class="incident-item">
+      <div class="label">Data collected</div>
+      <div class="value">Drone-sourced crop health imagery and yield analytics</div>
+    </div>
+    <div class="incident-item">
+      <div class="label">Trigger event</div>
+      <div class="value flag">Unilateral ToS amendment — third-party data sharing clause introduced</div>
+    </div>
+    <div class="incident-item">
+      <div class="label">Discovery method</div>
+      <div class="value">Peer notification — neighbouring operator</div>
+    </div>
+    <div class="incident-item">
+      <div class="label">Consent model</div>
+      <div class="value flag">Implied — continued use = acceptance</div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="goTo(2)">Next: Legal Risk →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE 2 – LEGAL RISK
+════════════════════════════════════════ -->
+<div class="page" id="page-2">
+
+  <div class="page-eyebrow">Module 4 · Page 2</div>
+  <h1 class="page-title">Legal Breach<br><span>Risk Exposure</span></h1>
+
+  <div class="section-label">Applicable Frameworks</div>
+  <table class="risk-table">
+    <thead>
+      <tr>
+        <th>Legal Instrument</th>
+        <th>Breach Vector</th>
+        <th>Risk</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Privacy Act 1988 (Cth)</strong><br>APPs 6 &amp; 8 — secondary use &amp; cross-border disclosure</td>
+        <td>APP 6 binds the platform as an APP entity — it cannot use collected data beyond the original purpose without consent. Where the operator holds personal information (e.g. data linked to identifiable individuals on the property), they too attract APP obligations. APP 8 applies if data is transferred offshore.</td>
+        <td><span class="badge badge-high">High</span></td>
+      </tr>
+      <tr>
+        <td><strong>Agricultural data ownership</strong><br>(Common law / contractual)</td>
+        <td>No Australian statute vests exclusive ownership of farm-generated data in the producer. Without a data ownership clause in your contract, the platform may assert broad licence rights over collected data.</td>
+        <td><span class="badge badge-high">High</span></td>
+      </tr>
+      <tr>
+        <td><strong>Consumer law — unfair contract terms</strong><br>ACL ss 23–28</td>
+        <td>A unilaterally amended ToS enabling third-party data sharing without direct notification may constitute an unfair contract term, particularly where the operator is a small business.</td>
+        <td><span class="badge badge-med">Medium</span></td>
+      </tr>
+      <tr>
+        <td><strong>CASR Part 101 MOS / RePL &amp; ReOC conditions</strong></td>
+        <td>No direct data-sharing obligation under the CASR framework. However, a ReOC holder's operations manual governs data handling for commercial operations — if geospatial flight records are shared without operator knowledge, a manual compliance gap may arise during audit.</td>
+        <td><span class="badge badge-low">Low–Med</span></td>
+      </tr>
+      <tr>
+        <td><strong>State biosecurity / land data laws</strong></td>
+        <td>Some states restrict disclosure of farm-level pest, disease, or soil data. Platform sharing with government agencies without operator awareness may trigger mandatory notification obligations.</td>
+        <td><span class="badge badge-med">Medium</span></td>
+      </tr>
+      <tr>
+        <td><strong>Privacy Act 1988 (Cth)</strong><br>APP 8 — cross-border disclosure</td>
+        <td>If the platform stores or processes data offshore, APP 8 requires the entity to take reasonable steps to ensure the overseas recipient does not breach the APPs. Operators using platforms with offshore infrastructure face indirect APP 8 exposure if they qualify as APP entities.</td>
+        <td><span class="badge badge-med">Medium</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-label">Key Legal Vulnerability</div>
+  <div class="scenario-card">
+    <p>
+      The clause's reliance on <strong>'aggregated and de-identified'</strong> data does not guarantee legal insulation. Re-identification risk is established in Australian Privacy law — sufficiently granular farm-level datasets (paddock boundaries, yield patterns, stock movements) linked to a known property can be re-identified. This converts 'anonymous' data into personal or commercially sensitive information, restoring full APP obligations.
+    </p>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+    <button class="btn btn-primary" onclick="goTo(3)">Next: Implications →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE 3 – IMPLICATIONS & CONCLUSION
+════════════════════════════════════════ -->
+<div class="page" id="page-3">
+
+  <div class="page-eyebrow">Module 4 · Page 3</div>
+  <h1 class="page-title">Implications for<br><span>Drone Pilots</span></h1>
+
+  <div class="impl-list">
+    <div class="impl-item">
+      <div class="impl-num">01</div>
+      <div class="impl-body">
+        <strong>Review ToS before you subscribe — and at every update</strong>
+        <p>Data rights clauses determine who controls your operational outputs. A 47-page document is not a defence against implied consent. Review ToS at onboarding and treat any platform update notification as a trigger for re-review.</p>
+      </div>
+    </div>
+    <div class="impl-item">
+      <div class="impl-num">02</div>
+      <div class="impl-body">
+        <strong>Negotiate data ownership at onboarding</strong>
+        <p>Request an explicit contractual clause asserting that all drone-collected data, raw and derived, remains the property of the operator. Platforms without this clause present a residual IP and commercial risk.</p>
+      </div>
+    </div>
+    <div class="impl-item">
+      <div class="impl-num">03</div>
+      <div class="impl-body">
+        <strong>'De-identified' does not mean non-actionable</strong>
+        <p>Granular geospatial and agronomic datasets are re-identifiable. Treat any farm-level data shared with third parties as potentially personal information under the Privacy Act. Do not rely on platform assurances alone.</p>
+      </div>
+    </div>
+    <div class="impl-item">
+      <div class="impl-num">04</div>
+      <div class="impl-body">
+        <strong>Monitor ToS amendments actively</strong>
+        <p>Set a contractual requirement for direct notification of material changes. Peer discovery (as in this scenario) is an operational failure — not a control. Continued platform use after a ToS update is legally interpreted as acceptance.</p>
+      </div>
+    </div>
+    <div class="impl-item">
+      <div class="impl-num">05</div>
+      <div class="impl-body">
+        <strong>Confirm data residency before subscribing</strong>
+        <p>Offshore storage engages APP 8 — the platform must take reasonable steps to ensure overseas recipients comply with the APPs. Verify data residency in writing. If the platform cannot confirm Australian storage, obtain independent legal advice on your exposure.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="conclusion">
+    <div class="section-label">Conclusion</div>
+    <p>
+      Drone operators in precision agriculture are data producers, not merely data users. The DroneAg Pro scenario illustrates a systemic risk across agritech platforms: data rights are governed by contract, not statute, and operators who do not actively assert ownership will cede it. The legal exposure here — Privacy Act breach, unfair contract terms, potential re-identification liability — is not hypothetical. It is the default position for any operator who subscribes without scrutinising data governance clauses. Treat platform ToS with the same rigour applied to airspace authorisations. The consequences of not doing so are commercial, regulatory, and reputational.
+    </p>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+  </div>
+</div>
+
+<script>
+  function goTo(n) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + n).classList.add('active');
+    document.querySelectorAll('.page-btn')[n - 1].classList.add('active');
+    document.getElementById('progress').style.width = (n / 3 * 100) + '%';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

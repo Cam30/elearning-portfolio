@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>NDB Threshold Test — RPAS Privacy</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --ink:#1a2b35;
+  --ink2:#2d4a58;
+  --page:rgb(248,248,248);
+  --page2:#FCFAEF;
+  --page3:#E9F5EB;
+  --rule:#ccd8dc;
+  --rule2:#d8e8ed;
+  --red:#c0392b;
+  --red-pale:#fdf0ee;
+  --red-mid:#e8c5c0;
+  --green:#1a7a4a;
+  --green-pale:#E9F5EB;
+  --green-mid:#b8dfc9;
+  --amber:#b86c00;
+  --amber-pale:#fdf6e8;
+  --amber-mid:#e8d4a0;
+  --blue:#0195BB;
+  --blue-dark:#0178a0;
+  --blue-pale:#FCFAEF;
+  --blue-mid:#b0dde8;
+  --blue-light:#d0eef6;
+  --stamp-red:#c0392b;
+  --r:8px;
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+
+html{font-size:16px;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:'Sora',sans-serif;
+  background:rgb(248,248,248);
+  color:var(--ink);
+  min-height:100vh;
+}
+
+/* ─── TOP BAR ─── */
+
+/* ─── HEADER ─── */
+.page-header{
+  background:#fff;
+  border-bottom:2px solid var(--rule2);
+  padding:1.8rem 1.5rem 1.5rem;
+  position:relative;
+  overflow:hidden;
+}
+.hdr-eyebrow{
+  font-family:'DM Mono',monospace;
+  font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--blue);margin-bottom:0.65rem;
+  display:flex;align-items:center;gap:0.5rem;
+}
+.hdr-eyebrow::before{content:'';width:20px;height:2px;background:var(--blue)}
+.hdr-h1{
+  font-family:'Sora',sans-serif;
+  font-size:clamp(1.6rem,4.5vw,2.2rem);
+  font-weight:800;
+  line-height:1.05;
+  color:var(--ink);
+  margin-bottom:0.6rem;
+  letter-spacing:-0.01em;
+}
+.hdr-h1 em{color:var(--blue);font-style:normal}
+.hdr-sub{
+  font-size:0.88rem;color:#555;line-height:1.65;
+  max-width:62ch;
+  border-left:3px solid var(--blue);
+  padding-left:0.85rem;
+  margin-bottom:1.2rem;
+}
+.hdr-sub strong{color:var(--ink)}
+
+/* PROGRESS TRAIL */
+.progress-strip{
+  background:#fff;
+  border:1px solid var(--rule2);
+  border-radius:8px;
+  padding:0.6rem 1rem;
+  display:flex;align-items:center;gap:0.75rem;
+  margin-top:0.5rem;
+}
+.prog-label{font-size:0.65rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#888;white-space:nowrap}
+.prog-trail{display:flex;align-items:center;gap:0.35rem;flex-wrap:wrap;flex:1}
+.trail-dot{
+  width:28px;height:28px;border-radius:50%;
+  border:2px solid var(--rule2);
+  background:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.62rem;font-weight:700;color:#bbb;
+  font-family:'DM Mono',monospace;
+  transition:all 0.3s;
+  flex-shrink:0;
+}
+.trail-dot.done-yes{background:var(--green);border-color:var(--green);color:#fff}
+.trail-dot.done-no{background:var(--red);border-color:var(--red);color:#fff}
+.trail-dot.active{background:var(--blue);border-color:var(--blue);color:#fff;transform:scale(1.1)}
+.trail-connector{width:12px;height:2px;background:var(--rule2);flex-shrink:0}
+.trail-connector.done{background:var(--blue)}
+.prog-reset{
+  font-size:0.7rem;font-weight:600;color:var(--blue);
+  background:none;border:1px solid var(--blue-mid);
+  border-radius:999px;padding:0.25rem 0.7rem;
+  cursor:pointer;font-family:'Sora',sans-serif;
+  transition:all 0.15s;white-space:nowrap;
+}
+.prog-reset:hover{border-color:var(--blue-dark);background:var(--blue-light)}
+
+/* ─── MAIN CONTENT ─── */
+.main{padding:1.8rem 1rem 4rem;max-width:760px;margin:0 auto}
+
+/* ─── NODE CARD ─── */
+.node-card{
+  background:#fff;
+  border:1.5px solid var(--rule2);
+  border-radius:12px;
+  padding:1.6rem 1.5rem 1.4rem;
+  position:relative;
+  box-shadow:0 2px 16px rgba(1,149,187,0.08), 0 1px 4px rgba(0,0,0,0.06);
+  display:none;
+  animation:nodeIn 0.35s cubic-bezier(.4,0,.2,1);
+}
+.node-card.active{display:block}
+@keyframes nodeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* Node number stamp */
+.node-num{
+  position:absolute;top:-14px;left:1.2rem;
+  background:var(--blue);
+  color:#fff;
+  font-family:'DM Mono',monospace;
+  font-size:0.6rem;font-weight:700;
+  letter-spacing:0.1em;
+  padding:0.2rem 0.7rem;
+  border-radius:999px;
+  text-transform:uppercase;
+}
+
+/* Section label */
+.node-section{
+  font-family:'DM Mono',monospace;
+  font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--blue);margin-bottom:0.6rem;
+  display:flex;align-items:center;gap:0.5rem;
+}
+.node-section::after{content:'';flex:1;height:1px;background:var(--blue-mid)}
+
+/* Question */
+.node-q{
+  font-family:'Sora',sans-serif;
+  font-size:clamp(1.1rem,3vw,1.45rem);
+  font-weight:700;
+  line-height:1.35;
+  color:var(--ink);
+  margin-bottom:0.9rem;
+}
+
+/* Context box */
+.node-context{
+  background:var(--page2);
+  border:1px solid var(--blue-mid);
+  border-left:4px solid var(--blue);
+  border-radius:8px;
+  padding:0.75rem 0.9rem;
+  font-size:0.82rem;
+  line-height:1.65;
+  color:#444;
+  margin-bottom:1.2rem;
+}
+.node-context strong{color:var(--ink);font-weight:600}
+.node-context .law-cite{
+  display:inline-block;
+  margin-top:0.5rem;
+  font-family:'DM Mono',monospace;
+  font-size:0.6rem;letter-spacing:0.06em;
+  background:var(--blue-pale);
+  border:1px solid var(--blue-mid);
+  color:var(--blue);
+  padding:0.15rem 0.5rem;border-radius:2px;
+}
+
+/* DRONE SCENARIO PILL */
+.scenario-pill{
+  display:flex;align-items:flex-start;gap:0.6rem;
+  background:#FFF8EC;
+  border:1px solid #f0d090;
+  border-radius:8px;
+  padding:0.65rem 0.8rem;
+  margin-bottom:1.2rem;
+  font-size:0.79rem;line-height:1.55;color:#5a3c00;
+}
+.scenario-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
+.scenario-label{font-size:0.56rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--amber);margin-bottom:0.2rem}
+
+/* ─── BUTTONS ─── */
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;margin-top:0.5rem}
+.choice-btn{
+  display:flex;flex-direction:column;align-items:flex-start;
+  padding:0.85rem 1rem;
+  border-radius:10px;
+  border:2px solid;
+  cursor:pointer;
+  font-family:'Sora',sans-serif;
+  transition:all 0.15s;
+  touch-action:manipulation;
+  text-align:left;
+  position:relative;
+  overflow:hidden;
+}
+.choice-btn:active{transform:scale(0.98)}
+.choice-btn::after{
+  content:'';
+  position:absolute;inset:0;
+  opacity:0;
+  transition:opacity 0.15s;
+}
+.choice-btn:hover::after{opacity:1}
+
+.btn-yes{
+  background:var(--green-pale);
+  border-color:var(--green);
+  color:var(--green);
+}
+.btn-yes::after{background:rgba(26,122,74,0.06)}
+.btn-yes:hover{background:#d4eedd;box-shadow:0 4px 12px rgba(26,122,74,0.15)}
+.btn-no{
+  background:var(--red-pale);
+  border-color:var(--red);
+  color:var(--red);
+}
+.btn-no::after{background:rgba(192,57,43,0.06)}
+.btn-no:hover{background:#fde8e6;box-shadow:0 4px 12px rgba(192,57,43,0.12)}
+
+.btn-label{font-size:1rem;font-weight:700;margin-bottom:0.15rem;display:flex;align-items:center;gap:0.4rem}
+.btn-sub{font-size:0.7rem;opacity:0.75;font-weight:400;line-height:1.4}
+
+/* Single / wide button */
+.btn-single{
+  grid-column:1/-1;
+  background:var(--blue);
+  border:2px solid var(--blue);
+  color:#fff;
+  border-radius:3px;
+  padding:0.85rem 1.2rem;
+  font-family:'Sora',sans-serif;
+  font-size:0.9rem;font-weight:600;
+  cursor:pointer;transition:all 0.15s;
+  touch-action:manipulation;
+  display:flex;align-items:center;justify-content:center;gap:0.5rem;
+}
+.btn-single:hover{background:var(--blue-dark);box-shadow:0 4px 12px rgba(1,149,187,0.25)}
+.btn-single:active{transform:scale(0.98)}
+
+/* ─── BREADCRUMB ─── */
+.breadcrumb{
+  display:flex;align-items:center;gap:0.3rem;
+  flex-wrap:wrap;
+  margin-bottom:1.2rem;
+  font-size:0.68rem;font-weight:500;
+  font-family:'DM Mono',monospace;
+  color:#aaa;
+}
+.bc-item{display:flex;align-items:center;gap:0.3rem}
+.bc-q{color:#aaa}
+.bc-ans{padding:0.1rem 0.4rem;border-radius:2px;font-weight:700}
+.bc-ans.yes{background:#E9F5EB;color:var(--green);border:1px solid var(--green-mid)}
+.bc-ans.no{background:var(--red-pale);color:var(--red);border:1px solid var(--red-mid)}
+.bc-arrow{color:#ccc;font-size:0.65rem}
+
+/* ─── OUTCOME CARDS ─── */
+.outcome-notifiable{
+  border-color:rgba(192,57,43,0.4);
+  box-shadow:0 4px 20px rgba(192,57,43,0.12);
+}
+.outcome-not{
+  border-color:rgba(26,122,74,0.4);
+  box-shadow:0 4px 20px rgba(26,122,74,0.1);
+}
+.outcome-remediated{
+  border-color:rgba(184,108,0,0.4);
+  box-shadow:0 4px 20px rgba(184,108,0,0.1);
+}
+
+.outcome-stamp{
+  display:inline-flex;align-items:center;
+  font-family:'DM Mono',monospace;
+  font-size:0.68rem;font-weight:700;
+  letter-spacing:0.12em;
+  padding:0.3rem 0.85rem;
+  border-radius:999px;
+  border:2px solid;
+  text-transform:uppercase;
+  margin-bottom:0.75rem;
+}
+.stamp-notifiable{border-color:var(--red);color:var(--red)}
+.stamp-not{border-color:var(--green);color:var(--green)}
+.stamp-remediated{border-color:var(--amber);color:var(--amber)}
+
+.outcome-title{
+  font-family:'Sora',sans-serif;
+  font-size:1.4rem;font-weight:700;
+  margin-bottom:0.5rem;line-height:1.2;
+}
+.outcome-notifiable .outcome-title{color:var(--red)}
+.outcome-not .outcome-title{color:var(--green)}
+.outcome-remediated .outcome-title{color:var(--amber)}
+
+.outcome-verdict{
+  font-size:0.88rem;line-height:1.65;color:#333;
+  margin-bottom:1rem;
+  border-top:1px solid var(--rule2);
+  padding-top:0.8rem;
+}
+.outcome-verdict strong{color:var(--ink)}
+
+/* ACTION LIST */
+.action-list{margin-bottom:1rem}
+.action-list-title{
+  font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
+  color:#888;margin-bottom:0.5rem;
+}
+.action-item{
+  display:flex;gap:0.6rem;
+  padding:0.55rem 0;
+  border-bottom:1px solid var(--rule2);
+  font-size:0.81rem;line-height:1.5;
+}
+.action-item:last-child{border-bottom:none}
+.action-num{
+  font-family:'DM Mono',monospace;
+  font-size:0.65rem;font-weight:700;
+  min-width:22px;height:22px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:2px;
+}
+.outcome-notifiable .action-num{background:var(--red-pale);color:var(--red);border:1px solid var(--red-mid);font-weight:700}
+.outcome-not .action-num{background:var(--green-pale);color:var(--green);border:1px solid var(--green-mid)}
+.outcome-remediated .action-num{background:var(--amber-pale);color:var(--amber);border:1px solid var(--amber-mid)}
+
+.timer-badge{
+  display:inline-flex;align-items:center;gap:0.35rem;
+  font-family:'DM Mono',monospace;
+  font-size:0.65rem;font-weight:700;
+  background:var(--red-pale);
+  border:1px solid var(--red-mid);
+  color:var(--red);
+  padding:0.2rem 0.55rem;border-radius:2px;
+  margin-top:0.5rem;
+}
+
+/* ─── SCENARIO SELECTOR ─── */
+.scenario-selector{
+  background:#fff;
+  border:1.5px solid var(--rule2);
+  border-radius:12px;
+  padding:1rem;
+  margin-bottom:1.5rem;
+}
+.ss-title{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#888;margin-bottom:0.65rem}
+.ss-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+@media(max-width:480px){.ss-grid{grid-template-columns:1fr}}
+.ss-btn{
+  background:rgb(248,248,248);border:1.5px solid var(--rule2);
+  border-radius:8px;padding:0.6rem 0.75rem;
+  cursor:pointer;font-family:'Sora',sans-serif;
+  transition:all 0.15s;text-align:left;touch-action:manipulation;
+}
+.ss-btn:hover{border-color:var(--blue);box-shadow:0 0 0 3px rgba(1,149,187,0.08)}
+.ss-btn:active{transform:scale(0.97)}
+.ss-btn.active-s{border-color:var(--blue);background:var(--blue-light);box-shadow:0 0 0 3px rgba(1,149,187,0.12)}
+.ss-name{font-size:0.8rem;font-weight:700;color:var(--ink);margin-bottom:0.15rem}
+.ss-desc{font-size:0.68rem;color:#777;line-height:1.35}
+
+/* ─── BACK BUTTON ─── */
+.back-btn{
+  display:flex;align-items:center;gap:0.4rem;
+  background:none;border:1px solid var(--rule2);
+  border-radius:8px;padding:0.35rem 0.75rem;
+  font-family:'Sora',sans-serif;
+  font-size:0.73rem;font-weight:500;color:#777;
+  cursor:pointer;transition:all 0.15s;
+  margin-bottom:1rem;touch-action:manipulation;
+}
+.back-btn:hover{border-color:var(--blue);color:var(--blue)}
+
+/* MOBILE */
+@media(max-width:560px){
+  .page-header{padding:1.2rem 1rem 1rem}
+  .node-card{padding:1.2rem 1rem 1rem}
+  .btn-row{grid-template-columns:1fr}
+  .outcome-stamp{position:static;transform:rotate(0);display:inline-block;margin-bottom:0.75rem;font-size:0.9rem}
+  .hdr-h1{font-size:1.7rem}
+  .trail-dot{width:24px;height:24px;font-size:0.55rem}
+  .trail-connector{width:8px}
+}
+.topbar{background:var(--blue);padding:0.5rem 1.5rem;display:flex;align-items:center;gap:0.75rem;position:sticky;top:0;z-index:400}
+.tb-module{font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.75)}
+.tb-title{font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;color:#fff}
+</style>
+</head>
+<body>
+<div class="topbar"><span class="tb-module">🔒 Case Study</span><span class="tb-title">Managing and Securing Personal Data</span></div>
+
+
+<!-- PAGE HEADER -->
+<div class="page-header" style="border-top:4px solid var(--blue);">
+  <div class="hdr-eyebrow">Privacy Act 1988 · Notifiable Data Breaches Scheme</div>
+  <h1 class="hdr-h1">Is This an <em>Eligible</em><br>Data Breach?</h1>
+  <p class="hdr-sub">
+    Work through the <strong>actual legal threshold test</strong> used to determine whether a data incident must be reported to the OAIC and affected individuals. Answer each question based on your scenario — the tree will tell you your obligations.
+  </p>
+
+  <!-- SCENARIO SELECTOR -->
+  <div class="scenario-selector">
+    <div class="ss-title">🚁 Choose a scenario to test — or use your own incident</div>
+    <div class="ss-grid">
+      <button class="ss-btn active-s" onclick="setScenario(0)" id="s0">
+        <div class="ss-name">Mental Health Clinic Footage</div>
+        <div class="ss-desc">Unencrypted SD card stolen — footage identifies patients at a mental-health clinic</div>
+      </button>
+      <button class="ss-btn" onclick="setScenario(1)" id="s1">
+        <div class="ss-name">Cloud Folder Shared</div>
+        <div class="ss-desc">Flight logs accidentally shared publicly via Dropbox link for 3 days</div>
+      </button>
+      <button class="ss-btn" onclick="setScenario(2)" id="s2">
+        <div class="ss-name">Footage of Bystanders</div>
+        <div class="ss-desc">Raw video showing identifiable neighbours — emailed to wrong client</div>
+      </button>
+      <button class="ss-btn" onclick="setScenario(3)" id="s3">
+        <div class="ss-name">Encrypted Drive Stolen</div>
+        <div class="ss-desc">Laptop stolen from vehicle — hard drive fully encrypted with strong passphrase</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-strip">
+    <span class="prog-label">Your path</span>
+    <div class="prog-trail" id="progTrail">
+      <div class="trail-dot active" id="td0">1</div>
+      <div class="trail-connector" id="tc0"></div>
+      <div class="trail-dot" id="td1">2</div>
+      <div class="trail-connector" id="tc1"></div>
+      <div class="trail-dot" id="td2">3</div>
+      <div class="trail-connector" id="tc2"></div>
+      <div class="trail-dot" id="td3">4</div>
+      <div class="trail-connector" id="tc3"></div>
+      <div class="trail-dot" id="td4">5</div>
+    </div>
+    <button class="prog-reset" onclick="restart()">↺ Start over</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main">
+
+  <!-- ─── NODE 0: Is it personal information? ─── -->
+  <div class="node-card active" id="node0">
+    <div class="node-num">Step 1 of 4 — Threshold Test</div>
+    <div class="node-section">Element 1 · Personal Information</div>
+    <div class="node-q">Does the incident involve personal information held by your organisation?</div>
+    <div class="node-context">
+      <strong>Personal information</strong> is any information or opinion about an identified individual, or an individual who is reasonably identifiable — whether true or not. Under the Privacy Act 1988, this includes:
+      <br><br>
+      Names · addresses · GPS coordinates linked to a person · identifiable images or video · vehicle plates linked to a person · health information · financial details
+      <br><br>
+      As a drone pilot, <strong>any footage that captures identifiable people or their property in a way that links to their identity</strong> is likely to be personal information.
+      <span class="law-cite">Privacy Act 1988 · s 6(1) definition of personal information</span>
+    </div>
+    <div class="scenario-pill" id="spill0">
+      <span class="scenario-icon">🚁</span>
+      <div><div class="scenario-label">Your scenario</div><span id="scenario-context-0">Drone footage captured for a solar-panel feasibility study shows identifiable faces of patients entering and leaving a regional mental health clinic, along with their vehicle registrations and GPS-tagged entry points to the building.</span></div>
+    </div>
+    <div class="btn-row">
+      <button class="choice-btn btn-yes" onclick="answer(0,'yes')">
+        <span class="btn-label">✓ Yes</span>
+        <span class="btn-sub">The incident involves footage, GPS data, or other info about identifiable people</span>
+      </button>
+      <button class="choice-btn btn-no" onclick="answer(0,'no')">
+        <span class="btn-label">✗ No</span>
+        <span class="btn-sub">The data is purely technical — no individuals are identifiable in any form</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── NODE 0 → NO outcome ─── -->
+  <div class="node-card outcome-not" id="node0no">
+    <div class="node-num">Outcome — Not an Eligible Data Breach</div>
+    <div class="outcome-stamp stamp-not">Not Notifiable</div>
+    <div class="outcome-title">No Personal Information Involved</div>
+    <div class="outcome-verdict">
+      If the lost or disclosed data contains <strong>no personal information</strong> — for example, pure geographic survey data with no linked identifiers, anonymised thermal scans, or structural measurements with no individual attribution — the incident does not trigger the NDB Scheme.
+      <br><br>
+      <strong>However:</strong> review your data carefully. GPS coordinates linked to a property owner, vehicle registration, or identifiable footage can convert otherwise neutral data into personal information.
+    </div>
+    <div class="action-list">
+      <div class="action-list-title">✅ Recommended actions</div>
+      <div class="action-item"><span class="action-num outcome-not">1</span><span>Document your assessment and the reasons you determined no personal information was involved.</span></div>
+      <div class="action-item"><span class="action-num outcome-not">2</span><span>Review your data collection practices — could future flights capture personal information incidentally?</span></div>
+      <div class="action-item"><span class="action-num outcome-not">3</span><span>Retain this assessment record for 5 years in case of OAIC inquiry.</span></div>
+    </div>
+    <button class="btn-single" onclick="restart()">↺ &nbsp;Test a different scenario</button>
+  </div>
+
+  <!-- ─── NODE 1: Unauthorised access/disclosure/loss? ─── -->
+  <div class="node-card" id="node1">
+    <div class="node-num">Step 2 of 4 — Threshold Test</div>
+    <div class="node-section">Element 2 · Unauthorised Access, Disclosure or Loss</div>
+    <div class="node-q">Has there been unauthorised access to, unauthorised disclosure of, or loss of that personal information?</div>
+    <div class="node-context">
+      The NDB Scheme covers three types of incidents:
+      <br><br>
+      <strong>Unauthorised access</strong> — someone who shouldn't have access views, copies or downloads the data (e.g. an office worker opening your USB)
+      <br><br>
+      <strong>Unauthorised disclosure</strong> — personal information is released to someone who shouldn't receive it (e.g. footage emailed to the wrong client)
+      <br><br>
+      <strong>Loss</strong> — you lose physical or technical control of data in circumstances where unauthorised access is likely (e.g. a USB drive goes missing)
+      <br><br>
+      Note: accidental internal access within your own organisation may still count if the person has no authorisation.
+      <span class="law-cite">Privacy Act 1988 · s 26WE — Eligible data breach definition</span>
+    </div>
+    <div class="scenario-pill" id="spill1">
+      <span class="scenario-icon">🚁</span>
+      <div><div class="scenario-label">Your scenario</div><span id="scenario-context-1">The unencrypted SD card containing the raw footage was stolen from the pilot's vehicle overnight. Police were notified but the card has not been recovered. The data is now in unknown hands.</span></div>
+    </div>
+    <div class="btn-row">
+      <button class="choice-btn btn-yes" onclick="answer(1,'yes')">
+        <span class="btn-label">✓ Yes</span>
+        <span class="btn-sub">Data was accessed by unauthorised parties, disclosed to the wrong person, or physically lost</span>
+      </button>
+      <button class="choice-btn btn-no" onclick="answer(1,'no')">
+        <span class="btn-label">✗ No</span>
+        <span class="btn-sub">The data remains fully in your control — no unauthorised access, disclosure or loss</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── NODE 1 → NO outcome ─── -->
+  <div class="node-card outcome-not" id="node1no">
+    <div class="node-num">Outcome — Not an Eligible Data Breach</div>
+    <div class="outcome-stamp stamp-not">Not Notifiable</div>
+    <div class="outcome-title">No Unauthorised Access, Disclosure or Loss</div>
+    <div class="outcome-verdict">
+      If personal information remains fully under your authorised control — for example, you discovered a potential breach but confirmed data never left your secure system — the incident is <strong>not an eligible data breach</strong> at this stage.
+      <br><br>
+      <strong>Important:</strong> if you become aware of new facts that suggest unauthorised access did occur, you must re-assess immediately. The 30-day notification clock starts from when you became, or ought reasonably to have become, aware.
+    </div>
+    <div class="action-list">
+      <div class="action-list-title">✅ Recommended actions</div>
+      <div class="action-item"><span class="action-num outcome-not">1</span><span>Document your investigation findings — what checks confirmed no unauthorised access occurred.</span></div>
+      <div class="action-item"><span class="action-num outcome-not">2</span><span>Review your access controls and storage practices to prevent future exposure.</span></div>
+      <div class="action-item"><span class="action-num outcome-not">3</span><span>Retain your assessment record for 5 years.</span></div>
+    </div>
+    <button class="btn-single" onclick="restart()">↺ &nbsp;Test a different scenario</button>
+  </div>
+
+  <!-- ─── NODE 2: Serious harm likely? ─── -->
+  <div class="node-card" id="node2">
+    <div class="node-num">Step 3 of 4 — Threshold Test</div>
+    <div class="node-section">Element 3 · Likely Serious Harm</div>
+    <div class="node-q">Is the unauthorised access, disclosure or loss likely to result in serious harm to one or more individuals?</div>
+    <div class="node-context">
+      <strong>"Serious harm"</strong> includes physical, psychological, emotional, financial, or reputational harm. When assessing likelihood, consider:
+      <br><br>
+      <strong>Sensitivity of the data</strong> — health info, location data, financial details, images of children, or footage near sensitive locations (medical centres, schools) significantly increase risk
+      <br><br>
+      <strong>Scale</strong> — how many individuals are affected? More = higher risk
+      <br><br>
+      <strong>Who has the data now</strong> — a malicious actor poses more risk than an accidental internal disclosure
+      <br><br>
+      <strong>Ability to misuse it</strong> — unencrypted, easily readable data in the wrong hands creates immediate risk
+      <br><br>
+      For drone pilots: footage of identifiable individuals on private property, near medical facilities, or linked to GPS home addresses is almost always in the <em>likely serious harm</em> category.
+      <span class="law-cite">Privacy Act 1988 · s 26WG — Likely to result in serious harm</span>
+    </div>
+    <div class="scenario-pill" id="spill2">
+      <span class="scenario-icon">🚁</span>
+      <div><div class="scenario-label">Your scenario</div><span id="scenario-context-2">The footage links identifiable individuals to a mental health facility — effectively disclosing sensitive health information. Disclosure creates clear risk of stigma, discrimination, employment harm, or psychological distress to the people filmed.</span></div>
+    </div>
+    <div class="btn-row">
+      <button class="choice-btn btn-yes" onclick="answer(2,'yes')">
+        <span class="btn-label">✓ Yes — likely serious harm</span>
+        <span class="btn-sub">Given the sensitivity of the data and circumstances, serious harm to individuals is reasonably likely</span>
+      </button>
+      <button class="choice-btn btn-no" onclick="answer(2,'no')">
+        <span class="btn-label">✗ No — harm unlikely</span>
+        <span class="btn-sub">The data is low-sensitivity and circumstances make serious harm to any individual very unlikely</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── NODE 2 → NO outcome ─── -->
+  <div class="node-card outcome-not" id="node2no">
+    <div class="node-num">Outcome — Not an Eligible Data Breach</div>
+    <div class="outcome-stamp stamp-not">Not Notifiable</div>
+    <div class="outcome-title">Serious Harm Not Likely</div>
+    <div class="outcome-verdict">
+      If the incident involves personal information but the circumstances make it <strong>unlikely that any individual will suffer serious harm</strong>, it does not meet the NDB threshold.
+      <br><br>
+      Example: survey data showing a property boundary with only publicly available information, no images of people, and no sensitive personal details — disclosed to a wrong recipient who immediately deleted it.
+      <br><br>
+      <strong>Important:</strong> the "likely" test is a low bar. If there is a <em>real and not remote</em> chance of serious harm, err on the side of notifying.
+    </div>
+    <div class="action-list">
+      <div class="action-list-title">✅ Recommended actions</div>
+      <div class="action-item"><span class="action-num outcome-not">1</span><span>Document your harm assessment — what factors led you to conclude serious harm was unlikely.</span></div>
+      <div class="action-item"><span class="action-num outcome-not">2</span><span>Consider voluntary notification to affected individuals as a trust-building measure even if not required.</span></div>
+      <div class="action-item"><span class="action-num outcome-not">3</span><span>Review and strengthen your data security practices to prevent recurrence.</span></div>
+    </div>
+    <button class="btn-single" onclick="restart()">↺ &nbsp;Test a different scenario</button>
+  </div>
+
+  <!-- ─── NODE 3: Remedial action possible? ─── -->
+  <div class="node-card" id="node3">
+    <div class="node-num">Step 4 of 4 — Threshold Test</div>
+    <div class="node-section">Element 4 · Remedial Action</div>
+    <div class="node-q">Have you been able to prevent the likely serious harm through remedial action before it occurs?</div>
+    <div class="node-context">
+      Even if all three previous elements are met, the breach is <strong>not notifiable</strong> if you took effective remedial action that prevented the serious harm from occurring. This is the "escape route" — but it has a high bar.
+      <br><br>
+      Effective remedial action could include: remotely wiping a lost device, recovering data before it was accessed, obtaining binding confirmation from the recipient that data was deleted without being viewed.
+      <br><br>
+      <strong>Crucially</strong> — the remedial action must have <em>actually prevented</em> the harm. Attempting to take action but failing does not satisfy this element. Unencrypted data that was already viewed cannot be "un-viewed."
+      <br><br>
+      If data was already accessed or copied, or if the device was unencrypted and is missing, remedial action almost certainly cannot prevent the harm.
+      <span class="law-cite">Privacy Act 1988 · s 26WF — Remedial action</span>
+    </div>
+    <div class="scenario-pill" id="spill3">
+      <span class="scenario-icon">🚁</span>
+      <div><div class="scenario-label">Your scenario</div><span id="scenario-context-3">The SD card remains missing. It was unencrypted. There is no remote-wipe capability and no backup mechanism to recover it. The information is already in circulation — no remedial action can prevent the harm.</span></div>
+    </div>
+    <div class="btn-row">
+      <button class="choice-btn btn-yes" onclick="answer(3,'remediated')">
+        <span class="btn-label">✓ Yes — harm prevented</span>
+        <span class="btn-sub">Effective remedial action has prevented the serious harm from occurring (e.g. device recovered, data confirmed deleted)</span>
+      </button>
+      <button class="choice-btn btn-no" onclick="answer(3,'yes')">
+        <span class="btn-label">✗ No — harm not prevented</span>
+        <span class="btn-sub">Remedial action could not or did not prevent the serious harm — data was accessed, copied, or remains unrecovered</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── FINAL OUTCOME: NOTIFIABLE ─── -->
+  <div class="node-card outcome-notifiable" id="nodeNotifiable">
+    <div class="node-num">Outcome — Eligible Data Breach Confirmed</div>
+    <div class="outcome-stamp stamp-notifiable">Notifiable</div>
+    <div class="outcome-title">This IS an Eligible Data Breach.<br>You Must Act Now.</div>
+    <div class="outcome-verdict">
+      All four elements of the NDB threshold test are met. This is an <strong>eligible data breach</strong> under the Privacy Act 1988 and you have mandatory reporting obligations.
+      <br><br>
+      The 30-day clock begins from when you <em>became aware</em> — or <em>ought reasonably to have become aware</em> — that an eligible data breach had occurred.
+    </div>
+    <div class="timer-badge">⏱ 30-day notification deadline — clock is running</div>
+    <div class="action-list" style="margin-top:1rem">
+      <div class="action-list-title">📋 Your mandatory obligations</div>
+      <div class="action-item"><span class="action-num">1</span><span><strong>Contain the breach immediately.</strong> Take all available steps to limit further access or disclosure — recover devices, revoke credentials, isolate systems.</span></div>
+      <div class="action-item"><span class="action-num">2</span><span><strong>Assess the breach.</strong> Within 30 days, complete a full assessment: what data was affected, who was involved, what harm could result, and what remedial action has been taken.</span></div>
+      <div class="action-item"><span class="action-num">3</span><span><strong>Notify affected individuals.</strong> Contact each person whose personal information was involved. Explain what happened, what data was involved, and what steps they can take to protect themselves.</span></div>
+      <div class="action-item"><span class="action-num">4</span><span><strong>Notify the OAIC.</strong> Lodge an NDB report at oaic.gov.au. Include your assessment, the data involved, the number of affected individuals, and your response steps.</span></div>
+      <div class="action-item"><span class="action-num">5</span><span><strong>Document everything.</strong> Keep detailed records of your discovery, assessment, notifications sent, and response actions. The OAIC may request this documentation.</span></div>
+    </div>
+    <div style="background:var(--red-pale);border:1px solid var(--red-mid);border-radius:3px;padding:0.7rem 0.85rem;margin-bottom:1rem;font-size:0.78rem;line-height:1.55;color:#5a1a15">
+      <strong>Failure to notify:</strong> Civil penalties under the Privacy Act can reach <strong>$3.32 million for organisations</strong> per serious interference with privacy. The OAIC can also make determinations, conduct audits, and require a remediation program.
+    </div>
+    <button class="btn-single" onclick="restart()">↺ &nbsp;Test a different scenario</button>
+  </div>
+
+  <!-- ─── OUTCOME: REMEDIATED (not notifiable) ─── -->
+  <div class="node-card outcome-remediated" id="nodeRemediated">
+    <div class="node-num">Outcome — Remedial Action Successful</div>
+    <div class="outcome-stamp stamp-remediated">Not Notifiable</div>
+    <div class="outcome-title">Effective Remedial Action Taken</div>
+    <div class="outcome-verdict">
+      Although all other elements of the NDB threshold were met, <strong>effective remedial action has prevented the serious harm</strong> from occurring. This incident is not a notifiable data breach — but your obligations are not over.
+      <br><br>
+      Example: An encrypted drive was stolen but the passphrase was never compromised and the drive was never decrypted. The data remained protected throughout.
+    </div>
+    <div class="action-list">
+      <div class="action-list-title">✅ Required actions even without notification</div>
+      <div class="action-item"><span class="action-num outcome-remediated">1</span><span><strong>Document your assessment thoroughly.</strong> Record every step of your investigation and the evidence that harm was prevented. If the OAIC investigates, this is your defence.</span></div>
+      <div class="action-item"><span class="action-num outcome-remediated">2</span><span><strong>Consider voluntary notification.</strong> Even if not required, informing affected individuals demonstrates transparency and protects your professional reputation.</span></div>
+      <div class="action-item"><span class="action-num outcome-remediated">3</span><span><strong>Review what went wrong.</strong> Remedial action succeeding this time doesn't mean your security practices are adequate — fix the vulnerability that created the risk.</span></div>
+      <div class="action-item"><span class="action-num outcome-remediated">4</span><span><strong>Update your incident response plan.</strong> Record what remedial actions worked so you can respond faster in future.</span></div>
+    </div>
+    <div style="background:var(--amber-pale);border:1px solid var(--amber-mid);border-radius:3px;padding:0.7rem 0.85rem;margin-bottom:1rem;font-size:0.78rem;line-height:1.55;color:#4a2e00">
+      <strong>Note:</strong> If you later discover that remedial action was less effective than believed — for example, evidence emerges the encrypted drive was cracked — you must immediately re-assess and notify if the threshold is now met.
+    </div>
+    <button class="btn-single" onclick="restart()">↺ &nbsp;Test a different scenario</button>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ─── SCENARIOS ───
+const SCENARIOS = [
+  {
+    name:"Mental Health Clinic Footage",
+    contexts:[
+      "Drone footage captured for a solar-panel feasibility study shows identifiable faces of patients entering and leaving a regional mental health clinic, along with their vehicle registrations and GPS-tagged entry points to the building.",
+      "The unencrypted SD card containing the raw footage was stolen from the pilot's vehicle overnight. Police were notified but the card has not been recovered. The data is now in unknown hands.",
+      "The footage links identifiable individuals to a mental health facility — effectively disclosing sensitive health information. Disclosure creates clear risk of stigma, discrimination, employment harm, or psychological distress to the people filmed.",
+      "The SD card remains missing. It was unencrypted. There is no remote-wipe capability and no backup mechanism to recover it. The information is already in circulation — no remedial action can prevent the harm."
+    ]
+  },
+  {
+    name:"Cloud Folder Shared",
+    contexts:[
+      "The Dropbox folder contains flight logs with GPS coordinates, pilot locations, and timestamped imagery showing identifiable individuals near a residential area.",
+      "A public link was shared to the entire flight data folder for 3 days. Search engines may have indexed it. An unknown number of people could have accessed the data.",
+      "The data includes GPS-linked imagery of private residences and identifiable people. The link was live for 3 days with no access logs. Exposure to malicious actors is plausible.",
+      "The folder has been taken offline, but Dropbox access logs confirm the link was opened from multiple IP addresses and at least one archive crawler indexed the directory. Downloaded copies cannot be recalled. No remedial action can undo 3 days of public exposure."
+    ]
+  },
+  {
+    name:"Footage Emailed to Wrong Client",
+    contexts:[
+      "The raw video contains clearly identifiable individuals — including their faces and home address area — who are not party to the project and never consented to being filmed.",
+      "The footage was emailed to the wrong client organisation. You discovered the error when the correct client asked where their deliverables were. The email was delivered and opened.",
+      "The recipients are a separate commercial organisation with no relationship to the people in the footage. The individuals' identifiable images and locations have been disclosed to unknown parties.",
+      "The wrong recipient opened the email and has declined to provide written confirmation of deletion. You have no control over whether the footage was forwarded, saved to their servers, or shared with third parties. Remedial action has failed."
+    ]
+  },
+  {
+    name:"Encrypted Drive Stolen",
+    contexts:[
+      "The laptop hard drive is fully encrypted using AES-256 with a 20-character passphrase. The drive contains survey imagery and client GPS data for a completed project.",
+      "The laptop was stolen from a locked vehicle. The theft was reported to police. The hard drive is encrypted with a strong passphrase that was not stored on the device or in any accessible location.",
+      "While personal information is on the drive, the AES-256 encryption with a strong, unique passphrase makes it computationally infeasible to access without the key — which was not compromised.",
+      "The drive is encrypted and the passphrase was not on the device or written down nearby. The OAIC guidance recognises that effective encryption of a lost device may prevent the serious harm threshold from being met."
+    ]
+  }
+];
+
+let currentScenario = 0;
+let history = []; // {node, answer}
+let currentNode = 'node0';
+
+// Node flow map
+const FLOW = {
+  'node0': { yes: 'node1', no: 'node0no' },
+  'node1': { yes: 'node2', no: 'node1no' },
+  'node2': { yes: 'node3', no: 'node2no' },
+  'node3': { yes: 'nodeNotifiable', remediated: 'nodeRemediated' }
+};
+
+const NODE_TO_STEP = {
+  'node0':0,'node1':1,'node2':2,'node3':3,
+  'node0no':4,'node1no':4,'node2no':4,'node3no':4,
+  'nodeNotifiable':4,'nodeRemediated':4
+};
+
+function setScenario(idx) {
+  currentScenario = idx;
+  document.querySelectorAll('.ss-btn').forEach((b,i)=>{
+    b.classList.toggle('active-s', i===idx);
+  });
+  // Update scenario context text
+  for(let i=0;i<4;i++){
+    const el = document.getElementById('scenario-context-'+i);
+    if(el) el.textContent = SCENARIOS[idx].contexts[i];
+  }
+  restart();
+}
+
+function answer(step, choice) {
+  const nodeId = currentNode;
+  history.push({node:nodeId, answer:choice});
+
+  // Mark trail dot
+  const stepDot = document.getElementById('td'+step);
+  if(stepDot){
+    stepDot.classList.remove('active');
+    stepDot.classList.add(choice==='yes'||choice==='remediated'?'done-yes':'done-no');
+    if(choice==='yes') stepDot.textContent='✓';
+    else if(choice==='no') stepDot.textContent='✗';
+    else stepDot.textContent='✓';
+  }
+  const tc = document.getElementById('tc'+step);
+  if(tc) tc.classList.add('done');
+
+  // Next node
+  const nextId = FLOW[nodeId]?.[choice];
+  if(!nextId) return;
+
+  // Hide current
+  document.getElementById(nodeId).classList.remove('active');
+
+  // Show breadcrumb on next node
+  const nextEl = document.getElementById(nextId);
+
+  // Insert breadcrumb
+  buildBreadcrumb(nextId);
+
+  // Show next
+  nextEl.classList.add('active');
+  currentNode = nextId;
+
+  // Activate next step dot if it's a question node
+  const nextStep = NODE_TO_STEP[nextId];
+  if(nextStep < 4){
+    const nd = document.getElementById('td'+nextStep);
+    if(nd && !nd.classList.contains('done-yes') && !nd.classList.contains('done-no')){
+      nd.classList.add('active');
+    }
+  } else {
+    // outcome — mark last trail dot
+    const td4 = document.getElementById('td4');
+    if(td4){
+      td4.classList.add('active');
+      // Check if notifiable
+      if(nextId==='nodeNotifiable') { td4.classList.add('done-no'); td4.textContent='!'; }
+      else if(nextId==='nodeRemediated') { td4.classList.add('done-yes'); td4.textContent='✓'; }
+      else { td4.classList.add('done-yes'); td4.textContent='✓'; }
+    }
+  }
+
+  // Scroll to card
+  nextEl.scrollIntoView({behavior:'smooth',block:'start'});
+
+  // SCORM completion on any outcome
+  if(['node0no','node1no','node2no','nodeNotifiable','nodeRemediated'].includes(nextId)){
+    
+  }
+}
+
+function buildBreadcrumb(targetNode){
+  // Remove any existing breadcrumb from target
+  const target = document.getElementById(targetNode);
+  const existing = target.querySelector('.breadcrumb');
+  if(existing) existing.remove();
+  if(history.length===0) return;
+
+  const labels = ['Personal info?','Unauth. access?','Serious harm?','Remediated?'];
+  const answerLabels = {yes:'YES',no:'NO',remediated:'YES'};
+  const answerClass = {yes:'yes',no:'no',remediated:'yes'};
+
+  const bc = document.createElement('div');
+  bc.className='breadcrumb';
+  history.forEach((h,i)=>{
+    const qIdx = parseInt(h.node.replace('node','')) || 0;
+    bc.innerHTML += `<span class="bc-item"><span class="bc-q">${labels[qIdx]||'Q'+(qIdx+1)}</span><span class="bc-ans ${answerClass[h.answer]}">${answerLabels[h.answer]}</span></span>`;
+    if(i<history.length-1) bc.innerHTML += `<span class="bc-arrow">→</span>`;
+  });
+  target.insertBefore(bc, target.querySelector('.node-section')||target.firstChild);
+}
+
+function restart() {
+  history = [];
+  currentNode = 'node0';
+
+  // Hide all nodes
+  document.querySelectorAll('.node-card').forEach(el => el.classList.remove('active'));
+
+  // Show node0
+  document.getElementById('node0').classList.add('active');
+
+  // Reset trail
+  for(let i=0;i<5;i++){
+    const td = document.getElementById('td'+i);
+    if(td){
+      td.classList.remove('done-yes','done-no','active');
+      td.textContent = i+1;
+    }
+    const tc = document.getElementById('tc'+i);
+    if(tc) tc.classList.remove('done');
+  }
+  document.getElementById('td0').classList.add('active');
+
+  // Scroll to top
+  document.querySelector('.page-header').scrollIntoView({behavior:'smooth',block:'start'});
+
+  // Update scenario text
+  for(let i=0;i<4;i++){
+    const el = document.getElementById('scenario-context-'+i);
+    if(el) el.textContent = SCENARIOS[currentScenario].contexts[i];
+  }
+}
+
+// Init
+setScenario(0);
+</script>
+</body>
+</html>

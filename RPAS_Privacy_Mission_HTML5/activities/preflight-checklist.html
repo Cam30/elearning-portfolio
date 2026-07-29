@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Pre-Flight Privacy Checklist – Drone Pilots</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{margin:0;padding:0}
+:root{
+  --cream:#FCFAEF;--mint:#E9F5EB;--blue:#0195BB;--blue-dark:#0178a0;--blue-pale:#d0eef6;--blue-mid:rgba(1,149,187,0.2);
+  --text:#1a3a4a;--muted:#5a8a9f;--border:#c5dfe8;
+  --green:#1a7a4a;--green-pale:#E9F5EB;--green-mid:rgba(26,122,74,0.25);
+  --amber:#b86c00;--amber-pale:#FFF8EC;--amber-mid:rgba(184,108,0,0.25);
+  --r:12px;--safe-bottom:env(safe-area-inset-bottom,0px);
+}
+html{font-size:16px;-webkit-tap-highlight-color:transparent}
+body{font-family:'Sora',sans-serif;background:var(--cream);color:var(--text);min-height:100dvh;overscroll-behavior:none}
+
+/* ── HEADER ── */
+.page-header{
+  background:#fff;
+  border-bottom:2px solid var(--border);
+  padding:1.5rem 1.2rem 1.2rem;
+  position:relative;overflow:hidden;
+}
+.page-header::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--blue)}
+.hdr-eyebrow{
+  font-family:'DM Mono',monospace;
+  font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--blue);margin-bottom:0.55rem;
+  display:flex;align-items:center;gap:0.5rem;
+}
+.hdr-eyebrow::before{content:'';width:20px;height:2px;background:var(--blue)}
+.hdr-h1{
+  font-family:'Sora',sans-serif;
+  font-size:clamp(1.4rem,4vw,1.9rem);
+  font-weight:800;line-height:1.1;
+  color:var(--text);margin-bottom:0.5rem;
+  letter-spacing:-0.01em;
+}
+.hdr-h1 em{color:var(--blue);font-style:normal}
+.hdr-sub{
+  font-size:0.82rem;color:#555;line-height:1.65;
+  max-width:58ch;
+  border-left:3px solid var(--blue);
+  padding-left:0.85rem;
+  margin-bottom:1rem;
+}
+
+/* ── PROGRESS ── */
+.progress-wrap{
+  background:#fff;border:1px solid var(--border);
+  border-radius:10px;padding:0.65rem 1rem;
+  display:flex;align-items:center;gap:0.85rem;
+}
+.prog-label{font-size:0.62rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.prog-bar-track{flex:1;height:8px;background:var(--border);border-radius:999px;overflow:hidden}
+.prog-bar-fill{height:100%;background:var(--blue);border-radius:999px;width:0%;transition:width 0.5s cubic-bezier(.4,0,.2,1)}
+.prog-bar-fill.complete{background:var(--green)}
+.prog-count{font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:700;color:var(--blue);white-space:nowrap;min-width:32px;text-align:right}
+.prog-count.complete{color:var(--green)}
+
+/* ── MAIN ── */
+.main{padding:1.2rem 1rem calc(2rem + var(--safe-bottom));max-width:720px;margin:0 auto}
+
+/* ── SECTION ── */
+.section{margin-bottom:1.2rem}
+.section-hdr{
+  display:flex;align-items:center;gap:0.75rem;
+  padding:0.8rem 1rem;
+  background:#fff;
+  border:1.5px solid var(--border);
+  border-radius:var(--r) var(--r) 0 0;
+  border-bottom:none;
+  cursor:pointer;
+  user-select:none;-webkit-user-select:none;
+  touch-action:manipulation;
+  transition:background 0.15s;
+}
+.section-hdr:active{background:var(--cream)}
+.section-hdr.all-done{background:var(--green-pale);border-color:var(--green-mid)}
+.section-icon{
+  width:38px;height:38px;border-radius:10px;
+  background:var(--blue-pale);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;flex-shrink:0;
+  transition:background 0.3s;
+}
+.section-hdr.all-done .section-icon{background:var(--green-pale)}
+.section-info{flex:1;min-width:0}
+.section-title{font-size:0.88rem;font-weight:800;color:var(--text);line-height:1.3;margin-bottom:0.1rem}
+.section-meta{font-size:0.67rem;color:var(--muted);line-height:1.35}
+.section-badge{
+  font-family:'DM Mono',monospace;
+  font-size:0.65rem;font-weight:700;
+  background:var(--blue-pale);color:var(--blue);
+  border:1px solid var(--blue-mid);
+  padding:0.2rem 0.55rem;border-radius:999px;
+  white-space:nowrap;flex-shrink:0;transition:all 0.3s;
+}
+.section-hdr.all-done .section-badge{background:var(--green-pale);color:var(--green);border-color:var(--green-mid)}
+.section-chev{font-size:0.7rem;color:var(--muted);transition:transform 0.25s;margin-left:0.3rem;flex-shrink:0}
+.section.open .section-chev{transform:rotate(180deg)}
+
+/* ── ITEMS LIST ── */
+.items-list{
+  background:#fff;
+  border:1.5px solid var(--border);border-top:none;
+  border-radius:0 0 var(--r) var(--r);
+  overflow:hidden;
+  max-height:0;
+  transition:max-height 0.35s cubic-bezier(.4,0,.2,1);
+}
+.section.open .items-list{max-height:700px}
+
+/* ── CHECKLIST ITEM ── */
+.check-item{
+  display:flex;align-items:flex-start;gap:0.85rem;
+  padding:0.85rem 1rem;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;
+  transition:background 0.15s;
+  user-select:none;-webkit-user-select:none;
+  touch-action:manipulation;
+}
+.check-item:last-child{border-bottom:none}
+.check-item:active{background:var(--cream)}
+.check-item.checked{background:var(--mint)}
+.chk-box{
+  width:24px;height:24px;border-radius:6px;
+  border:2px solid var(--border);background:#fff;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;
+  transition:all 0.2s cubic-bezier(.34,1.4,.64,1);
+}
+.check-item.checked .chk-box{background:var(--blue);border-color:var(--blue);transform:scale(1.08)}
+.chk-tick{
+  opacity:0;transform:scale(0) rotate(-10deg);
+  transition:all 0.2s cubic-bezier(.34,1.6,.64,1);
+  color:#fff;font-size:0.75rem;font-weight:900;
+}
+.check-item.checked .chk-tick{opacity:1;transform:scale(1) rotate(0deg)}
+.chk-body{flex:1;min-width:0}
+.chk-title{
+  font-size:0.84rem;font-weight:700;color:var(--text);
+  line-height:1.3;transition:color 0.2s;
+}
+.check-item.checked .chk-title{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(90,138,159,0.5)}
+.chk-desc{font-size:0.72rem;color:var(--muted);line-height:1.5;margin-top:0.2rem;transition:opacity 0.2s}
+.check-item.checked .chk-desc{opacity:0.6}
+
+/* ── COMPLETION BANNER ── */
+.complete-banner{
+  display:none;background:var(--green-pale);
+  border:1.5px solid var(--green-mid);
+  border-radius:var(--r);padding:1.2rem;
+  text-align:center;margin-bottom:1.2rem;
+  animation:popIn 0.4s cubic-bezier(.34,1.3,.64,1);
+}
+.complete-banner.show{display:block}
+@keyframes popIn{from{opacity:0;transform:scale(0.94)}to{opacity:1;transform:scale(1)}}
+.cb-emoji{font-size:2rem;margin-bottom:0.4rem}
+.cb-title{font-size:1rem;font-weight:800;color:var(--green);margin-bottom:0.3rem}
+.cb-sub{font-size:0.78rem;color:#3a6a4a;line-height:1.55}
+
+/* ── RESET ── */
+.reset-btn{
+  display:flex;align-items:center;justify-content:center;gap:0.4rem;
+  width:100%;padding:0.75rem;
+  background:transparent;border:1.5px solid var(--border);
+  border-radius:var(--r);font-family:'Sora',sans-serif;
+  font-size:0.8rem;font-weight:600;color:var(--muted);
+  cursor:pointer;transition:all 0.15s;touch-action:manipulation;margin-top:0.5rem;
+}
+.reset-btn:hover{border-color:var(--blue);color:var(--blue)}
+
+@media(max-width:480px){
+  .progress-wrap{flex-wrap:wrap;gap:0.5rem}
+  .prog-label{width:100%}
+  .section-title{font-size:0.82rem}
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="hdr-eyebrow">RPAS · Pre-Flight Protocol</div>
+  <div class="hdr-h1"><em>Pre-Job Privacy</em> Checklist<br>for Drone Pilots</div>
+  <p class="hdr-sub">As a drone pilot, respecting privacy is essential. Work through each section below and tick off every item before your flight.</p>
+  <div class="progress-wrap">
+    <span class="prog-label">Your progress</span>
+    <div class="prog-bar-track"><div class="prog-bar-fill" id="progFill"></div></div>
+    <span class="prog-count" id="progCount">0 / 9</span>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="complete-banner" id="completeBanner">
+    <div class="cb-emoji">✅</div>
+    <div class="cb-title">Pre-flight checklist complete!</div>
+    <div class="cb-sub">You've reviewed all privacy requirements. You're cleared to fly responsibly and in compliance with the Privacy Act 1988.</div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section open" id="sec0">
+    <div class="section-hdr" id="hdr0" onclick="toggleSection(0)">
+      <div class="section-icon">📋</div>
+      <div class="section-info">
+        <div class="section-title">Is Consent Needed or Signage Required?</div>
+        <div class="section-meta">Permissions, notices, and local regulations</div>
+      </div>
+      <span class="section-badge" id="badge0">0 / 3</span>
+      <span class="section-chev">▼</span>
+    </div>
+    <div class="items-list" id="list0">
+      <div class="check-item" id="item0-0" onclick="toggle(0,0)">
+        <div class="chk-box"><span class="chk-tick">✓</span></div>
+        <div class="chk-body">
+          <div class="chk-title">Public vs. Private Property</div>
+          <div class="chk-desc">Always get permission from property owners before flying over private land. Do not assume public airspace equals open access to private land below.</div>
+        </div>
+      </div>
+      <div class="check-item" id="item0-1" onclick="toggle(0,1)">
+        <div class="chk-box"><span class="chk-tick">✓</span></div>
+        <div class="chk-body">
+          <div class="chk-title">Signage in Place</div>
+          <div class="chk-desc">Consider using visible signage to inform people that a drone is operating in the area, especially in public spaces or near access points.</div>
+        </div>
+      </div>
+      <div class="check-item" id="item0-2" onclick="toggle(0,2)">
+        <div class="chk-box"><span class="chk-tick">✓</span></div>
+        <div class="chk-body">
+          <div class="chk-title">Local Regulations Checked</div>
+          <div class="chk-desc">Verify any state or local laws regarding consent and signage requirements for your specific operation area before departing.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section" id="sec1">
+    <div class="section-hdr" id="hdr1" onclick="toggleSection(1)">
+      <div class="section-icon">🗺️</div>
+      <div class="section-info">
+        <div class="section-title">Are You Avoiding Unnecessary Overflight of Private Areas?</div>
+        <div class="section-meta">Flight planning, buffer zones, and altitude</div>
+      </div>
+      <span class="section-badge" id="badge1">0 / 3</span>
+      <span class="section-chev">▼</span>
+    </div>
+    <div class="items-list" id="list1">
+      <div class="check-item" id="item1-0" onclick="toggle(1,0)">
+        <div class="chk-box"><span class="chk-tick">✓</span></div>
+        <div class="chk-body">
+          <div class="chk-title">Flight Path Planned to Avoid Residential Areas</div>
+          <div class="chk-desc">Use mapping tools to route your flight away from residential neighbourhoods, private properties, and any areas not relevant to your brief.</div>
+        </div>
+      </div>
+      <div class="check-item" id="item1-1" onclick="toggle(1,1)">
+        <div class="chk-box"><span class="chk-tick">✓</span></div>
+        <div class="chk-body">
+          <div class="chk-title">Buffer Zones Established</div>
+          <div class="chk-desc">Set appropriate buffer distances around sensitive locations — homes, schools, hospitals, and places of worship — and note them in your flight plan.</div>
+        </div>
+      </div>
+      <div class="check-item" id="item1-2" onclick="toggle(1,2)">
+        <div class="chk-box"><span class="chk-tick">✓</span></div>
+        <div class="chk-body">
+          <div class="chk-title">Altitude Set to Minimise Privacy Capture</div>
+          <div class="chk-desc">Confirm your planned operating altitude minimises the capture of private property detail. Higher is not always better — balance safety with privacy obligations.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section" id="sec2">
+    <div class="section-hdr" id="hdr2" onclick="toggleSection(2)">
+      <div class="section-icon">📡</div>
+      <div class="section-info">
+        <div class="section-title">Is Your Payload Likely to Record Sensitive Information?</div>
+        <div class="section-meta">Sensors, data handling, and purpose of flight</div>
+      </div>
+      <span class="section-badge" id="badge2">0 / 3</span>
+      <span class="section-chev">▼</span>
+    </div>
+    <div class="items-list" id="list2">
+      <div class="check-item" id="item2-0" onclick="toggle(2,0)">
+        <div class="chk-box"><span class="chk-tick">✓</span></div>
+        <div class="chk-body">
+          <div class="chk-title">Sensor Capabilities Reviewed</div>
+          <div class="chk-desc">Understand the full capabilities of your drone's cameras and sensors — including zoom, thermal, and audio — which may capture sensitive personal data.</div>
+        </div>
+      </div>
+      <div class="check-item" id="item2-1" onclick="toggle(2,1)">
+        <div class="chk-box"><span class="chk-tick">✓</span></div>
+        <div class="chk-body">
+          <div class="chk-title">Data Management Plan Confirmed</div>
+          <div class="chk-desc">Have a clear plan for storing, protecting, and deleting collected data in compliance with the Privacy Act 1988 and any client data agreements.</div>
+        </div>
+      </div>
+      <div class="check-item" id="item2-2" onclick="toggle(2,2)">
+        <div class="chk-box"><span class="chk-tick">✓</span></div>
+        <div class="chk-body">
+          <div class="chk-title">Purpose of Flight Does Not Infringe Privacy</div>
+          <div class="chk-desc">Confirm the operational purpose is lawful and does not require collecting personal information beyond what is necessary for the project scope.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetAll()">↺ &nbsp;Reset checklist</button>
+
+</div>
+
+<script>
+const SECTIONS = [{count:3},{count:3},{count:3}];
+const TOTAL = 9;
+const state = {
+  '0-0':false,'0-1':false,'0-2':false,
+  '1-0':false,'1-1':false,'1-2':false,
+  '2-0':false,'2-1':false,'2-2':false
+};
+
+function toggle(sec, item) {
+  const key = sec+'-'+item;
+  state[key] = !state[key];
+  document.getElementById('item'+sec+'-'+item).classList.toggle('checked', state[key]);
+  updateProgress();
+  updateSectionBadge(sec);
+  checkSectionComplete(sec);
+  const done = Object.keys(state).filter(k=>k.startsWith(sec+'-')&&state[k]).length;
+  if (done === SECTIONS[sec].count && state[key] && sec < SECTIONS.length-1) {
+    const next = document.getElementById('sec'+(sec+1));
+    if (!next.classList.contains('open')) setTimeout(()=>toggleSection(sec+1), 300);
+  }
+}
+
+function updateSectionBadge(sec) {
+  const done = Object.keys(state).filter(k=>k.startsWith(sec+'-')&&state[k]).length;
+  document.getElementById('badge'+sec).textContent = done+' / '+SECTIONS[sec].count;
+}
+
+function checkSectionComplete(sec) {
+  const done = Object.keys(state).filter(k=>k.startsWith(sec+'-')&&state[k]).length;
+  const hdr = document.getElementById('hdr'+sec);
+  hdr.classList.toggle('all-done', done === SECTIONS[sec].count);
+}
+
+function updateProgress() {
+  const done = Object.values(state).filter(Boolean).length;
+  const pct = (done/TOTAL)*100;
+  const fill = document.getElementById('progFill');
+  const count = document.getElementById('progCount');
+  fill.style.width = pct+'%';
+  count.textContent = done+' / '+TOTAL;
+  const complete = done === TOTAL;
+  fill.classList.toggle('complete', complete);
+  count.classList.toggle('complete', complete);
+  const banner = document.getElementById('completeBanner');
+  banner.classList.toggle('show', complete);
+  if (complete) banner.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function toggleSection(sec) {
+  document.getElementById('sec'+sec).classList.toggle('open');
+}
+
+function resetAll() {
+  Object.keys(state).forEach(k=>state[k]=false);
+  document.querySelectorAll('.check-item').forEach(el=>el.classList.remove('checked'));
+  document.querySelectorAll('.section-hdr').forEach(el=>el.classList.remove('all-done'));
+  for(let s=0;s<SECTIONS.length;s++) document.getElementById('badge'+s).textContent='0 / '+SECTIONS[s].count;
+  const fill=document.getElementById('progFill');
+  fill.style.width='0%';fill.classList.remove('complete');
+  const count=document.getElementById('progCount');
+  count.textContent='0 / '+TOTAL;count.classList.remove('complete');
+  document.getElementById('completeBanner').classList.remove('show');
+  document.querySelectorAll('.section').forEach((el,i)=>el.classList.toggle('open',i===0));
+}
+</script>
+</body>
+</html>
