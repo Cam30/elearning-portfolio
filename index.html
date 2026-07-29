@@ -6,6 +6,37 @@
   <meta name="description" content="Carmelo Moschella's instructional design and eLearning portfolio. Scenario-based learning, compliance training, LMS design and technical documentation.">
   <title>Carmelo Moschella | Instructional Design & eLearning Portfolio</title>
   <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .title-card {
+      min-height: 240px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      color: #fff;
+      background:
+        linear-gradient(135deg, rgba(22,58,95,.96), rgba(0,143,120,.88)),
+        radial-gradient(circle at 85% 15%, rgba(255,255,255,.2), transparent 34%);
+    }
+    .title-card span {
+      display: block;
+      margin-bottom: .65rem;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+    .title-card strong {
+      max-width: 22ch;
+      font-size: clamp(1.65rem,3vw,2.35rem);
+      line-height: 1.08;
+    }
+    .title-card.telecommunications {
+      background:
+        linear-gradient(135deg, rgba(19,48,76,.97), rgba(38,104,148,.9)),
+        radial-gradient(circle at 85% 15%, rgba(255,255,255,.2), transparent 34%);
+    }
+  </style>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -70,6 +101,39 @@
       </article>
 
       <article class="project-card">
+        <div class="title-card" role="img" aria-label="RPAS and Privacy Course project title card">
+          <span>Interactive compliance learning</span>
+          <strong>RPAS and Privacy Course</strong>
+        </div>
+        <div class="content">
+          <div class="tags"><span class="tag">HTML5</span><span class="tag">Privacy</span><span class="tag">Scenario design</span></div>
+          <h3>Uncrewed Approvals. RPAS and Privacy Course</h3>
+          <p>A practical learning uplift that turns dense privacy law into realistic drone missions, visible consequences and profession-specific workplace decisions.</p>
+          <div class="project-actions">
+            <a class="btn btn-primary" href="RPAS_Privacy_Mission_HTML5/index.html" target="_blank" rel="noopener">Launch live demo</a>
+            <a class="text-link" href="#rpas-privacy-case">Read case study →</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="project-card">
+        <div class="title-card telecommunications" role="img" aria-label="Solomon Islands wireless training project title card">
+          <span>Technical training and documentation</span>
+          <strong>Solomon Islands Wireless Training</strong>
+        </div>
+        <div class="content">
+          <div class="tags"><span class="tag">HTML5</span><span class="tag">Telecommunications</span><span class="tag">Technical documentation</span></div>
+          <h3>CBO Telecommunications. Solomon Islands Government ICT Program</h3>
+          <p>A structured knowledge-transfer experience that makes complex wireless installation procedures and appendices easier for technical teams to navigate and apply.</p>
+          <div class="project-actions">
+            <a class="btn btn-primary" href="solomons-wireless-training-html5-all-appendices/index.html" target="_blank" rel="noopener">Launch live demo</a>
+            <a class="btn btn-secondary" href="downloads/Solomons-ICT-Installation-Manual-Condensed.pdf" download>Download PDF manual</a>
+            <a class="text-link" href="#cbo-telecommunications-case">Read case study →</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="project-card">
         <img src="assets/images/medicinal-cannabis.svg" alt="Medicinal Cannabis Readiness Course project cover">
         <div class="content">
           <div class="tags">
@@ -125,6 +189,42 @@
         <p>I designed a civil construction-specific, formative HTML5 learning application structured around six progressive shifts on a fictional residential subdivision. It combines branching scenarios, hazard identification, sequencing, sorting, equipment familiarisation and decision-based feedback. Experience points, badges, ranks and visible progress encourage practice without presenting the application as evidence of competency.</p>
         <h4>Result</h4>
         <div class="metric">A responsive learning prototype with 55 screens and 48 graded activities that demonstrates how technical unit content can be transformed into practical operator learning. The proposed wider redevelopment would also include assessment remediation, formal unit mapping and audit-aligned documentation to support MyneSight's RIIMPO321F scope application.</div>
+      </div>
+    </article>
+
+    <article class="case-study" id="rpas-privacy-case">
+      <div class="title-card" role="img" aria-label="RPAS and Privacy Course case study title card">
+        <span>Uncrewed Approvals</span>
+        <strong>RPAS and Privacy Course</strong>
+      </div>
+      <div>
+        <h3>RPAS and Privacy Course. From Legal Content to Applied Learning</h3>
+        <h4>Business problem</h4>
+        <p>The existing course contained accurate legal information but read like a legal brief. Dense, text-heavy content offered few opportunities to practise decisions or apply privacy principles. Its dominant property-filming scenario also limited relevance for land surveyors, engineers, farmers and commercial photographers.</p>
+        <h4>My solution</h4>
+        <p>I audited the course and created an interactivity blueprint across all eight modules. I introduced profession-specific pathways, privacy-risk hotspots, mission planning, breach decisions, interactive workflows, scenario-based checks, plain-English explanations and downloadable workplace resources. Storyline interactions were designed for integration into LearnWorlds.</p>
+        <h4>Result</h4>
+        <div class="metric">The uplift moved learners from passive reading to active decision-making. Complex legal content became accessible, relevant and practical across four target audiences, with full client satisfaction.</div>
+      </div>
+    </article>
+
+    <article class="case-study" id="cbo-telecommunications-case">
+      <div class="title-card telecommunications" role="img" aria-label="Solomon Islands telecommunications case study title card">
+        <span>CBO Telecommunications</span>
+        <strong>Solomon Islands Government ICT Program</strong>
+      </div>
+      <div>
+        <h3>Solomon Islands Government ICT Installation Manual</h3>
+        <h4>Business problem</h4>
+        <p>A national government infrastructure program needed a comprehensive ICT installation manual built from complex engineering knowledge across technical teams, government stakeholders and significant geographic distance.</p>
+        <h4>My solution</h4>
+        <p>I used structured authoring, rigorous version control, staged stakeholder review gates and disciplined terminology management to consolidate hundreds of pages of engineering content into one accurate, usable reference and knowledge-transfer package.</p>
+        <h4>Result</h4>
+        <div class="metric">Government stakeholders accepted the completed knowledge-transfer package. The result demonstrated strong documentation discipline, review governance and stakeholder management across a technically complex program.</div>
+        <div class="project-actions">
+          <a class="btn btn-primary" href="solomons-wireless-training-html5-all-appendices/index.html" target="_blank" rel="noopener">Launch live demo</a>
+          <a class="btn btn-secondary" href="downloads/Solomons-ICT-Installation-Manual-Condensed.pdf" download>Download PDF manual</a>
+        </div>
       </div>
     </article>
 
