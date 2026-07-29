@@ -9,32 +9,59 @@
   <style>
     .title-card {
       min-height: 240px;
-      padding: 2rem;
+      padding: 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 105% -5%, rgba(43,108,145,.38) 0 28%, transparent 29%),
+        radial-gradient(circle at 105% 105%, rgba(43,108,145,.22) 0 31%, transparent 32%),
+        #153f62;
+    }
+    .title-card-panel {
+      width: 100%;
+      min-height: 145px;
+      padding: 1.5rem;
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
-      color: #fff;
-      background:
-        linear-gradient(135deg, rgba(22,58,95,.96), rgba(0,143,120,.88)),
-        radial-gradient(circle at 85% 15%, rgba(255,255,255,.2), transparent 34%);
+      justify-content: center;
+      color: #06345a;
+      background: #f7f9fa;
+      border-left: 5px solid #20b9a2;
+      border-radius: 8px;
+      box-shadow: 0 10px 22px rgba(3,30,52,.22);
     }
-    .title-card span {
+    .title-card-panel span {
       display: block;
       margin-bottom: .65rem;
-      font-size: .82rem;
+      font-size: .74rem;
       font-weight: 700;
       letter-spacing: .09em;
       text-transform: uppercase;
     }
-    .title-card strong {
+    .title-card-panel strong {
       max-width: 22ch;
-      font-size: clamp(1.65rem,3vw,2.35rem);
-      line-height: 1.08;
+      font-size: clamp(1.35rem,2.4vw,1.8rem);
+      line-height: 1.12;
     }
     .title-card.telecommunications {
       background:
-        linear-gradient(135deg, rgba(19,48,76,.97), rgba(38,104,148,.9)),
-        radial-gradient(circle at 85% 15%, rgba(255,255,255,.2), transparent 34%);
+        radial-gradient(circle at 105% -5%, rgba(52,119,157,.42) 0 28%, transparent 29%),
+        radial-gradient(circle at 105% 105%, rgba(52,119,157,.24) 0 31%, transparent 32%),
+        #153f62;
+    }
+    .title-card.telecommunications .title-card-panel {
+      border-left-color: #d4a64c;
+    }
+    @media (max-width: 600px) {
+      .title-card {
+        min-height: 210px;
+        padding: 1.25rem;
+      }
+      .title-card-panel {
+        min-height: 135px;
+        padding: 1.25rem;
+      }
     }
   </style>
 </head>
@@ -102,8 +129,10 @@
 
       <article class="project-card">
         <div class="title-card" role="img" aria-label="RPAS and Privacy Course project title card">
-          <span>Interactive compliance learning</span>
-          <strong>RPAS and Privacy Course</strong>
+          <div class="title-card-panel">
+            <span>Interactive compliance learning</span>
+            <strong>RPAS and Privacy Course</strong>
+          </div>
         </div>
         <div class="content">
           <div class="tags"><span class="tag">HTML5</span><span class="tag">Privacy</span><span class="tag">Scenario design</span></div>
@@ -118,8 +147,10 @@
 
       <article class="project-card">
         <div class="title-card telecommunications" role="img" aria-label="Solomon Islands wireless training project title card">
-          <span>Technical training and documentation</span>
-          <strong>Solomon Islands Wireless Training</strong>
+          <div class="title-card-panel">
+            <span>Technical training and documentation</span>
+            <strong>Solomon Islands Wireless Training</strong>
+          </div>
         </div>
         <div class="content">
           <div class="tags"><span class="tag">HTML5</span><span class="tag">Telecommunications</span><span class="tag">Technical documentation</span></div>
@@ -193,8 +224,10 @@
 
     <article class="case-study" id="rpas-privacy-case">
       <div class="title-card" role="img" aria-label="RPAS and Privacy Course case study title card">
-        <span>Uncrewed Approvals</span>
-        <strong>RPAS and Privacy Course</strong>
+        <div class="title-card-panel">
+          <span>Uncrewed Approvals</span>
+          <strong>RPAS and Privacy Course</strong>
+        </div>
       </div>
       <div>
         <h3>RPAS and Privacy Course. From Legal Content to Applied Learning</h3>
@@ -209,8 +242,10 @@
 
     <article class="case-study" id="cbo-telecommunications-case">
       <div class="title-card telecommunications" role="img" aria-label="Solomon Islands telecommunications case study title card">
-        <span>CBO Telecommunications</span>
-        <strong>Solomon Islands Government ICT Program</strong>
+        <div class="title-card-panel">
+          <span>CBO Telecommunications</span>
+          <strong>Solomon Islands Government ICT Program</strong>
+        </div>
       </div>
       <div>
         <h3>Solomon Islands Government ICT Installation Manual</h3>
