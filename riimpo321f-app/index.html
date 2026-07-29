@@ -1,0 +1,2899 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Site 7 Operator Program — RIIMPO321F Conduct Civil Construction Wheeled Front End Loader Operations</title>
+<meta name="description" content="Interactive gamified learning module for RIIMPO321F Conduct civil construction wheeled front end loader operations.">
+<style>
+/* ============================================================
+   SITE 7 OPERATOR PROGRAM  —  RIIMPO321F
+   Single-file HTML5 learning app. No external dependencies.
+   ============================================================ */
+
+:root{
+  --bg:#12151a;
+  --bg2:#181c23;
+  --panel:#1e232c;
+  --panel2:#252b36;
+  --line:#333b48;
+  --line2:#414b5c;
+  --ink:#e8ecf2;
+  --ink2:#a5b0c0;
+  --ink3:#6f7c8f;
+  --hiviz:#ffb400;
+  --hiviz2:#ffcc4d;
+  --hiviz-dim:#4a3a10;
+  --green:#3ecf8e;
+  --green-bg:#12352a;
+  --red:#ff5f5f;
+  --red-bg:#3a1a1c;
+  --blue:#5ba8f5;
+  --blue-bg:#16283d;
+  --radius:12px;
+  --radius-s:8px;
+  --shadow:0 8px 28px rgba(0,0,0,.45);
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.55;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(1100px 520px at 50% -10%, rgba(255,180,0,.09), transparent 62%),
+    repeating-linear-gradient(135deg, rgba(255,255,255,.014) 0 12px, transparent 12px 24px);
+}
+#app{position:relative;z-index:1}
+
+button{font-family:inherit;font-size:inherit;cursor:pointer}
+h1,h2,h3,h4{line-height:1.2;margin:0}
+p{margin:0 0 .85em}
+ul{margin:0 0 .85em;padding-left:1.25em}
+li{margin-bottom:.3em}
+a{color:var(--hiviz2)}
+
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px}
+.hidden{display:none !important}
+
+/* ---------- Hazard stripe ---------- */
+.stripe{height:6px;background:repeating-linear-gradient(45deg,var(--hiviz) 0 14px,#12151a 14px 28px)}
+
+/* ---------- Top bar / HUD ---------- */
+#hud{
+  position:sticky;top:0;z-index:50;
+  background:rgba(18,21,26,.93);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.hud-in{display:flex;align-items:center;gap:14px;padding:10px 18px;max-width:1000px;margin:0 auto;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0}
+.brand-mark{
+  width:34px;height:34px;border-radius:8px;flex:none;
+  background:linear-gradient(150deg,var(--hiviz),#e08c00);
+  display:grid;place-items:center;color:#12151a;font-weight:900;font-size:13px;letter-spacing:-.5px;
+}
+.brand-txt{min-width:0}
+.brand-txt b{display:block;font-size:14px;letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-txt span{display:block;font-size:10.5px;color:var(--ink3);font-family:var(--mono);letter-spacing:.5px}
+
+.hud-stat{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12.5px;color:var(--ink2);
+  background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:5px 11px;white-space:nowrap}
+.hud-stat b{color:var(--hiviz);font-size:13px}
+.hud-stat.lvl b{color:var(--green)}
+
+.hud-btn{background:var(--panel);border:1px solid var(--line);color:var(--ink2);border-radius:99px;
+  padding:5px 12px;font-size:12.5px;transition:.15s}
+.hud-btn:hover{border-color:var(--hiviz);color:var(--hiviz)}
+
+#xpbar{height:3px;background:var(--line);position:relative;overflow:hidden}
+#xpbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--hiviz),var(--green));transition:width .6s cubic-bezier(.2,.8,.2,1)}
+
+/* ---------- Cards / panels ---------- */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.card+.card{margin-top:16px}
+
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--hiviz);margin-bottom:8px}
+.sub{color:var(--ink2);font-size:14.5px}
+
+/* ---------- Buttons ---------- */
+.btn{
+  background:var(--hiviz);color:#12151a;border:none;border-radius:var(--radius-s);
+  padding:13px 24px;font-weight:750;font-size:15px;letter-spacing:.2px;transition:.15s;
+}
+.btn:hover{background:var(--hiviz2);transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn:disabled{background:var(--line);color:var(--ink3);cursor:not-allowed;transform:none}
+.btn.ghost{background:transparent;color:var(--ink2);border:1px solid var(--line2)}
+.btn.ghost:hover{border-color:var(--hiviz);color:var(--hiviz);background:transparent}
+.btn.sm{padding:9px 16px;font-size:13.5px}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* ---------- Start screen ---------- */
+#screen-start{padding:44px 0 70px}
+.hero{text-align:center;margin-bottom:34px}
+.hero h1{font-size:clamp(28px,5.2vw,46px);font-weight:850;letter-spacing:-1px;margin-bottom:10px}
+.hero h1 em{font-style:normal;color:var(--hiviz)}
+.hero .unit{
+  display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:1.4px;
+  border:1px solid var(--line2);border-radius:99px;padding:6px 15px;color:var(--ink2);margin-bottom:18px;
+}
+.hero p{max-width:640px;margin:0 auto .8em;color:var(--ink2);font-size:16px}
+
+.brief{background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid var(--line);
+  border-left:4px solid var(--hiviz);border-radius:var(--radius);padding:24px;margin-bottom:24px}
+.brief h3{font-size:17px;margin-bottom:10px;color:var(--hiviz2)}
+
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:26px}
+.mini{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-s);padding:16px}
+.mini b{display:block;font-size:14px;margin-bottom:5px}
+.mini span{font-size:13px;color:var(--ink2);line-height:1.5}
+
+.namebox{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;margin-bottom:8px}
+.namebox input{
+  background:var(--bg2);border:1px solid var(--line2);color:var(--ink);border-radius:var(--radius-s);
+  padding:13px 16px;font-size:15px;font-family:inherit;min-width:250px;
+}
+.namebox input:focus{outline:none;border-color:var(--hiviz)}
+
+/* ---------- Map / shift select ---------- */
+#screen-map{padding:26px 0 70px}
+.maphead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+
+.shifts{display:grid;gap:14px}
+.shift{
+  display:grid;grid-template-columns:60px 1fr auto;gap:16px;align-items:center;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px;text-align:left;width:100%;transition:.18s;position:relative;overflow:hidden;
+}
+.shift:hover:not(.locked){border-color:var(--hiviz);transform:translateY(-2px);box-shadow:var(--shadow)}
+.shift.locked{opacity:.42;cursor:not-allowed}
+.shift.done{border-color:rgba(62,207,142,.45)}
+.shift::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--line)}
+.shift.done::before{background:var(--green)}
+.shift.current::before{background:var(--hiviz)}
+.shift-num{
+  width:60px;height:60px;border-radius:12px;display:grid;place-items:center;flex:none;
+  background:var(--panel2);border:1px solid var(--line2);font-family:var(--mono);
+}
+.shift-num b{display:block;font-size:20px;color:var(--hiviz);line-height:1}
+.shift-num span{font-size:9px;letter-spacing:1px;color:var(--ink3);text-transform:uppercase}
+.shift.done .shift-num{background:var(--green-bg);border-color:rgba(62,207,142,.4)}
+.shift.done .shift-num b{color:var(--green)}
+.shift-body{min-width:0}
+.shift-body h3{font-size:17px;margin-bottom:4px}
+.shift-body p{margin:0 0 8px;font-size:13.5px;color:var(--ink2)}
+.shift-meta{display:flex;gap:8px;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px;color:var(--ink3)}
+.tag{border:1px solid var(--line2);border-radius:99px;padding:2px 9px;letter-spacing:.5px}
+.tag.pc{color:var(--blue);border-color:rgba(91,168,245,.35)}
+.shift-go{font-size:12px;font-family:var(--mono);color:var(--ink3);text-align:right;white-space:nowrap}
+.shift-go b{display:block;color:var(--hiviz);font-size:13px}
+.shift.done .shift-go b{color:var(--green)}
+
+.bar{height:5px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:9px}
+.bar i{display:block;height:100%;background:var(--hiviz);border-radius:99px;transition:width .5s}
+.shift.done .bar i{background:var(--green)}
+
+/* ---------- Badge shelf ---------- */
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:12px}
+.badge{
+  background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius-s);
+  padding:14px 10px;text-align:center;opacity:.3;transition:.3s;
+}
+.badge.earned{opacity:1;border-color:var(--hiviz);background:linear-gradient(170deg,var(--hiviz-dim),var(--panel2))}
+.badge .em{font-size:26px;display:block;line-height:1;margin-bottom:7px;filter:grayscale(1)}
+.badge.earned .em{filter:none}
+.badge b{display:block;font-size:11.5px;line-height:1.3;margin-bottom:3px}
+.badge span{font-size:10px;color:var(--ink3);line-height:1.35;display:block}
+
+/* ---------- Activity player ---------- */
+#screen-play{padding:0 0 60px}
+.playbar{background:var(--bg2);border-bottom:1px solid var(--line);position:sticky;top:57px;z-index:40}
+.playbar-in{max-width:1000px;margin:0 auto;padding:11px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.playbar .ttl{font-size:13.5px;font-weight:650;margin-right:auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pips{display:flex;gap:4px;flex-wrap:wrap}
+.pip{width:22px;height:4px;border-radius:99px;background:var(--line)}
+.pip.done{background:var(--green)}
+.pip.now{background:var(--hiviz)}
+
+.stage{padding:26px 0}
+
+/* teach block */
+.teach{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:18px}
+.teach h2{font-size:22px;margin-bottom:6px}
+.teach .lead{color:var(--ink2);font-size:15px;margin-bottom:16px}
+.teach h4{font-size:14px;color:var(--hiviz2);margin:18px 0 7px;font-family:var(--mono);letter-spacing:.8px;text-transform:uppercase}
+.teach ul{font-size:15px}
+.teach li b{color:var(--ink)}
+.callout{background:var(--red-bg);border:1px solid rgba(255,95,95,.32);border-left:4px solid var(--red);
+  border-radius:var(--radius-s);padding:13px 16px;margin:14px 0;font-size:14.5px}
+.callout b{color:var(--red)}
+.callout.info{background:var(--blue-bg);border-color:rgba(91,168,245,.3);border-left-color:var(--blue)}
+.callout.info b{color:var(--blue)}
+.callout.civil{background:rgba(255,180,0,.07);border-color:rgba(255,180,0,.3);border-left-color:var(--hiviz)}
+.callout.civil b{color:var(--hiviz)}
+
+/* question block */
+.q{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:24px}
+.q-type{font-family:var(--mono);font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--ink3);margin-bottom:9px;
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.q-type .xp{color:var(--hiviz);border:1px solid var(--hiviz-dim);border-radius:99px;padding:1px 8px;background:rgba(255,180,0,.07)}
+.q-stem{font-size:18px;font-weight:650;margin-bottom:6px;line-height:1.4}
+.q-hint{font-size:13.5px;color:var(--ink3);margin-bottom:16px}
+.q-scene{background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:var(--radius-s);
+  padding:13px 16px;margin-bottom:16px;font-size:14.5px;color:var(--ink2);font-style:italic}
+
+/* options */
+.opts{display:grid;gap:9px}
+.opt{
+  display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;
+  background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius-s);
+  padding:14px 16px;color:var(--ink);font-size:15px;line-height:1.45;transition:.14s;
+}
+.opt:hover:not(:disabled){border-color:var(--line2);background:#2b323e}
+.opt .key{
+  width:24px;height:24px;border-radius:6px;flex:none;display:grid;place-items:center;
+  background:var(--bg2);border:1px solid var(--line2);font-family:var(--mono);font-size:12px;color:var(--ink3);margin-top:1px;
+}
+.opt.sel{border-color:var(--hiviz);background:rgba(255,180,0,.08)}
+.opt.sel .key{background:var(--hiviz);color:#12151a;border-color:var(--hiviz)}
+.opt.ok{border-color:var(--green);background:var(--green-bg)}
+.opt.ok .key{background:var(--green);color:#12151a;border-color:var(--green)}
+.opt.no{border-color:var(--red);background:var(--red-bg)}
+.opt.no .key{background:var(--red);color:#fff;border-color:var(--red)}
+.opt:disabled{cursor:default}
+
+/* sequence */
+.seq{display:grid;gap:8px}
+.seqitem{
+  display:flex;gap:12px;align-items:center;background:var(--panel2);border:1px solid var(--line);
+  border-radius:var(--radius-s);padding:12px 14px;font-size:14.5px;
+}
+.seqitem .ord{width:26px;height:26px;border-radius:6px;flex:none;display:grid;place-items:center;
+  background:var(--bg2);border:1px solid var(--line2);font-family:var(--mono);font-size:12px;color:var(--hiviz)}
+.seqitem .txt{flex:1;min-width:0}
+.seqitem .mv{display:flex;gap:4px;flex:none}
+.seqitem .mv button{width:28px;height:28px;border-radius:6px;background:var(--bg2);border:1px solid var(--line2);
+  color:var(--ink2);display:grid;place-items:center;font-size:13px;line-height:1;padding:0}
+.seqitem .mv button:hover:not(:disabled){border-color:var(--hiviz);color:var(--hiviz)}
+.seqitem .mv button:disabled{opacity:.25;cursor:not-allowed}
+.seqitem.ok{border-color:var(--green);background:var(--green-bg)}
+.seqitem.ok .ord{background:var(--green);color:#12151a;border-color:var(--green)}
+.seqitem.no{border-color:var(--red);background:var(--red-bg)}
+.seqitem.no .ord{background:var(--red);color:#fff;border-color:var(--red)}
+.seqitem .corr{font-family:var(--mono);font-size:11px;color:var(--red);white-space:nowrap}
+
+/* sort bins */
+.pool{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;min-height:44px;
+  background:var(--bg2);border:1px dashed var(--line2);border-radius:var(--radius-s);padding:12px}
+.chip{background:var(--panel2);border:1px solid var(--line2);border-radius:99px;padding:8px 14px;font-size:13.5px;
+  color:var(--ink);transition:.14s}
+.chip:hover:not(:disabled){border-color:var(--hiviz);color:var(--hiviz)}
+.chip.sel{border-color:var(--hiviz);background:rgba(255,180,0,.12);color:var(--hiviz)}
+.chip.ok{border-color:var(--green);background:var(--green-bg);color:var(--green)}
+.chip.no{border-color:var(--red);background:var(--red-bg);color:var(--red)}
+.chip:disabled{cursor:default}
+.bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.bin{background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius-s);padding:14px;min-height:120px;transition:.14s}
+.bin.armed{border-color:var(--hiviz);box-shadow:0 0 0 2px rgba(255,180,0,.14)}
+.bin h5{font-size:13px;margin:0 0 4px;font-family:var(--mono);letter-spacing:.6px;text-transform:uppercase;color:var(--hiviz2)}
+.bin .bd{font-size:11.5px;color:var(--ink3);margin-bottom:10px;line-height:1.4}
+.bin .items{display:flex;flex-wrap:wrap;gap:7px}
+
+/* match */
+.match{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.matchcol{display:grid;gap:8px;align-content:start}
+.mcell{background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius-s);padding:12px 14px;
+  font-size:13.5px;text-align:left;color:var(--ink);line-height:1.4;transition:.14s;position:relative}
+.mcell:hover:not(:disabled){border-color:var(--line2)}
+.mcell.sel{border-color:var(--hiviz);background:rgba(255,180,0,.1)}
+.mcell.ok{border-color:var(--green);background:var(--green-bg)}
+.mcell.no{border-color:var(--red);background:var(--red-bg)}
+.mcell.paired{opacity:.55}
+.mcell .pin{position:absolute;top:6px;right:8px;font-family:var(--mono);font-size:10px;color:var(--hiviz)}
+.mcell:disabled{cursor:default}
+
+/* hotspot */
+.hotwrap{background:var(--bg2);border:1px solid var(--line);border-radius:var(--radius-s);padding:10px;margin-bottom:14px}
+.hotwrap svg{width:100%;height:auto;display:block;max-height:430px}
+.hs{cursor:pointer}
+.hs .hit{fill:rgba(255,180,0,.001);stroke:rgba(255,180,0,.4);stroke-width:1.5;stroke-dasharray:4 4;transition:.15s}
+.hs:hover .hit{fill:rgba(255,180,0,.18);stroke:var(--hiviz)}
+.hs.sel .hit{fill:rgba(255,180,0,.3);stroke:var(--hiviz);stroke-dasharray:none;stroke-width:2.5}
+.hs.ok .hit{fill:rgba(62,207,142,.3);stroke:var(--green);stroke-dasharray:none;stroke-width:2.5}
+.hs.no .hit{fill:rgba(255,95,95,.32);stroke:var(--red);stroke-dasharray:none;stroke-width:2.5}
+.hs.found .hit{fill:rgba(62,207,142,.24);stroke:var(--green);stroke-dasharray:none;stroke-width:2}
+.hs-lbl{font-family:var(--mono);font-size:9px;fill:#8b97a8;pointer-events:none}
+
+/* timer */
+.timer{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.timer .tt{font-family:var(--mono);font-size:13px;color:var(--hiviz);min-width:44px}
+.timer .tb{flex:1;height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+.timer .tb i{display:block;height:100%;background:var(--hiviz);transition:width 1s linear}
+.timer.warn .tb i{background:var(--red)}
+.timer.warn .tt{color:var(--red)}
+
+/* feedback */
+.fb{margin-top:16px;border-radius:var(--radius-s);padding:16px 18px;font-size:14.5px;line-height:1.55;
+  border:1px solid;animation:pop .28s cubic-bezier(.2,.9,.3,1.3);width:100%}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.fb.ok{background:var(--green-bg);border-color:rgba(62,207,142,.4)}
+.fb.no{background:var(--red-bg);border-color:rgba(255,95,95,.38)}
+.fb.part{background:rgba(255,180,0,.08);border-color:rgba(255,180,0,.4)}
+.fb h5{font-size:14px;margin:0 0 6px;display:flex;align-items:center;gap:8px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase}
+.fb.ok h5{color:var(--green)}
+.fb.no h5{color:var(--red)}
+.fb.part h5{color:var(--hiviz)}
+.fb p{margin:0 0 .6em;color:var(--ink)}
+.fb p:last-child{margin:0}
+.fb .why{color:var(--ink2);font-size:13.5px}
+.fb .pcref{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-top:9px;padding-top:9px;border-top:1px solid rgba(255,255,255,.07)}
+
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;align-items:center}
+.attempt{font-family:var(--mono);font-size:11.5px;color:var(--ink3);margin-left:auto}
+
+/* ---------- Debrief ---------- */
+#screen-debrief{padding:40px 0 70px}
+.score-ring{width:150px;height:150px;margin:0 auto 18px;position:relative}
+.score-ring svg{transform:rotate(-90deg);width:100%;height:100%}
+.score-ring .val{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.score-ring .val b{display:block;font-size:34px;line-height:1;color:var(--hiviz)}
+.score-ring .val span{font-size:10px;font-family:var(--mono);letter-spacing:1.5px;color:var(--ink3);text-transform:uppercase}
+
+.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:22px 0}
+.stat{background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius-s);padding:15px;text-align:center}
+.stat b{display:block;font-size:23px;color:var(--hiviz);line-height:1.1}
+.stat span{font-size:11px;font-family:var(--mono);letter-spacing:.8px;color:var(--ink3);text-transform:uppercase}
+
+.review{display:grid;gap:8px;margin-top:8px}
+.rev{display:flex;gap:11px;align-items:flex-start;background:var(--panel2);border:1px solid var(--line);
+  border-radius:var(--radius-s);padding:11px 14px;font-size:13.5px}
+.rev .dot{width:9px;height:9px;border-radius:99px;flex:none;margin-top:6px}
+.rev.ok .dot{background:var(--green)}
+.rev.no .dot{background:var(--red)}
+.rev.part .dot{background:var(--hiviz)}
+.rev .t{flex:1;min-width:0}
+.rev .t span{display:block;font-size:11.5px;color:var(--ink3);font-family:var(--mono);margin-top:2px}
+
+/* ---------- Toast ---------- */
+#toasts{position:fixed;right:16px;bottom:16px;z-index:200;display:grid;gap:9px;max-width:330px}
+.toast{background:var(--panel);border:1px solid var(--hiviz);border-left-width:4px;border-radius:var(--radius-s);
+  padding:13px 16px;box-shadow:var(--shadow);animation:slidein .3s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes slidein{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+.toast.out{animation:slideout .3s forwards}
+@keyframes slideout{to{opacity:0;transform:translateX(30px)}}
+.toast b{display:block;font-size:13.5px;color:var(--hiviz);margin-bottom:2px}
+.toast span{font-size:12.5px;color:var(--ink2);line-height:1.45}
+
+/* ---------- Modal ---------- */
+#modal{position:fixed;inset:0;z-index:300;background:rgba(10,12,16,.82);backdrop-filter:blur(5px);
+  display:grid;place-items:center;padding:20px}
+.modal-box{background:var(--panel);border:1px solid var(--line2);border-radius:var(--radius);
+  max-width:560px;width:100%;padding:26px;box-shadow:var(--shadow);max-height:86vh;overflow:auto}
+.modal-box h3{font-size:20px;margin-bottom:10px}
+.modal-box p{font-size:14.5px;color:var(--ink2)}
+
+/* ---------- Print ---------- */
+@media print{
+  body{background:#fff;color:#000}
+  body::before,#hud,#toasts,.no-print{display:none !important}
+  .card{border-color:#ccc;background:#fff;color:#000}
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width:640px){
+  .hud-in{gap:8px;padding:9px 14px}
+  .brand-txt span{display:none}
+  .hud-stat{font-size:11.5px;padding:4px 9px}
+  .shift{grid-template-columns:46px 1fr;padding:14px}
+  .shift-num{width:46px;height:46px}
+  .shift-num b{font-size:16px}
+  .shift-go{grid-column:1/-1;text-align:left}
+  .match{grid-template-columns:1fr}
+  .playbar{top:52px}
+  .card,.q,.teach{padding:18px}
+  .q-stem{font-size:16.5px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+
+<div class="stripe"></div>
+
+<header id="hud" class="no-print">
+  <div class="hud-in">
+    <div class="brand">
+      <div class="brand-mark">S7</div>
+      <div class="brand-txt">
+        <b>Site 7 Operator Program</b>
+        <span>RIIMPO321F · CIVIL LOADER</span>
+      </div>
+    </div>
+    <div class="hud-stat lvl" id="hud-lvl" title="Operator rank">🎖️ <b>1</b> <span>Trainee</span></div>
+    <div class="hud-stat" id="hud-xp" title="Experience points">⚡ <b>0</b> XP</div>
+    <div class="hud-stat" id="hud-badge" title="Badges earned">🏅 <b>0</b>/8</div>
+    <button class="hud-btn" id="btn-home" title="Return to shift board">Shift Board</button>
+  </div>
+  <div id="xpbar"><i></i></div>
+</header>
+
+<main id="app">
+
+  <!-- ============ START ============ -->
+  <section id="screen-start" class="wrap">
+    <div class="hero">
+      <div class="unit">RIIMPO321F · CONDUCT CIVIL CONSTRUCTION WHEELED FRONT END LOADER OPERATIONS</div>
+      <h1>Site 7: <em>Northlink</em> Subdivision</h1>
+      <p>You've been rostered onto a live civil construction site. Six shifts stand between you and operator sign-off. Every shift mixes briefing, decision-making and hands-on judgement — the same calls a real loader operator makes before the key turns.</p>
+    </div>
+
+    <div class="brief">
+      <h3>🪧 Your site induction</h3>
+      <p><b>The job:</b> Northlink is a 42-lot residential subdivision. Bulk earthworks are done; you're on stockpile management, truck loading, trimming to design level and drainage-trench backfill. Your plant is a 3.5 m³ articulated wheeled front end loader.</p>
+      <p><b>The rules:</b> You learn by doing. Every activity gives you an immediate call — right, wrong, or partly there — and tells you <em>why</em>. Getting it wrong first go costs you XP, not your job. Retry as many times as you need.</p>
+      <p style="margin:0"><b>The goal:</b> Clear all six shifts, bank 8 competency badges, and reach <b>Leading Hand</b> rank.</p>
+    </div>
+
+    <div class="grid3">
+      <div class="mini"><b>⚡ Earn XP</b><span>Full points for a first-attempt call. Partial credit if you self-correct. Nothing is locked out by failure.</span></div>
+      <div class="mini"><b>🏅 Bank badges</b><span>Eight badges map to the unit's elements. You need them all for sign-off.</span></div>
+      <div class="mini"><b>🎖️ Climb the ranks</b><span>Trainee → Operator → Senior Op → Leading Hand, driven by total XP.</span></div>
+    </div>
+
+    <div class="namebox">
+      <input id="in-name" type="text" placeholder="Your name (for the shift board)" maxlength="40" autocomplete="name">
+      <button class="btn" id="btn-start">Start induction →</button>
+    </div>
+    <p style="text-align:center;font-size:12.5px;color:var(--ink3);margin-top:14px">
+      Progress saves in this browser. <button class="btn ghost sm" id="btn-reset-start" style="padding:4px 12px">Clear saved progress</button>
+    </p>
+
+    <div class="card" style="margin-top:34px">
+      <div class="kicker">Formative learning tool</div>
+      <p class="sub" style="margin:0">This module is designed for <b>practice and knowledge-building</b>. It is not a summative assessment tool and does not produce assessment evidence for RIIMPO321F. Competency is determined by your RTO through the unit's theory assessment and practical (workplace) assessment under the unit's assessment conditions, including the repeated occurrences of performance the unit requires.</p>
+    </div>
+  </section>
+
+  <!-- ============ MAP ============ -->
+  <section id="screen-map" class="wrap hidden">
+    <div class="maphead">
+      <div>
+        <div class="kicker">Shift board</div>
+        <h2 style="font-size:26px" id="map-title">Northlink Site 7</h2>
+        <p class="sub" style="margin:6px 0 0" id="map-sub">Select a shift to begin.</p>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:1px">OVERALL</div>
+        <div style="font-size:30px;font-weight:800;color:var(--hiviz)" id="map-pct">0%</div>
+      </div>
+    </div>
+
+    <div class="shifts" id="shift-list"></div>
+
+    <div class="card" style="margin-top:24px">
+      <div class="kicker">Competency badges</div>
+      <div class="shelf" id="badge-shelf"></div>
+    </div>
+
+    <div class="card">
+      <div class="kicker">Site office</div>
+      <div class="btn-row">
+        <button class="btn ghost sm" id="btn-summary">📋 Progress summary</button>
+        <button class="btn ghost sm" id="btn-glossary">📖 Civil site glossary</button>
+        <button class="btn ghost sm" id="btn-mapping">🗂️ Unit alignment</button>
+        <button class="btn ghost sm" id="btn-reset">↺ Reset all progress</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PLAY ============ -->
+  <section id="screen-play" class="hidden">
+    <div class="playbar no-print">
+      <div class="playbar-in">
+        <div class="ttl" id="play-title">Shift</div>
+        <div class="pips" id="play-pips"></div>
+        <button class="hud-btn" id="btn-quit">Exit</button>
+      </div>
+    </div>
+    <div class="wrap stage" id="stage"></div>
+  </section>
+
+  <!-- ============ DEBRIEF ============ -->
+  <section id="screen-debrief" class="wrap hidden">
+    <div id="debrief-body"></div>
+  </section>
+
+</main>
+
+<div id="toasts"></div>
+<div id="modal" class="hidden"><div class="modal-box" id="modal-box"></div></div>
+
+<!-- ============================================================
+     CONTENT PAYLOAD — SVG diagrams, glossary, course data
+     ============================================================ -->
+<script>
+/* ============================================================
+   CONTENT PAYLOAD — RIIMPO321F "Site 7: Northlink Subdivision"
+   Loaded before the engine. Exposes:
+     window.SVG_DATA, window.GLOSSARY_DATA, window.COURSE_DATA
+   ============================================================ */
+
+/* ---------- SVG DIAGRAMS ---------- */
+window.SVG_DATA = {
+
+/* --- Wheel loader, side profile (facing left) --- */
+loader:
+'<svg viewBox="0 0 720 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Side profile of an articulated wheeled front end loader">' +
+  '<defs><linearGradient id="mtl" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0" stop-color="#3a4250"/><stop offset="1" stop-color="#262d38"/></linearGradient></defs>' +
+
+  /* ground */
+  '<line x1="10" y1="292" x2="710" y2="292" stroke="#414b5c" stroke-width="2"/>' +
+  '<path d="M10 292 L710 292" stroke="#2a313d" stroke-width="10" opacity=".5"/>' +
+
+  /* rear frame + engine bay */
+  '<rect x="404" y="170" width="232" height="76" rx="7" fill="url(#mtl)" stroke="#4d586a" stroke-width="1.5"/>' +
+  '<rect x="516" y="178" width="108" height="42" rx="4" fill="#2f3744" stroke="#4d586a"/>' +
+  '<line x1="530" y1="184" x2="530" y2="214" stroke="#566274"/><line x1="546" y1="184" x2="546" y2="214" stroke="#566274"/>' +
+  '<line x1="562" y1="184" x2="562" y2="214" stroke="#566274"/><line x1="578" y1="184" x2="578" y2="214" stroke="#566274"/>' +
+  '<line x1="594" y1="184" x2="594" y2="214" stroke="#566274"/>' +
+
+  /* counterweight */
+  '<rect x="628" y="196" width="26" height="52" rx="4" fill="#333c4a" stroke="#4d586a"/>' +
+
+  /* cab / ROPS */
+  '<polygon points="424,168 424,96 442,84 508,84 512,96 512,168" fill="#2c333f" stroke="#5c6879" stroke-width="2"/>' +
+  '<rect x="434" y="102" width="70" height="58" rx="3" fill="#1a2a3a" stroke="#5c6879" opacity=".85"/>' +
+  '<line x1="424" y1="84" x2="512" y2="84" stroke="#ffb400" stroke-width="3" opacity=".55"/>' +
+
+  /* front frame */
+  '<rect x="206" y="188" width="188" height="60" rx="7" fill="url(#mtl)" stroke="#4d586a" stroke-width="1.5"/>' +
+
+  /* articulation joint */
+  '<rect x="386" y="182" width="24" height="66" rx="4" fill="#3d4655" stroke="#6d7a8d" stroke-width="1.5"/>' +
+  '<circle cx="398" cy="200" r="8" fill="#565f70" stroke="#8b97a8" stroke-width="1.5"/>' +
+  '<circle cx="398" cy="232" r="8" fill="#565f70" stroke="#8b97a8" stroke-width="1.5"/>' +
+
+  /* lift arm */
+  '<path d="M394 198 L268 168 L156 152" stroke="#414b5c" stroke-width="19" stroke-linecap="round" fill="none"/>' +
+  '<circle cx="394" cy="198" r="7" fill="#6d7a8d"/>' +
+
+  /* tilt cylinder */
+  '<rect x="228" y="176" width="150" height="15" rx="7" transform="rotate(-7 303 183)" fill="#4d586a" stroke="#6d7a8d"/>' +
+  '<rect x="150" y="168" width="86" height="11" rx="5" transform="rotate(-7 193 173)" fill="#7d8a9c"/>' +
+
+  /* bucket */
+  '<path d="M156 140 L156 236 Q158 254 176 256 L74 256 Q56 254 56 236 L56 168 Z" fill="#3a4250" stroke="#5c6879" stroke-width="2"/>' +
+  '<path d="M56 256 L176 256" stroke="#ffb400" stroke-width="5" stroke-linecap="round"/>' +
+  '<path d="M74 256 l0 12 M104 256 l0 12 M134 256 l0 12 M164 256 l0 12" stroke="#ffb400" stroke-width="4"/>' +
+
+  /* wheels */
+  '<circle cx="272" cy="248" r="46" fill="#1c2129" stroke="#4d586a" stroke-width="4"/>' +
+  '<circle cx="272" cy="248" r="22" fill="#39424f" stroke="#6d7a8d" stroke-width="2"/>' +
+  '<circle cx="556" cy="248" r="46" fill="#1c2129" stroke="#4d586a" stroke-width="4"/>' +
+  '<circle cx="556" cy="248" r="22" fill="#39424f" stroke="#6d7a8d" stroke-width="2"/>' +
+
+  /* access steps */
+  '<path d="M410 250 l0 40 M424 250 l0 40 M410 262 l14 0 M410 276 l14 0 M410 290 l14 0" stroke="#6d7a8d" stroke-width="3"/>' +
+
+  /* battery isolator box */
+  '<rect x="640" y="168" width="30" height="26" rx="3" fill="#2f3744" stroke="#ffb400" stroke-width="1.5"/>' +
+  '<circle cx="655" cy="181" r="6" fill="#4d586a" stroke="#ffb400"/>' +
+
+  /* ---- HOTSPOTS ---- */
+  '<g class="hs" data-hs="bucket"><rect class="hit" x="46" y="130" width="122" height="140" rx="6"/></g>' +
+  '<g class="hs" data-hs="liftarm"><rect class="hit" x="176" y="132" width="200" height="60" rx="6"/></g>' +
+  '<g class="hs" data-hs="artic"><rect class="hit" x="378" y="174" width="40" height="82" rx="6"/></g>' +
+  '<g class="hs" data-hs="cab"><rect class="hit" x="418" y="76" width="100" height="92" rx="6"/></g>' +
+  '<g class="hs" data-hs="engine"><rect class="hit" x="510" y="166" width="122" height="58" rx="6"/></g>' +
+  '<g class="hs" data-hs="isolator"><rect class="hit" x="634" y="160" width="44" height="42" rx="6"/></g>' +
+  '<g class="hs" data-hs="tyres"><rect class="hit" x="224" y="200" width="98" height="96" rx="6"/></g>' +
+  '<g class="hs" data-hs="steps"><rect class="hit" x="400" y="252" width="42" height="42" rx="6"/></g>' +
+  '<g class="hs" data-hs="counterweight"><rect class="hit" x="622" y="208" width="42" height="52" rx="6"/></g>' +
+  '<g class="hs" data-hs="tiltram"><rect class="hit" x="200" y="192" width="150" height="34" rx="6"/></g>' +
+'</svg>',
+
+/* --- Operator station, plan view --- */
+cab:
+'<svg viewBox="0 0 700 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plan view of a wheel loader operator station">' +
+  '<rect x="60" y="20" width="580" height="392" rx="18" fill="#1c222b" stroke="#4d586a" stroke-width="2"/>' +
+  '<text x="350" y="14" text-anchor="middle" class="hs-lbl">FRONT OF MACHINE</text>' +
+
+  /* dash panel */
+  '<rect x="110" y="40" width="480" height="76" rx="8" fill="#2a313d" stroke="#4d586a"/>' +
+  /* monitor */
+  '<rect x="300" y="54" width="112" height="48" rx="4" fill="#122430" stroke="#5ba8f5" stroke-width="1.5"/>' +
+  '<line x1="310" y1="70" x2="360" y2="70" stroke="#5ba8f5" stroke-width="2"/>' +
+  '<line x1="310" y1="82" x2="392" y2="82" stroke="#3d5670" stroke-width="2"/>' +
+  '<circle cx="392" cy="66" r="5" fill="#ffb400"/>' +
+  /* park brake knob (red pull knob) */
+  '<circle cx="196" cy="78" r="19" fill="#3a1a1c" stroke="#ff5f5f" stroke-width="2.5"/>' +
+  '<circle cx="196" cy="78" r="8" fill="#ff5f5f"/>' +
+  /* hydraulic lockout rocker */
+  '<rect x="240" y="62" width="34" height="32" rx="4" fill="#2f3744" stroke="#ffb400" stroke-width="2"/>' +
+  '<line x1="246" y1="78" x2="268" y2="78" stroke="#ffb400" stroke-width="2.5"/>' +
+  /* start switch */
+  '<circle cx="462" cy="78" r="16" fill="#2f3744" stroke="#8b97a8" stroke-width="2"/>' +
+  '<line x1="462" y1="66" x2="462" y2="78" stroke="#8b97a8" stroke-width="3"/>' +
+  /* horn */
+  '<circle cx="524" cy="78" r="16" fill="#2f3744" stroke="#8b97a8" stroke-width="2"/>' +
+  '<path d="M517 78 l7 -7 0 14 z" fill="#8b97a8"/>' +
+  '<path d="M528 72 q5 6 0 12" stroke="#8b97a8" stroke-width="2" fill="none"/>' +
+
+  /* pedals */
+  '<rect x="196" y="146" width="48" height="84" rx="6" fill="#39424f" stroke="#ff5f5f" stroke-width="2"/>' +
+  '<rect x="252" y="146" width="48" height="84" rx="6" fill="#39424f" stroke="#8b97a8" stroke-width="2"/>' +
+  '<rect x="308" y="146" width="42" height="84" rx="6" fill="#39424f" stroke="#3ecf8e" stroke-width="2"/>' +
+  '<text x="220" y="242" text-anchor="middle" class="hs-lbl">PEDAL 1</text>' +
+  '<text x="276" y="242" text-anchor="middle" class="hs-lbl">PEDAL 2</text>' +
+  '<text x="329" y="242" text-anchor="middle" class="hs-lbl">PEDAL 3</text>' +
+
+  /* seat */
+  '<rect x="286" y="262" width="128" height="122" rx="16" fill="#2a313d" stroke="#4d586a" stroke-width="2"/>' +
+  '<rect x="300" y="274" width="100" height="52" rx="10" fill="#333c4a"/>' +
+  '<text x="350" y="360" text-anchor="middle" class="hs-lbl">OPERATOR SEAT</text>' +
+
+  /* left console — STIC / steering control */
+  '<rect x="150" y="264" width="98" height="112" rx="10" fill="#2a313d" stroke="#4d586a" stroke-width="2"/>' +
+  '<circle cx="199" cy="308" r="20" fill="#39424f" stroke="#ffb400" stroke-width="2.5"/>' +
+  '<rect x="192" y="286" width="14" height="26" rx="6" fill="#ffb400" opacity=".75"/>' +
+  '<rect x="176" y="342" width="46" height="20" rx="5" fill="#39424f" stroke="#8b97a8"/>' +
+  '<text x="199" y="356" text-anchor="middle" class="hs-lbl">F N R</text>' +
+
+  /* right console — implement levers */
+  '<rect x="452" y="264" width="140" height="112" rx="10" fill="#2a313d" stroke="#4d586a" stroke-width="2"/>' +
+  '<circle cx="492" cy="306" r="18" fill="#39424f" stroke="#5ba8f5" stroke-width="2.5"/>' +
+  '<rect x="486" y="286" width="12" height="24" rx="5" fill="#5ba8f5" opacity=".75"/>' +
+  '<circle cx="552" cy="306" r="18" fill="#39424f" stroke="#3ecf8e" stroke-width="2.5"/>' +
+  '<rect x="546" y="286" width="12" height="24" rx="5" fill="#3ecf8e" opacity=".75"/>' +
+  '<text x="522" y="360" text-anchor="middle" class="hs-lbl">IMPLEMENT LEVERS</text>' +
+
+  /* ---- HOTSPOTS ---- */
+  '<g class="hs" data-hs="leftpedal"><rect class="hit" x="190" y="140" width="60" height="96" rx="6"/></g>' +
+  '<g class="hs" data-hs="servicebrake"><rect class="hit" x="248" y="140" width="56" height="96" rx="6"/></g>' +
+  '<g class="hs" data-hs="throttle"><rect class="hit" x="304" y="140" width="52" height="96" rx="6"/></g>' +
+  '<g class="hs" data-hs="parkbrake"><rect class="hit" x="170" y="52" width="52" height="52" rx="6"/></g>' +
+  '<g class="hs" data-hs="hydlock"><rect class="hit" x="232" y="54" width="50" height="50" rx="6"/></g>' +
+  '<g class="hs" data-hs="monitor"><rect class="hit" x="294" y="48" width="124" height="60" rx="6"/></g>' +
+  '<g class="hs" data-hs="startsw"><rect class="hit" x="440" y="56" width="44" height="44" rx="6"/></g>' +
+  '<g class="hs" data-hs="horn"><rect class="hit" x="502" y="56" width="44" height="44" rx="6"/></g>' +
+  '<g class="hs" data-hs="stic"><rect class="hit" x="166" y="278" width="66" height="66" rx="6"/></g>' +
+  '<g class="hs" data-hs="fnr"><rect class="hit" x="170" y="338" width="58" height="30" rx="6"/></g>' +
+  '<g class="hs" data-hs="liftlever"><rect class="hit" x="466" y="278" width="54" height="54" rx="6"/></g>' +
+  '<g class="hs" data-hs="tiltlever"><rect class="hit" x="526" y="278" width="54" height="54" rx="6"/></g>' +
+'</svg>'
+};
+
+/* ---------- GLOSSARY ---------- */
+window.GLOSSARY_DATA = [
+  {t:"Design level / finished surface level (FSL)", d:"The height a surface must be trimmed to, taken off the civil drawings. Civil work is dimensioned to a design; quarry work generally is not."},
+  {t:"Set-out / survey pegs", d:"Marks placed by a surveyor showing line and level. Knocking one out with a bucket or a tyre costs the job a re-survey."},
+  {t:"BYDA (Before You Dig Australia)", d:"The free national service — formerly Dial Before You Dig — that supplies plans of registered underground assets. Plans are the start of the process, not the end."},
+  {t:"Potholing / hydro-excavation", d:"Physically exposing a buried service by hand or vacuum excavation to confirm its exact position before machine work goes near it."},
+  {t:"Exclusion zone / no-go zone", d:"A marked area around a hazard (live service, trench, overhead line) that plant must not enter without specific authority and controls."},
+  {t:"SWMS", d:"Safe Work Method Statement. Required for high risk construction work under WHS regulations, including work near live services and around powered mobile plant."},
+  {t:"TMP / TCP", d:"Traffic Management Plan and Traffic Control Plan — how plant, trucks, workers and (on civil sites) the public are kept separated."},
+  {t:"Spotter", d:"A trained person whose only job is watching the machine's blind side and the clearance zone. A spotter must be able to see the operator and stop the work."},
+  {t:"ITP", d:"Inspection and Test Plan. Sets the hold points where work must be checked and signed off before the next stage starts."},
+  {t:"Sediment / erosion controls", d:"Silt fences, sediment basins, stabilised site access. Damaging them with a loader is an environmental breach, not just a nuisance."},
+  {t:"Stabilised site access / rumble grid", d:"The constructed entry point that keeps mud off the public road. Tracking mud onto a road is a reportable environmental issue on most civil jobs."},
+  {t:"Batter / batter slope", d:"The engineered slope of a cut or fill face. Loading or trafficking too close to the crest can collapse it."},
+  {t:"Zone of influence", d:"The ground either side of a trench where machine weight can trigger a collapse. Roughly relates to trench depth and soil type — set by the excavation SWMS."},
+  {t:"Rimpull", d:"The tractive force at the tyres. Reduced-rimpull settings limit wheel slip when loading loose material."},
+  {t:"Kickout / positioner", d:"Automatic stops that return the boom or bucket to a preset height or angle — improves consistency in repetitive loading."},
+  {t:"Float", d:"A detent on the lift lever that lets the bucket follow the ground contour under its own weight, used for clean-up and back-blading."},
+  {t:"ROPS / FOPS", d:"Rollover Protective Structure and Falling Object Protective Structure. The cab certification that keeps you alive in a rollover or under falling material."},
+  {t:"Lock and tag / isolation", d:"Physically isolating the machine's energy sources and applying a personal lock and danger tag so it cannot be started while you are working on it."},
+  {t:"Take 5 / SLAM", d:"A short point-of-work risk assessment done before starting a task or when conditions change. Stop, Look, Assess, Manage."}
+];
+
+/* ---------- COURSE ---------- */
+window.COURSE_DATA = [
+
+/* ============================================================
+   SHIFT 1 — PLAN AND PREPARE
+   ============================================================ */
+{
+  id:"s1",
+  title:"The Pre-Shift Briefing",
+  blurb:"0630. Site office, Northlink. Before you touch a machine you have to know the job, the ground and what is buried under it.",
+  element:"Element 1 · Plan & prepare",
+  mechanic:"Hazard hunt + branching",
+  badge:"planner",
+  maps:"Access work instructions, identify hazards and controls, confirm site requirements and PPE",
+  items:[
+    {
+      type:"teach", id:"s1t1", kicker:"Toolbox talk",
+      title:"Know the job before the key turns",
+      lead:"On a civil site the work is defined by a design, a program and a permit system. You cannot work it out from the dirt in front of you.",
+      body:
+        "<h4>Where your instructions come from</h4><ul>"+
+        "<li><b>Daily pre-start / toolbox meeting</b> — today's tasks, who else is on the ground, weather, changed conditions.</li>"+
+        "<li><b>Supervisor or leading hand</b> — direct instruction on what you're doing and in what order.</li>"+
+        "<li><b>Civil drawings and set-out</b> — line, level and design surface. Survey pegs and string lines are instructions, not decoration.</li>"+
+        "<li><b>SWMS and JSA</b> — the agreed method and the controls you must apply. If you work outside the SWMS, you are working unauthorised.</li>"+
+        "<li><b>Traffic Management Plan</b> — plant routes, pedestrian exclusions, the public interface at the site boundary.</li>"+
+        "<li><b>Service plans and permits</b> — BYDA plans, locator marks, excavation and overhead-line permits.</li>"+
+        "<li><b>Shift handover</b> — what the last operator left you: faults, part-finished tasks, moved barricades.</li>"+
+        "</ul>"+
+        "<div class='callout civil'><b>Civil vs quarry:</b> in a quarry the material is the product. On a civil job the material is only ever a means to a <em>design</em> — a level, a grade, a compaction result. Getting the design wrong is as much a failure as getting the safety wrong.</div>"+
+        "<div class='callout info'><b>If the information is vague, it is not information.</b> Incomplete or contradictory instructions get clarified with your supervisor <em>before</em> you start, not halfway through.</div>"
+    },
+    {
+      type:"multi", id:"s1q1", xp:15, pc:"PC 1.1", title:"Legitimate sources of work instruction",
+      stem:"Which of these are legitimate sources of work instruction for your shift?",
+      hint:"Select every one that applies.",
+      options:[
+        {t:"The daily pre-start / toolbox meeting", ok:true},
+        {t:"The approved civil drawings and surveyor's set-out", ok:true},
+        {t:"The SWMS for the task you've been allocated", ok:true},
+        {t:"Direct instruction from your supervisor", ok:true},
+        {t:"The written shift handover from the outgoing operator", ok:true},
+        {t:"What the truck driver reckons the boss probably wants", ok:false},
+        {t:"How the same job was done on your last site", ok:false},
+        {t:"A verbal request from a subcontractor you don't report to", ok:false}
+      ],
+      fb:"All five authorised sources — pre-start, drawings, SWMS, supervisor and handover.",
+      why:"The three you left out share a problem: none of them is traceable or authorised. If something goes wrong, 'the truck driver told me' is not a defence, and it will not match what the site diary records.",
+      pcFull:"Access, interpret and apply documentation and site instructions"
+    },
+    {
+      type:"sort", id:"s1q2", xp:20, pc:"PC 1.1", title:"What each document actually does",
+      stem:"Sort each document by the job it does for you.",
+      hint:"Tap a document, then tap the bin it belongs in.",
+      bins:[
+        {id:"what", name:"Defines WHAT", d:"Sets the task, the design or the sequence of work"},
+        {id:"how",  name:"Defines HOW safely", d:"Sets the method, the controls and the limits"},
+        {id:"rec",  name:"RECORDS what happened", d:"Evidence created during or after the work"}
+      ],
+      entries:[
+        {t:"Civil drawings / set-out sheet", bin:"what"},
+        {t:"Work order or daily task allocation", bin:"what"},
+        {t:"Inspection and Test Plan (ITP)", bin:"what"},
+        {t:"SWMS", bin:"how"},
+        {t:"Traffic Management Plan", bin:"how"},
+        {t:"Excavation permit", bin:"how"},
+        {t:"Plant pre-start checklist (completed)", bin:"rec"},
+        {t:"Shift handover report", bin:"rec"},
+        {t:"Incident / near-miss report", bin:"rec"}
+      ],
+      fb:"That's the three-way split a supervisor uses without thinking about it.",
+      why:"The distinction matters at audit. A SWMS that doubles as a record, or a checklist that nobody signs, is the paperwork failure that turns a minor incident into a finding.",
+      pcFull:"Interpret and apply documentation applicable to the work"
+    },
+    {
+      type:"teach", id:"s1t2", kicker:"The civil difference",
+      title:"What's under you, and who's beside you",
+      lead:"Two things separate a civil subdivision from a quarry pit: buried services, and members of the public.",
+      body:
+        "<h4>Underground services</h4><ul>"+
+        "<li><b>BYDA plans are indicative.</b> They show that an asset is registered and roughly where. They do not guarantee depth, alignment or that every asset is on them.</li>"+
+        "<li><b>Locate and mark.</b> A qualified locator marks the ground; marks have a validity period and get destroyed by traffic and rain.</li>"+
+        "<li><b>Pothole to confirm.</b> Non-destructive digging exposes the asset so you know exactly where it is before machine work goes near it.</li>"+
+        "<li><b>Exclusion zones.</b> Once located, the asset owner's clearance distance applies. Entering it needs specific authority and controls.</li>"+
+        "</ul>"+
+        "<h4>Overhead services</h4>"+
+        "<p>Powerlines run through subdivisions at road-reserve height. A loader with the bucket up is tall. Exclusion distances vary by voltage and by state, and are set by the network operator — never assume a number.</p>"+
+        "<h4>People and the public</h4><ul>"+
+        "<li>Surveyors, pipelayers, formworkers and services crews work <em>on the ground</em> around you, often in a trench where you cannot see them.</li>"+
+        "<li>Site boundaries adjoin live roads, footpaths and occupied houses. Children, pets and delivery drivers appear where they shouldn't.</li>"+
+        "<li>Traffic controllers, spotters and the TMP exist to keep plant and people apart. Working outside them is working uncontrolled.</li>"+
+        "</ul>"+
+        "<div class='callout'><b>The one that kills:</b> a loader operator's worst blind spot is short, low and directly behind the machine. That is exactly where a crouching worker or a child ends up.</div>"
+    },
+    {
+      type:"mcq", id:"s1q3", xp:15, pc:"PC 1.2", title:"BYDA plans and service location",
+      stem:"You've been asked to strip topsoil across Lot 18. The BYDA plans came back showing a gas main near the frontage, but you can't see any locate marks on the ground.",
+      scene:"The supervisor is off-site for two hours. Trucks are booked. The topsoil has to move today.",
+      options:[
+        {t:"Stop, do not strip near the frontage, and get the service located and marked before any machine work goes near it.", ok:true,
+         fb:"Correct — and the schedule pressure is exactly why this is the hard call to make."},
+        {t:"Strip the middle of the lot and stay roughly 5 m off the frontage until the marks appear.", ok:false,
+         fb:"You've invented a clearance distance. BYDA plans are indicative — the main may not be where the plan shows, and 'roughly' is not a control."},
+        {t:"Strip carefully with the bucket floating, so you'd feel the main before you damaged it.", ok:false,
+         fb:"You will not feel a gas main through a loader before you hole it. Feel is not a service-location method."},
+        {t:"Ring the gas provider and start work while you wait on hold.", ok:false,
+         fb:"Making the call is right. Starting the machine while you wait is not — the control has to be in place before the work, not alongside it."}
+      ],
+      why:"BYDA plans establish that an asset exists. Location marking and, where the SWMS requires it, potholing establish where it actually is. Machine work near an unlocated service is uncontrolled work regardless of how carefully you do it.",
+      pcFull:"Identify, confirm and apply controls for underground and overhead services"
+    },
+    {
+      type:"timed", id:"s1q4", xp:30, seconds:70, pc:"PC 1.2", title:"Take 5 — the work area",
+      stem:"Take 5. You've walked to the work area. Flag every genuine hazard before the clock runs out.",
+      hint:"False calls cost you — flag what's a hazard, not everything you can see.",
+      scene:"Overcast, rain overnight. You're stockpiling topsoil beside a 1.8 m open drainage trench near the Lot 22 frontage.",
+      options:[
+        {t:"Open trench with no edge protection on the machine side", ok:true},
+        {t:"Overhead LV powerline crossing the haul route", ok:true},
+        {t:"Ground softened by overnight rain along the trench edge", ok:true},
+        {t:"Pipelayer working in the trench, out of your line of sight", ok:true},
+        {t:"Survey pegs set through the middle of your intended travel path", ok:true},
+        {t:"Silt fence between the stockpile and the street gutter", ok:true},
+        {t:"A parked site ute in the designated car park", ok:false},
+        {t:"The stockpile is a slightly different colour to yesterday's", ok:false},
+        {t:"National flag on the site office", ok:false},
+        {t:"Skip bin inside the fenced laydown area", ok:false}
+      ],
+      why:"Note what made the list. The trench, the softened edge and the unseen pipelayer are the classic loader-into-trench sequence. The silt fence is a hazard in the sense that damaging it is an environmental breach — on civil sites, environmental controls belong in the Take 5.",
+      pcFull:"Identify and assess hazards and apply risk controls"
+    },
+    {
+      type:"scenario", id:"s1q5", xp:35, pc:"PC 1.2", title:"Scenario — the unmarked service",
+      stem:"Scenario: something in the ground that shouldn't be there.",
+      start:"a",
+      nodes:{
+        a:{ text:"Mid-morning. You're pushing spoil back into a backfilled trench line on Lot 27. The bucket edge catches on something and you feel the machine load up. Looking back, there's a length of orange conduit turned up in the spoil — not on any plan you were shown.",
+            q:"What's your first action?",
+            choices:[
+              {t:"Stop the machine where it is, keep everyone clear and don't move the bucket further.", go:"b"},
+              {t:"Reverse clear so you can see it properly, then have a look.", go:"b2", penalty:1},
+              {t:"Lift the conduit out with the bucket to see whether it's live or abandoned.", go:"bad1"}
+            ]},
+        b:{ text:"Good. The machine is stopped and the area is static. Orange conduit is the standard marker colour for electrical.",
+            q:"Next?",
+            choices:[
+              {t:"Notify the supervisor immediately, establish an exclusion zone and treat it as live until the asset owner confirms otherwise.", go:"good"},
+              {t:"Get out and inspect the conduit up close to check for damage.", go:"bad2"},
+              {t:"Photograph it, note it in the diary and carry on with the rest of the lot.", go:"bad3"}
+            ]},
+        b2:{ text:"You reverse a couple of metres. The conduit shifts as the bucket comes clear — you can't tell whether that made things better or worse.",
+            q:"Now what?",
+            choices:[
+              {t:"Stop, notify the supervisor, establish an exclusion zone and treat it as live.", go:"good"},
+              {t:"Nudge it once more to see if it's actually loose.", go:"bad1"}
+            ]},
+        good:{ end:true, good:true, title:"Outcome: controlled",
+            outcome:"The area is isolated, the supervisor and asset owner are notified, and the conduit is confirmed as an abandoned communications duct. Work resumes on a revised SWMS after the area is re-located and marked.",
+            why:"Stop, secure, notify, treat as live. The unglamorous sequence is the one that keeps operators alive. Colour coding tells you what an asset probably is — it never tells you whether it is energised." },
+        bad1:{ end:true, good:false, title:"Outcome: incident",
+            outcome:"Using the bucket to move an unidentified service is direct contact with an unknown energy source. Best case you damage an asset and trigger a notifiable incident. Worst case it was live electrical and you are standing on a machine in contact with it.",
+            why:"Never manipulate an unidentified service with the machine. The moment something unexpected comes out of the ground, the machine stops being a tool and becomes the hazard." },
+        bad2:{ end:true, good:false, title:"Outcome: near miss",
+            outcome:"You've walked into the immediate vicinity of a possibly live, possibly damaged service before it was isolated. Nothing happened this time.",
+            why:"Approaching on foot puts you inside the danger zone with no protection. Notification and exclusion come first; inspection is the asset owner's job, not yours." },
+        bad3:{ end:true, good:false, title:"Outcome: reportable",
+            outcome:"You've documented a service strike and then kept working around it. The record now shows you knew and continued.",
+            why:"Recording a hazard is not controlling it. A service strike is a stop-work-and-notify event on every civil site in the country." }
+      },
+      pcFull:"Respond to changed conditions and unplanned events; report incidents"
+    },
+    {
+      type:"multi", id:"s1q6", xp:15, pc:"PC 1.3", title:"PPE for civil loader work",
+      stem:"What PPE do you need available for loader operations on this site?",
+      hint:"Think about what you need in the cab and what you need the moment you step down.",
+      options:[
+        {t:"Safety helmet", ok:true},
+        {t:"Hi-vis clothing to the site's required standard (day/night)", ok:true},
+        {t:"Steel-cap safety boots", ok:true},
+        {t:"Safety glasses", ok:true},
+        {t:"Hearing protection", ok:true},
+        {t:"Gloves for ground-level and maintenance tasks", ok:true},
+        {t:"Fall-arrest harness for normal cab access", ok:false},
+        {t:"Respirator worn continuously while seated in an enclosed, filtered cab", ok:false}
+      ],
+      fb:"Helmet, hi-vis, boots, eye and hearing protection, gloves — the standard civil kit.",
+      why:"The two you rejected are about proportionality. Cab access uses three points of contact on designed steps, not fall arrest. Respiratory protection is driven by an actual dust assessment — an enclosed pressurised cab is itself the control, and a mask becomes relevant when you step out into dust or the cab filtration is down.",
+      pcFull:"Select and use personal protective equipment"
+    },
+    {
+      type:"mcq", id:"s1q7", xp:15, pc:"PC 1.4", title:"Coordinating with other trades",
+      stem:"Your next task is loading topsoil from a stockpile that sits 4 m from an open trench where a pipe crew is working.",
+      options:[
+        {t:"Speak to the pipe crew supervisor before you start, agree the exclusion and the signals, and confirm a spotter is in place.", ok:true,
+         fb:"Right — the coordination happens before the machine moves, face to face, with the people affected."},
+        {t:"Sound the horn as you approach so they know you're there.", ok:false,
+         fb:"A horn tells people a machine exists. It doesn't agree an exclusion zone, and a worker in a trench may not be able to move clear in time."},
+        {t:"Work the far side of the stockpile and let them manage their own safety.", ok:false,
+         fb:"Separation by preference isn't separation by control. If the trench is inside your work area, the interaction has to be managed, not avoided by habit."},
+        {t:"Radio the site channel to announce you're loading in that area.", ok:false,
+         fb:"Better than nothing, but a broadcast isn't an agreement — and the crew in the trench may not be carrying a radio."}
+      ],
+      why:"Interaction between plant and people on foot is the highest-consequence risk on a civil site. It is managed by agreement, physical exclusion and a dedicated spotter — not by noise, habit or good intentions.",
+      pcFull:"Coordinate work with others and confirm site communication requirements"
+    }
+  ],
+  takeaway:
+    "<ul>"+
+    "<li><b>Instructions must be traceable.</b> Pre-start, drawings, SWMS, supervisor, handover. Nothing else counts.</li>"+
+    "<li><b>BYDA plans locate the existence of an asset, not the asset.</b> Marks and potholing locate the asset.</li>"+
+    "<li><b>Anything unexpected out of the ground = stop, secure, notify, treat as live.</b></li>"+
+    "<li><b>Plant/pedestrian interaction is agreed before the wheels move.</b></li>"+
+    "</ul>"
+},
+
+/* ============================================================
+   SHIFT 2 — MACHINE KNOWLEDGE AND CONTROLS
+   ============================================================ */
+{
+  id:"s2",
+  title:"Cab Familiarisation",
+  blurb:"New machine on the fleet. Before you're signed onto it you need to know what every control does and what the machine is telling you.",
+  element:"Element 1–2 · Machine knowledge",
+  mechanic:"Diagram hotspots + matching",
+  badge:"cabrat",
+  maps:"Identify machine components, controls, instruments and their functions; interpret monitoring system alerts",
+  items:[
+    {
+      type:"teach", id:"s2t1", kicker:"Machine anatomy",
+      title:"How a wheeled loader is put together",
+      lead:"Every operating limit on this machine comes from three design facts: it's articulated, it's front-heavy when loaded, and it steers by bending in the middle.",
+      body:
+        "<h4>Frame and steering</h4><ul>"+
+        "<li><b>Articulated frame</b> — front and rear halves pivot at a centre hinge. Tight turning circle; also a moving crush zone that will kill anyone standing in it.</li>"+
+        "<li><b>Steering</b> — hydraulic actuators bend the machine, controlled by a steering wheel or a STIC (Steering, Transmission, Implement Control) joystick. Secondary steering takes over on primary failure so you can stop safely, not so you can keep working.</li>"+
+        "</ul>"+
+        "<h4>Driveline</h4><ul>"+
+        "<li><b>Engine and turbocharger</b> — turbo forces cooler, denser air in to lift power output. It also means the turbo runs hot and needs an idle-down before shutdown.</li>"+
+        "<li><b>Torque converter</b> — a fluid coupling, so the machine will not stall when the bucket loads up. A lock-up clutch gives direct drive at speed for fuel efficiency.</li>"+
+        "<li><b>Transmission</b> — typically three or four speeds forward and reverse.</li>"+
+        "<li><b>Brakes</b> — sealed oil-disc. Right pedal is the service brake. The left pedal is the one that catches new operators.</li>"+
+        "</ul>"+
+        "<h4>Hydraulics and implement</h4><ul>"+
+        "<li>Engine-driven pump feeds lift and tilt cylinders, steering and braking. A variable piston pump matches flow to lever stroke, so the implement responds proportionally to how far you move the lever.</li>"+
+        "<li><b>Reduced rimpull</b> limits tractive effort to stop wheel spin while keeping hydraulic power up.</li>"+
+        "<li><b>Kickouts and positioners</b> preset lift height, return-to-dig and bucket angle for repetitive cycles.</li>"+
+        "</ul>"+
+        "<h4>Cab</h4>"+
+        "<p><b>ROPS/FOPS</b> certified, sealed, filtered, air conditioned and sound insulated. The monitoring system (VIDS/VIMS or equivalent) runs a self-test at start-up and reports faults through a lamp, a buzzer and a screen message.</p>"+
+        "<div class='callout civil'><b>Civil attachments:</b> subdivisions run buckets, and often pallet forks for delivering pipe, pit lids and drainage product. Any attachment change alters the machine's rated capacity and stability — and needs its own SOP, training and authorisation.</div>"
+    },
+    {
+      type:"hotspot", id:"s2q1", xp:25, svg:"loader", mode:"identify", pc:"KE 1", title:"Identify major components",
+      stem:"Identify each component on the machine as it's called.",
+      hint:"Click the region of the diagram that matches the part named below.",
+      targets:[
+        {id:"artic", label:"The articulation joint (centre hinge)", fb:"This is where the machine bends to steer — and the crush zone that must never have a person in it while the engine is running."},
+        {id:"cab", label:"The ROPS/FOPS operator cabin", fb:"Rollover and falling-object protection. Its certification is void if the structure is cut, welded or damaged — which is why a damaged cab is an out-of-service defect."},
+        {id:"bucket", label:"The bucket and cutting edge", fb:"The cutting edge and teeth do the work. Worn or missing teeth change how the bucket loads and can damage a truck tray."},
+        {id:"liftarm", label:"The lift arm (boom)", fb:"Raises and lowers the implement. Pin and bush wear here shows up as slop in the bucket and is a pre-start check item."},
+        {id:"tiltram", label:"The tilt cylinder", fb:"Racks the bucket back and dumps it. A weeping tilt ram is one of the most common defects you'll write up."},
+        {id:"isolator", label:"The battery isolator switch", fb:"Your electrical isolation point. Turned off for extended parking, servicing, and as part of lock and tag."},
+        {id:"engine", label:"The engine compartment", fb:"Engine, turbo and cooling package. Ground-level checks here are visual — build-up of foreign material around a hot turbo is a fire risk."}
+      ],
+      missFb:"Not that one — look again at the part being named.",
+      fb:"That's the machine broken into the parts you're accountable for at pre-start.",
+      why:"You don't need to be a fitter, but you must be able to name, locate and visually assess every major component. That's what makes a pre-start inspection meaningful rather than a signature.",
+      pcFull:"Identify machine components and their function"
+    },
+    {
+      type:"hotspot", id:"s2q2", xp:25, svg:"cab", mode:"identify", pc:"KE 2", title:"Identify the controls",
+      stem:"Plan view of the operator station. Find each control as it's named.",
+      hint:"Pedal 1 is the leftmost pedal, Pedal 3 the rightmost.",
+      targets:[
+        {id:"leftpedal", label:"The left brake pedal (impeller clutch / transmission modulation)", fb:"Partially depressed it reduces impeller clutch pressure to cut wheel slip while keeping engine revs and hydraulic power up. Push further and it brakes. This is the loading pedal."},
+        {id:"servicebrake", label:"The right brake pedal (service brake)", fb:"Normal braking. Depress to slow, release to release."},
+        {id:"throttle", label:"The throttle pedal", fb:"Engine speed. Note how much of good loader technique is about using less of this, not more."},
+        {id:"parkbrake", label:"The parking brake control", fb:"Pull OUT to engage, push IN to release. Applied only once the machine has stopped — never while moving."},
+        {id:"hydlock", label:"The hydraulic lockout switch", fb:"Locks the implement controls. Must be engaged whenever you leave or park the machine."},
+        {id:"stic", label:"The STIC steering control", fb:"Left for left, right for right. Returns to centre when released, but the machine holds the direction it's in — releasing does not straighten the machine."},
+        {id:"fnr", label:"The forward / neutral / reverse selector", fb:"Direction control. The selected direction shows on the instrument panel — check it before you move, every time."},
+        {id:"liftlever", label:"The lift (boom) control lever", fb:"Back to raise, forward to lower, further forward into detent for float. Returns to hold when released."},
+        {id:"tiltlever", label:"The tilt (bucket) control lever", fb:"Forward to dump, back to rack the bucket back. Returns to hold when released."},
+        {id:"monitor", label:"The monitoring system display", fb:"Gauges, gear and speed, and fault messages. It self-tests at start-up — if the test doesn't run, that itself is a fault."}
+      ],
+      missFb:"Wrong control — read the description again and look at the layout.",
+      fb:"You can now put a hand on every primary control without looking for it.",
+      why:"Control familiarity is not a memory test — it is the difference between a controlled response and a fumble when something goes wrong at 8 km/h with a full bucket up.",
+      pcFull:"Identify and use machine controls and instruments"
+    },
+    {
+      type:"match", id:"s2q3", xp:25, pc:"KE 2", title:"Control functions",
+      stem:"Match each control to what it actually does.",
+      hint:"Tap a control on the left, then its function on the right.",
+      pairs:[
+        {a:"Left brake pedal", b:"Reduces impeller clutch pressure to limit wheel slip while loading", fb:"The loading pedal. Used properly it keeps hydraulic power up while stopping the tyres from spinning."},
+        {a:"Hydraulic lockout switch", b:"Locks the implement controls when leaving or parking the machine", fb:"Engaged every time you get out. Not optional."},
+        {a:"Parking brake knob", b:"Pull OUT to engage after the machine has stopped", fb:"Applying it while moving damages the brake pack and can pitch the load."},
+        {a:"Float detent on lift lever", b:"Lets the bucket follow the ground contour under its own weight", fb:"Used for clean-up and back-blading. Dangerous below about 400 mm boom height — the bucket can drop into the surface."},
+        {a:"Kickout / positioner", b:"Automatically stops the boom or bucket at a preset height or angle", fb:"Consistency and speed in repetitive loading — set it and every cycle is the same."},
+        {a:"Reduced rimpull switch", b:"Limits tractive effort at the wheels to control slip", fb:"Selected to suit gear and ground conditions, especially in loose or wet material."},
+        {a:"Battery isolator", b:"Disables the electrical system for servicing or extended shutdown", fb:"Your isolation point for lock and tag."},
+        {a:"Secondary steering", b:"Engages automatically on primary steering failure so you can stop safely", fb:"It gets you stopped. It is not a limp-home mode — the machine is out of service."},
+        {a:"Transmission neutraliser", b:"Returns transmission to neutral via the left pedal so engine revs stay up", fb:"Lets you keep hydraulic power for the implement while taking drive off the wheels."}
+      ],
+      fb:"That's the control set that separates a smooth operator from a rough one.",
+      pcFull:"Identify the function of machine controls"
+    },
+    {
+      type:"mcq", id:"s2q4", xp:12, pc:"KE 2", title:"The left pedal",
+      stem:"You're crowding into a topsoil stockpile and the front tyres start to spin. What's the correct response?",
+      options:[
+        {t:"Partially depress the left pedal to reduce impeller clutch pressure and cut the slip, keeping engine revs up for the hydraulics.", ok:true,
+         fb:"Correct. That's precisely what the left pedal exists for."},
+        {t:"Increase throttle to power through the pile.", ok:false,
+         fb:"More power to a spinning wheel makes more spin. You'll polish the tyres, dig a hole under the machine and load nothing."},
+        {t:"Apply the right brake pedal to slow the wheels.", ok:false,
+         fb:"Braking a spinning wheel kills your drive and your hydraulics at the same time. Wrong pedal."},
+        {t:"Back out and take a run-up at the pile.", ok:false,
+         fb:"Impact loading damages the machine, and momentum into a face is how you end up under material."}
+      ],
+      why:"Tyre slip is expensive — tyres are one of the highest running costs on a wheel loader, and slip means you're burning fuel without moving material. The left pedal is the tool for it.",
+      pcFull:"Operate machine controls to suit conditions"
+    },
+    {
+      type:"sequence", id:"s2q5", xp:15, pc:"KE 2", title:"Horn signals",
+      stem:"Put the standard horn signals in order of number of blasts, from one to three.",
+      hint:"One blast, two blasts, three blasts.",
+      steps:[
+        "One blast — starting the engine",
+        "Two blasts — about to move forward",
+        "Three blasts — about to move backward"
+      ],
+      fb:"One start, two forward, three back.",
+      why:"Signals only work if everyone on site uses the same ones. Confirm the convention at induction — and remember a horn is a warning, not a substitute for checking the area is clear.",
+      pcFull:"Apply site communication requirements"
+    },
+    {
+      type:"sort", id:"s2q6", xp:20, pc:"KE 3", title:"Reading the monitoring system",
+      stem:"The monitoring system has thrown an alert. Sort each one by the response it demands.",
+      hint:"Think about how quickly you have to act, and whether you keep working.",
+      bins:[
+        {id:"watch", name:"Monitor & continue", d:"Outside normal range but not yet critical — keep an eye on it"},
+        {id:"change", name:"Change what you're doing", d:"Reduce load or alter operation now to avoid damage"},
+        {id:"stop",  name:"Stop immediately", d:"Park safely, lower implement, shut down, report"}
+      ],
+      entries:[
+        {t:"Amber lamp — slightly elevated hydraulic oil temp", bin:"watch"},
+        {t:"Amber lamp — minor sensor fault logged", bin:"watch"},
+        {t:"Coolant temperature climbing under sustained heavy load", bin:"change"},
+        {t:"Transmission oil temperature rising in high gear on a grade", bin:"change"},
+        {t:"Red lamp — low engine oil pressure", bin:"stop"},
+        {t:"Red lamp — brake system fault", bin:"stop"},
+        {t:"Red lamp — severe engine overheat", bin:"stop"},
+        {t:"Secondary steering has activated", bin:"stop"}
+      ],
+      fb:"Amber means attention. Red means the machine is telling you to stop before it stops itself.",
+      why:"Manufacturers group alerts into categories precisely so operators don't have to diagnose. Category 3 / red is an immediate controlled shutdown — safe location, implement down, park brake, engine off, report. Continuing on a red is how a repairable fault becomes a fire or a runaway.",
+      pcFull:"Monitor and interpret machine operating condition and alerts"
+    },
+    {
+      type:"mcq", id:"s2q7", xp:12, pc:"PC 2.1", title:"Leaving the cab",
+      stem:"You're stepping out of the cab for two minutes to talk to the surveyor. What must be done before you leave the seat?",
+      options:[
+        {t:"Implement lowered to the ground, transmission in neutral, park brake engaged, hydraulic lockout ON, STIC/steering lock applied.", ok:true,
+         fb:"All of it — and 'two minutes' changes none of it."},
+        {t:"Park brake on and engine at idle — you're only a moment.", ok:false,
+         fb:"A running machine with live hydraulics and an unlocked control is an unattended hazard. Duration is irrelevant."},
+        {t:"Bucket raised so it's out of the way, park brake on, engine off.", ok:false,
+         fb:"Never leave the implement raised. A hydraulic failure or an accidental lever knock drops it — potentially onto the person you got out to talk to."},
+        {t:"Neutral, park brake on, and leave the hydraulics live so you can resume quickly.", ok:false,
+         fb:"Live implement controls with nobody in the seat is the exact scenario the hydraulic lockout was designed to prevent."}
+      ],
+      why:"Every one of those steps removes a stored energy source: the bucket's potential energy, the driveline, the hydraulics, and the steering. Leaving any of them live means the machine can still move without an operator.",
+      pcFull:"Secure the machine when not in operation"
+    }
+  ],
+  takeaway:
+    "<ul>"+
+    "<li><b>Left pedal = loading pedal.</b> It kills wheel slip without killing your hydraulics.</li>"+
+    "<li><b>Hydraulic lockout goes ON every time you leave the seat.</b> No exceptions for short jobs.</li>"+
+    "<li><b>Red lamp = stop, park, lower, shut down, report.</b> Amber = watch it.</li>"+
+    "<li><b>The articulation joint is a moving crush zone</b> whenever the engine is running.</li>"+
+    "</ul>"
+},
+
+/* ============================================================
+   SHIFT 3 — PRE-START AND WALK-AROUND
+   ============================================================ */
+{
+  id:"s3",
+  title:"The Walk-Around",
+  blurb:"0700. The machine is cold and parked. Everything that goes wrong today was either found this morning, or missed this morning.",
+  element:"Element 1 · Pre-start & inspection",
+  mechanic:"Sequencing + defect triage",
+  badge:"eagleeye",
+  maps:"Conduct pre-operational checks, identify faults, isolate and tag, complete records",
+  items:[
+    {
+      type:"teach", id:"s3t1", kicker:"Before you inspect",
+      title:"Make the machine safe before you walk around it",
+      lead:"A pre-start inspection on a machine that isn't secured is just a walk.",
+      body:
+        "<h4>The machine must be:</h4><ul>"+
+        "<li>Unloaded and parked on stable, level ground in an approved area</li>"+
+        "<li>Park brake applied, transmission in NEUTRAL</li>"+
+        "<li>All implements resting on the ground</li>"+
+        "<li>Wheels chocked in line with site requirements</li>"+
+        "<li>Shut down and isolated, with lock and tag applied as the site requires</li>"+
+        "</ul>"+
+        "<h4>What you're looking for</h4>"+
+        "<p>Every major component checked visually to confirm it is present, secure and fit for purpose, and free from:</p><ul>"+
+        "<li>Cracking, distortion and damage</li>"+
+        "<li>Excessive wear or corrosion</li>"+
+        "<li>Build-up of foreign material</li>"+
+        "<li>Lubrication and fluid leaks</li>"+
+        "<li>Sharp edges or burrs</li>"+
+        "</ul>"+
+        "<h4>The route</h4>"+
+        "<p>Start at the isolators. Complete all ground-level checks in one clockwise pass — left side, front, right side, rear — then upper level: engine compartment, decks, and finally the operator cabin.</p>"+
+        "<div class='callout info'><b>Why one direction, every time?</b> A fixed route makes omission obvious. Wander and you will convince yourself you checked the right rear when you checked it yesterday.</div>"+
+        "<div class='callout civil'><b>Civil addition:</b> check the beacon, reversing alarm, mirrors and any camera or proximity system as part of pre-start. On a site with pedestrians and public frontage, those are primary controls, not accessories.</div>"
+    },
+    {
+      type:"sequence", id:"s3q1", xp:22, pc:"PC 1.5", title:"Securing the machine for inspection",
+      stem:"Put the securing steps in the correct order before you begin the walk-around.",
+      steps:[
+        "Park unloaded on stable, level ground in an approved area",
+        "Apply the park brake and select NEUTRAL",
+        "Lower all implements fully to the ground",
+        "Shut the engine down",
+        "Turn the battery isolator OFF",
+        "Apply lock and tag in line with site requirements",
+        "Chock the wheels as required by the site"
+      ],
+      fb:"Ground, brake, implements down, engine off, isolate, lock and tag, chock.",
+      why:"The order removes energy sources progressively: position, driveline, stored hydraulic potential, then engine, then electrical. Chocking last is deliberate — you don't want to be crouched at a wheel with the machine still live.",
+      pcFull:"Prepare the machine for pre-operational inspection"
+    },
+    {
+      type:"mcq", id:"s3q2", xp:12, pc:"PC 1.5", title:"Why a fixed route",
+      stem:"Why does the walk-around follow the same clockwise route every single time?",
+      options:[
+        {t:"Because a fixed route makes an omission obvious — you can tell when a section has been skipped.", ok:true,
+         fb:"Exactly. Consistency is what makes the check auditable and what makes gaps visible."},
+        {t:"Because manufacturers require a clockwise direction for warranty.", ok:false,
+         fb:"Not a warranty condition. The direction matters far less than doing the same one every time."},
+        {t:"Because it's faster than checking in whatever order you happen to notice things.", ok:false,
+         fb:"It probably is faster — but speed isn't the reason, and a faster wrong check is worse than a slower right one."},
+        {t:"Because the checklist is printed in that order.", ok:false,
+         fb:"Backwards. The checklist follows the route; the route isn't dictated by the paperwork."}
+      ],
+      why:"This is why a pre-start checklist is a compliance record, not a formality. If the same operator signs the same form in 40 seconds every morning, an auditor will notice — and so will the component that failed.",
+      pcFull:"Conduct pre-operational checks in accordance with procedures"
+    },
+    {
+      type:"hotspot", id:"s3q3", xp:25, svg:"loader", mode:"findall", pc:"PC 1.5", title:"Ground-level check points",
+      stem:"Click every area you must visually check from ground level during the walk-around.",
+      hint:"Ground level only — click each one; misses cost you XP.",
+      findLabel:"Find all six ground-level check points on the machine.",
+      targets:[
+        {id:"tyres", label:"Tyres and wheels", fb:"Pressure, cuts, sidewall damage, missing wheel nuts, and material trapped between duals."},
+        {id:"bucket", label:"Bucket, cutting edge and teeth", fb:"Cracking, wear, missing teeth, distortion of the cutting edge."},
+        {id:"liftarm", label:"Lift arms, pins and bushes", fb:"Cracking at weld points, pin wear, missing retainers. Slop here shows up as a bucket you can't hold steady."},
+        {id:"tiltram", label:"Tilt cylinder and hydraulic hoses", fb:"Weeping seals, chafed or bulging hoses, wet rams. The most commonly written-up defect on a loader."},
+        {id:"artic", label:"Articulation joint and steering rams", fb:"Pin wear, grease condition, cracking. Also confirm the frame lock is stowed, not engaged."},
+        {id:"isolator", label:"Battery isolator and battery compartment", fb:"Secure, accessible, functioning. If you can't isolate it, you can't safely work on it."}
+      ],
+      missFb:"That's a check point, but not one you do from ground level on this pass — keep to the ground-level circuit.",
+      fb:"That's the ground-level circuit. Upper level — engine bay, decks, cab — comes after.",
+      why:"Ground level first, in one pass, before you climb anything. Climbing up and down between checks is how operators fall off machines.",
+      pcFull:"Conduct pre-operational inspection of the machine"
+    },
+    {
+      type:"multi", id:"s3q4", xp:15, pc:"PC 1.5", title:"What counts as a defect",
+      stem:"During the walk-around, which of these are defects you must record?",
+      options:[
+        {t:"A hairline crack at a lift-arm weld", ok:true},
+        {t:"A weeping seal on the tilt cylinder", ok:true},
+        {t:"Two missing bucket teeth", ok:true},
+        {t:"A cracked cab window on the right side", ok:true},
+        {t:"Reversing alarm not sounding when tested", ok:true},
+        {t:"Build-up of dried mud packed around the turbo area", ok:true},
+        {t:"Dust on the outside of the cab glass", ok:false},
+        {t:"Yesterday's operator left the seat position wrong for you", ok:false}
+      ],
+      fb:"Six genuine defects. The last two are housekeeping and comfort, not defects.",
+      why:"Two of those defects have consequences people underestimate. A cracked cab window compromises the ROPS/FOPS envelope. Packed material around a hot turbo is one of the leading causes of mobile plant fires.",
+      pcFull:"Identify and report faults and damage"
+    },
+    {
+      type:"sort", id:"s3q5", xp:22, pc:"PC 1.5", title:"Defect triage",
+      stem:"You've found these on the walk-around. Sort each by what you do about it.",
+      hint:"The question is whether the machine operates today, and who fixes it.",
+      bins:[
+        {id:"out",  name:"Do not operate", d:"Tag out, isolate, report — the machine stays parked"},
+        {id:"rep",  name:"Record & report", d:"Note on the pre-start, report it, machine can operate"},
+        {id:"you",  name:"You fix it now", d:"Within an operator's authorisation to correct"}
+      ],
+      entries:[
+        {t:"Brake system warning active at start-up", bin:"out"},
+        {t:"Visible crack in a lift arm", bin:"out"},
+        {t:"Reversing alarm inoperative", bin:"out"},
+        {t:"Steering feels vague and secondary steering warning has logged", bin:"out"},
+        {t:"One bucket tooth worn but intact", bin:"rep"},
+        {t:"Small stain of hydraulic residue, no active drip", bin:"rep"},
+        {t:"Scratched paint on the rear guard", bin:"rep"},
+        {t:"Mirror knocked out of alignment", bin:"you"},
+        {t:"Mud packed on the access steps", bin:"you"},
+        {t:"Rubbish and empty bottles in the cab footwell", bin:"you"}
+      ],
+      fb:"That's the triage a supervisor expects you to make unsupervised.",
+      why:"The 'do not operate' group all share one feature: they remove a safety-critical function — stopping, structural integrity, warning others, or steering. Anything in that group is a tag-out regardless of how much the job needs the machine.",
+      pcFull:"Assess, report and act on identified faults"
+    },
+    {
+      type:"scenario", id:"s3q6", xp:30, pc:"PC 1.5", title:"Scenario — the leak",
+      stem:"Scenario: something wet under the machine.",
+      start:"a",
+      nodes:{
+        a:{ text:"Walk-around, Lot 12 laydown. There's a fresh puddle of hydraulic oil roughly 300 mm across under the front frame, and the tilt cylinder rod is visibly wet. The machine is booked to load 14 truckloads today and it's the only loader on site.",
+            q:"First move?",
+            choices:[
+              {t:"Do not start the machine. Tag it out, report to the supervisor and record the defect on the pre-start.", go:"good"},
+              {t:"Wipe the ram, start the machine, cycle the tilt and see how fast it re-wets.", go:"b", penalty:1},
+              {t:"Top up the hydraulic tank and monitor the level through the shift.", go:"bad1"},
+              {t:"Note it on the pre-start and start loading — 14 loads is a big day.", go:"bad2"}
+            ]},
+        b:{ text:"You cycle the tilt twice. Oil runs down the rod and drips within seconds. This is an active leak under pressure, not residue.",
+            q:"Now?",
+            choices:[
+              {t:"Shut down, tag out, report and record.", go:"good"},
+              {t:"Work the morning carefully and get it looked at at smoko.", go:"bad2"}
+            ]},
+        good:{ end:true, good:true, title:"Outcome: correct",
+            outcome:"The machine is tagged out and the fitter finds a failed rod seal. It's replaced by early afternoon and you lose four loads, not a machine or an operator.",
+            why:"An active hydraulic leak is a loss-of-control risk, an environmental release, a fire risk near hot components, and an injection-injury risk to anyone who touches a pinhole. It is not a 'monitor it' defect." },
+        bad1:{ end:true, good:false, title:"Outcome: wrong call",
+            outcome:"Topping up masks the fault. You've also released hydraulic oil to ground on a site with sediment controls and a stormwater connection.",
+            why:"Topping up a leaking system treats the symptom. The leak rate is unknown and can accelerate — losing tilt or steering pressure mid-cycle with a loaded bucket up is a serious event." },
+        bad2:{ end:true, good:false, title:"Outcome: incident",
+            outcome:"Mid-morning the leak worsens. You lose tilt control with a loaded bucket at height, drop the load, and there is now an oil spill through the work area feeding to the stormwater pit.",
+            why:"Schedule pressure is the most common reason operators run defective plant, and the least defensible one at investigation. Fourteen loads is not worth a load dropped near people." }
+      },
+      pcFull:"Isolate, tag and report defective plant"
+    },
+    {
+      type:"estimate", id:"s3q7", xp:15, pc:"PC 2.1", title:"Warm-up before load",
+      stem:"After start-up, how long should the engine and hydraulics warm at low idle before you put the machine under load?",
+      hint:"Slide to your answer, then lock it in.",
+      min:0, max:20, step:1, unit:" min",
+      answerMin:5, answerMax:8, answerLabel:"at least 5 minutes",
+      nudge:"Think about cold hydraulic oil moving through cold cylinders and a cold turbo bearing.",
+      fb:"At least five minutes at low idle, cycling the hydraulic controls to circulate oil.",
+      why:"Cold hydraulic oil is thick and won't reach clearances properly; loading a cold machine causes accelerated wear and jerky implement response. Warm up while you monitor gauges and listen for unusual noise, smell or vibration — the warm-up doubles as your running check.",
+      pcFull:"Carry out start-up and warm-up procedures"
+    },
+    {
+      type:"sequence", id:"s3q8", xp:20, pc:"PC 2.1", title:"Brake system test",
+      stem:"Order the post-start brake system test.",
+      hint:"This test confirms the park brake will hold the machine under power.",
+      steps:[
+        "Raise the attachment clear of the ground",
+        "Depress the service brake pedal",
+        "Release the parking brake",
+        "Select third speed forward",
+        "Gradually increase engine speed to high idle — the machine must not move",
+        "Reduce engine speed to low idle and select neutral",
+        "Engage the park brake, lower the attachment and shut down"
+      ],
+      fb:"If the machine creeps at high idle, the park brake has failed the test — tag it out.",
+      why:"This test is the only way to know the park brake will hold on a grade before you need it to. On a subdivision with fall to the street, a park brake that won't hold is a runaway machine into a public road.",
+      pcFull:"Conduct post start-up checks and functional tests"
+    }
+  ],
+  takeaway:
+    "<ul>"+
+    "<li><b>Secure the machine before you inspect it</b> — level, brake, implements down, off, isolated, tagged, chocked.</li>"+
+    "<li><b>Same route every time.</b> Ground level in one pass, then upper level, then the cab.</li>"+
+    "<li><b>Anything that removes stopping, structure, steering or warning = tag out.</b></li>"+
+    "<li><b>Active hydraulic leak is never a 'monitor it'.</b></li>"+
+    "</ul>"
+},
+
+/* ============================================================
+   SHIFT 4 — PRODUCTION OPERATIONS
+   ============================================================ */
+{
+  id:"s4",
+  title:"The Production Shift",
+  blurb:"1030. Trucks are cycling, the surveyor wants Lot 22 trimmed to level, and the drainage crew needs backfill. Technique is where the money and the damage both live.",
+  element:"Element 2 · Operate the loader",
+  mechanic:"Sequencing + technique scenarios",
+  badge:"smoothop",
+  maps:"Start up, move off, load, carry, dump, level and trim to design in a civil context",
+  items:[
+    {
+      type:"sequence", id:"s4q1", xp:22, pc:"PC 2.1", title:"Start-up procedure",
+      stem:"Order the start-up procedure.",
+      steps:[
+        "Turn the battery isolator to the RUN position",
+        "Confirm park brake engaged and transmission in NEUTRAL",
+        "Confirm hydraulic controls in HOLD with the implement lock engaged",
+        "Check for bystanders, sound one horn blast and wait five seconds",
+        "Turn the start switch ON and confirm the alert self-test runs",
+        "Crank the engine and release the key as soon as it fires"
+      ],
+      fb:"Isolator, neutral and brake, implements locked, warn and wait, self-test, crank.",
+      why:"The five-second pause after the horn is the part people skip. It exists so someone underneath, behind, or on the far side has time to get clear and respond. If the alert self-test doesn't run, stop — you have no working monitoring system.",
+      pcFull:"Start up the machine in accordance with procedures"
+    },
+    {
+      type:"sequence", id:"s4q2", xp:22, pc:"PC 2.2", title:"Moving off",
+      stem:"You've completed post-start checks. Order the moving-off sequence.",
+      steps:[
+        "Confirm the area is clear of personnel and other plant",
+        "Depress the service brake pedal",
+        "Release the park brake",
+        "Release the hydraulic lockout",
+        "Raise the implement to a safe travelling height",
+        "Select the intended direction of travel",
+        "Sound the horn — two blasts forward, three blasts reverse",
+        "Release the service brake and apply throttle smoothly"
+      ],
+      fb:"Clear, brake, park brake off, hydraulics live, implement up, direction, horn, move.",
+      why:"Note the order of brake and park brake — the service brake goes on before the park brake comes off, so the machine can never roll during the changeover. That matters on the grades in a subdivision.",
+      pcFull:"Move and position the machine safely"
+    },
+    {
+      type:"teach", id:"s4t1", kicker:"Technique",
+      title:"Loading, carrying and trimming on a civil job",
+      lead:"On a subdivision you're rarely just moving volume. You're feeding trucks to a program, backfilling to a specification, and trimming to a design level someone will survey and reject.",
+      body:
+        "<h4>Filling the bucket</h4><ul>"+
+        "<li>Approach the face with a <b>straight frame</b>. Digging while articulated puts torsional load into the frame and hinge.</li>"+
+        "<li>First or second gear, bucket square to the face, lower to about 300 mm.</li>"+
+        "<li>Push forward while lowering slightly and tilting; raise the lift arms simultaneously to keep weight on the drive wheels.</li>"+
+        "<li>Rack the bucket back to load, remove excess if overloaded, then reverse away.</li>"+
+        "</ul>"+
+        "<h4>Avoiding slip and damage</h4><ul>"+
+        "<li>Don't hit the ground with the bucket or rock the cutting edge while pushing.</li>"+
+        "<li>Use minimal throttle. Reduce revs before downshifting, never downshift at full throttle.</li>"+
+        "<li>Keep loads centred — loading one side only twists the bucket and unbalances the machine.</li>"+
+        "<li>Never drop the bucket sharply or work over blasted rock.</li>"+
+        "</ul>"+
+        "<h4>Truck loading</h4><ul>"+
+        "<li>Inspect the area, agree movements with the truck driver, and assess the face before you start.</li>"+
+        "<li>Load <b>left to right</b> so you stay on the truck driver's side and remain visible.</li>"+
+        "<li>On a sloping floor, load uphill so the truck isn't tipped by an off-centre load.</li>"+
+        "<li>Pad the tray with fine material before large rock or broken concrete.</li>"+
+        "<li>Sweep spillage each cycle and pick it up as you return to the face — spillage on a haul route is a puncture and a trip hazard.</li>"+
+        "</ul>"+
+        "<h4>Levelling and trimming</h4><ul>"+
+        "<li>For levelling, position the base of the bucket flat and level with the desired surface height.</li>"+
+        "<li>For minor excavation, tilt the front of the bucket slightly down for a digging angle; if it digs too deep, reduce the angle.</li>"+
+        "<li>Maintain cutting depth by adjusting up or down on the lift control as you travel.</li>"+
+        "</ul>"+
+        "<div class='callout civil'><b>Trimming to design is not eyeballing.</b> Finished surface levels come off survey control — pegs, string lines or machine guidance. A loader is a rough-trim machine; final trim to tolerance is usually a grader or an excavator with guidance. Know where your machine's accuracy stops.</div>"+
+        "<div class='callout'><b>Backfilling near a trench:</b> the loader's own weight is the hazard. Work square to the trench, never parallel along the edge, and stay outside the zone of influence set by the excavation SWMS.</div>"
+    },
+    {
+      type:"mcq", id:"s4q3", xp:12, pc:"PC 2.3", title:"Approaching the face",
+      stem:"You're loading from a stockpile of imported fill. What's the correct frame position on approach?",
+      options:[
+        {t:"Straight frame, square to the face, first or second gear.", ok:true,
+         fb:"Correct. Straight frame keeps the load path through the machine's designed line."},
+        {t:"Slightly articulated so you can adjust position as you crowd in.", ok:false,
+         fb:"Digging articulated puts torsion into the frame and articulation hinge, and it compromises stability at exactly the moment weight comes onto the front."},
+        {t:"Whatever angle gets the bucket into the softest part of the pile.", ok:false,
+         fb:"Chasing soft material at an angle is how frames get cracked. Reposition the machine instead of steering into the cut."},
+        {t:"Third gear so you carry momentum into the pile.", ok:false,
+         fb:"Momentum into a face is impact loading — hard on the machine and it can bring material down over the bucket."}
+      ],
+      why:"Almost every structural failure on a wheel loader traces back to loading under articulation or impact loading a face. Both are technique problems, not machine problems.",
+      pcFull:"Load material using correct operating technique"
+    },
+    {
+      type:"estimate", id:"s4q4", xp:18, pc:"PC 2.3", title:"Dumping near an edge",
+      stem:"You're dumping spoil near the edge of an open excavation. What is the minimum distance from the edge at which material should be dumped?",
+      hint:"This is the distance from the edge that material is dumped — not where it comes to rest.",
+      min:0, max:4, step:0.1, unit:" m",
+      answerMin:1, answerMax:1.2, answerLabel:"no closer than 1 metre",
+      nudge:"Think about what happens to the edge if material is placed right on it — and remember the material still has to come to rest clear.",
+      fb:"Dump no closer than 1 metre from the edge, and the material must come to rest at least 0.5 metres clear of it.",
+      why:"Surcharging an excavation edge is a direct cause of collapse — the weight of dumped material adds load exactly where the ground is least supported. Note this is a general operating rule; the actual standoff on any given job is set by the excavation SWMS and the ground conditions, and can be much greater.",
+      pcFull:"Dump material safely in relation to excavations and edges"
+    },
+    {
+      type:"scenario", id:"s4q5", xp:35, pc:"PC 2.3", title:"Scenario — truck loading on the slope",
+      stem:"Scenario: loading out on a sloping lot.",
+      start:"a",
+      nodes:{
+        a:{ text:"You're loading topsoil out of a stockpile on Lot 22. The pad has noticeable fall from left to right — maybe 1 in 12. A tandem tipper has just backed in and parked across the fall, so the truck is sitting with a distinct lean. The driver stays in the cab.",
+            q:"What do you do before the first bucket?",
+            choices:[
+              {t:"Ask the driver to reposition so the truck sits square to the slope rather than across it.", go:"b"},
+              {t:"Load it as parked but keep the loads light and centred.", go:"b2", penalty:1},
+              {t:"Load the downhill side first to level the truck up.", go:"bad1"}
+            ]},
+        b:{ text:"The driver repositions so the truck is facing up the fall and sitting far more level. Better.",
+            q:"Which way do you work the tray?",
+            choices:[
+              {t:"Load from the front of the tray to the rear, working left to right so you stay on the driver's side and visible.", go:"good"},
+              {t:"Load from the rear forward — easier reach from where you're standing.", go:"b3", penalty:1},
+              {t:"Dump three quick buckets into the middle and let it settle out.", go:"bad2"}
+            ]},
+        b2:{ text:"Two buckets in, the truck's suspension is loading unevenly and the tray is visibly listing further.",
+            q:"Now?",
+            choices:[
+              {t:"Stop and have the truck repositioned before continuing.", go:"b"},
+              {t:"Even it up by loading the high side heavily.", go:"bad1"}
+            ]},
+        b3:{ text:"Loading rear-first puts weight behind the rear axle group before the front of the tray is carrying anything. The truck sits nose-light.",
+            q:"Adjust?",
+            choices:[
+              {t:"Change to front-to-rear loading and spread the load evenly.", go:"good"},
+              {t:"Keep going — it'll even out by the last bucket.", go:"bad2"}
+            ]},
+        good:{ end:true, good:true, title:"Outcome: clean load-out",
+            outcome:"The truck is loaded level, evenly distributed front to rear, within legal axle loading, and departs without spillage. You stayed on the driver's side throughout and the driver had eyes on you every cycle.",
+            why:"Truck loading is a two-person operation even though only one person is moving. Position, sequence and sightlines are all agreed before the first bucket." },
+        bad1:{ end:true, good:false, title:"Outcome: near rollover",
+            outcome:"Deliberately loading the low or high side to correct a lean concentrates weight off-centre on a machine already tilted. The truck's centre of gravity shifts outboard and it comes close to going over.",
+            why:"You never correct a truck's attitude with material. You correct it by moving the truck. Uneven loads also breach axle mass limits, which is the driver's licence on the line." },
+        bad2:{ end:true, good:false, title:"Outcome: rework and damage",
+            outcome:"The load is bunched, over the rear group and under-loaded at the front. It spills on the haul route and has to be swept up, and the driver refuses the load until it's redistributed.",
+            why:"Dumping to the middle and hoping is the habit that produces spillage, axle overloads and rejected loads. Even distribution is deliberate, not incidental." }
+      },
+      pcFull:"Load haulage units safely and to specification"
+    },
+    {
+      type:"multi", id:"s4q6", xp:20, pc:"PC 2.3", title:"Efficient, low-damage operating",
+      stem:"Which of these are correct operating techniques for a wheeled loader?",
+      options:[
+        {t:"Maintain continuous movement through the loading cycle rather than stop-start", ok:true},
+        {t:"Use the transmission neutraliser to keep engine RPM up for hydraulic power while loading", ok:true},
+        {t:"Dig with a straight frame at all times", ok:true},
+        {t:"Carry the bucket low when travelling for visibility and stability", ok:true},
+        {t:"Use the kickout system to preset bucket travel height on repetitive cycles", ok:true},
+        {t:"When digging from a bank, tilt back and rake up rather than penetrating from floor level", ok:true},
+        {t:"Downshift at full throttle to hold power through the pile", ok:false},
+        {t:"Push with the bucket in the dump position to move loose material quickly", ok:false},
+        {t:"Back-drag with the cutting edge to tidy the floor between loads", ok:false}
+      ],
+      fb:"Six correct techniques identified.",
+      why:"The three wrong ones each cause a specific, expensive failure: downshifting at full throttle hammers the transmission; pushing in the dump position and back-dragging both load the lift arm tips and cutting edge in a direction they weren't designed for.",
+      pcFull:"Apply efficient operating techniques and minimise machine damage"
+    },
+    {
+      type:"mcq", id:"s4q7", xp:15, pc:"PC 2.4", title:"Trimming to design level",
+      stem:"The surveyor has set pegs for the finished surface level on Lot 22 and asked you to trim the pad. How do you approach it with a loader?",
+      options:[
+        {t:"Rough-trim with the bucket base flat and level to the design height, work off the survey control, and confirm the final tolerance is achievable with this machine before committing.", ok:true,
+         fb:"Correct — and knowing where your machine's accuracy stops is part of the job."},
+        {t:"Trim by eye off the surrounding ground until it looks flat, then get it checked.", ok:false,
+         fb:"Eyeballing a surface off adjacent ground reproduces whatever error is already there. Design level comes from survey control, not from what looks right."},
+        {t:"Use float on the lift lever and drive back and forth until the surface evens out.", ok:false,
+         fb:"Float makes the bucket follow the existing contour — that smooths the surface but does nothing to bring it to a design level. It also risks the bucket catching if the boom is low."},
+        {t:"Set the bucket at a digging angle and cut until you reach peg height.", ok:false,
+         fb:"A digging angle cuts, it doesn't trim. For levelling, the base of the bucket goes flat and level with the target surface."}
+      ],
+      why:"This is the single biggest difference between quarry and civil loader work. In a quarry you move material. On a subdivision every surface answers to a drawing, a tolerance and an ITP hold point — and rework costs the contractor real money.",
+      pcFull:"Level and trim material to specified requirements"
+    },
+    {
+      type:"mcq", id:"s4q8", xp:15, pc:"PC 2.3", title:"Backfilling a drainage trench",
+      stem:"The drainage crew has laid pipe in a 1.6 m trench and wants backfill pushed in. Where do you work the machine from?",
+      options:[
+        {t:"Square to the trench, outside the zone of influence set by the excavation SWMS, pushing material in at right angles.", ok:true,
+         fb:"Right. Square approach keeps the machine's weight away from the edge that's least supported."},
+        {t:"Travelling along parallel to the trench edge so you can feed material continuously.", ok:false,
+         fb:"Running parallel puts the full weight of the machine along the unsupported edge for the whole pass. This is the classic loader-into-trench sequence."},
+        {t:"With one wheel on the spoil heap for reach, at whatever angle suits.", ok:false,
+         fb:"The spoil heap is uncompacted material sitting on the exact ground that's most likely to fail."},
+        {t:"Right at the edge so material drops straight in without spilling.", ok:false,
+         fb:"Working at the edge surcharges it with the machine's own mass. The collapse takes the machine with it."}
+      ],
+      why:"A loaded wheel loader can exceed 25 tonnes. Trench collapse doesn't need the machine to fall in for someone to die — a wall failure onto a person in the trench is enough, and it happens without warning.",
+      pcFull:"Operate safely in the vicinity of excavations"
+    }
+  ],
+  takeaway:
+    "<ul>"+
+    "<li><b>Straight frame to dig.</b> Every time, no exceptions.</li>"+
+    "<li><b>Load trucks left to right, front to rear, evenly.</b> Never correct a truck's lean with material.</li>"+
+    "<li><b>Dump no closer than 1 m from an edge</b> and at rest no closer than 0.5 m — subject to the excavation SWMS.</li>"+
+    "<li><b>Work square to a trench, never parallel along it.</b></li>"+
+    "<li><b>Civil trimming answers to survey control</b>, not to what looks flat.</li>"+
+    "</ul>"
+},
+
+/* ============================================================
+   SHIFT 5 — STABILITY, HAZARDS, EMERGENCIES
+   ============================================================ */
+{
+  id:"s5",
+  title:"The Wobble",
+  blurb:"1400. Wind's up, the ground's still soft from the rain, and the powerline crossing Road 2 is lower than it looks. This is the shift where physics stops being theory.",
+  element:"Element 2–3 · Stability, hazards & relocation",
+  mechanic:"Danger-zone hunt + emergency branching",
+  badge:"steady",
+  maps:"Manage machine stability, hazards, travel and relocation; respond to emergencies",
+  items:[
+    {
+      type:"teach", id:"s5t1", kicker:"Physics",
+      title:"Centre of gravity, articulation and rollover",
+      lead:"A loader is stable on level ground with a straight frame. Every departure from that reduces your margin.",
+      body:
+        "<h4>What raising a load does</h4>"+
+        "<p>Raising a loaded bucket moves the centre of gravity <b>forward and upward</b>. Higher and further forward means less resistance to tipping, in every direction.</p>"+
+        "<h4>What articulation does</h4>"+
+        "<p>When the machine is articulated the centre of gravity shifts <b>toward the shorter side</b> of the bend — and if the bucket is raised, toward the inside front tyre. The machine is only designed to balance its own weight on level ground with a straight frame.</p>"+
+        "<h4>Risk factors that stack</h4><ul>"+
+        "<li>Raising a full bucket or attachment</li>"+
+        "<li>Turning on a slope, uphill or down</li>"+
+        "<li>Uneven tyre pressures or soft, saturated ground</li>"+
+        "<li>Fully extended handling arms, especially with forks</li>"+
+        "<li>Driving into a hole or depression you didn't see</li>"+
+        "</ul>"+
+        "<div class='callout'><b>They compound.</b> Any one of these on its own is usually survivable. A raised load, on a turn, on a slope, on ground softened by rain is the combination that puts a loader on its side. On a subdivision after wet weather, all four are available at once.</div>"+
+        "<h4>Travel and grades</h4><ul>"+
+        "<li>Select a gear to suit the grade and the load. Steeper or heavier = lower gear. Always first gear down a steep slope.</li>"+
+        "<li><b>Face uphill with the bucket low.</b> Reverse down steep grades slowly and under control.</li>"+
+        "<li>Avoid driving across slopes — that's how rollovers happen.</li>"+
+        "<li>Avoid direction changes at speed in high gear. Stop and change direction at low revs.</li>"+
+        "</ul>"+
+        "<h4>Reversing</h4>"+
+        "<p>You must be as skilled in reverse as forward. The outside edge of the bucket swings through a much larger arc than the wheels — the sideswipe risk is at the front while you're looking backwards.</p>"
+    },
+    {
+      type:"multi", id:"s5q1", xp:20, pc:"KE 4", title:"What shifts the centre of gravity",
+      stem:"Which of these increase rollover risk by shifting or destabilising the centre of gravity?",
+      options:[
+        {t:"Raising a loaded bucket", ok:true},
+        {t:"Operating with the frame articulated", ok:true},
+        {t:"Turning while on a slope", ok:true},
+        {t:"Uneven tyre pressures", ok:true},
+        {t:"Soft or saturated ground under one side", ok:true},
+        {t:"Fully extended handling arms with a load on forks", ok:true},
+        {t:"Driving into an unseen depression", ok:true},
+        {t:"Travelling in a straight line on level ground with the bucket low", ok:false},
+        {t:"Running with a full fuel tank", ok:false}
+      ],
+      fb:"Seven genuine risk factors.",
+      why:"The two you rejected matter as a contrast: low bucket, straight frame, level ground is the machine's designed stable configuration — that's the baseline you return to whenever you're unsure.",
+      pcFull:"Identify and manage factors affecting machine stability"
+    },
+    {
+      type:"hotspot", id:"s5q2", xp:25, svg:"loader", mode:"findall", pc:"KE 4", title:"Danger zones",
+      stem:"Click every part of this machine that is a danger zone for a person on foot while the engine is running.",
+      hint:"Four zones. Think about what moves, what falls, and what crushes.",
+      findLabel:"Find all four danger zones for people on foot.",
+      targets:[
+        {id:"artic", label:"Articulation joint — crush zone", fb:"A fully articulating machine creates a closing crush point. A person standing in it when the operator steers has no escape and no survivable outcome."},
+        {id:"bucket", label:"Under or in front of the raised bucket", fb:"Never stand under a raised implement. Hydraulic failure, a knocked lever or a load shift drops it instantly."},
+        {id:"counterweight", label:"Rear swing zone", fb:"When the machine articulates, the rear end swings out well beyond the wheel track. People judge clearance off the wheels and get caught by the rear."},
+        {id:"tyres", label:"Wheel path and blind spots at ground level", fb:"The blind spot behind and beside a loader is short and low — exactly where a crouching worker or a child ends up."}
+      ],
+      missFb:"That component isn't a danger zone for someone standing on the ground — think about what moves, falls or swings.",
+      fb:"Crush point, drop zone, swing zone, wheel path.",
+      why:"Every one of those killed someone in the industry before it was written into a procedure. The exclusion zone around a working loader exists because all four are active at once and the operator cannot see into most of them.",
+      pcFull:"Identify hazards to personnel around the machine"
+    },
+    {
+      type:"mcq", id:"s5q3", xp:12, pc:"PC 3.1", title:"Travelling with a load",
+      stem:"You're carrying a bucket of drainage aggregate 200 m along the internal road to the pit. What height do you carry it at?",
+      options:[
+        {t:"Low — just high enough to clear the ground and obstacles, keeping the centre of gravity down and your forward visibility clear.", ok:true,
+         fb:"Correct. Low bucket for travel, every time."},
+        {t:"At mid-height so the bucket is clear of anything unexpected on the road.", ok:false,
+         fb:"Mid-height raises the centre of gravity for no benefit and starts to block your forward view. If the road has obstacles, that's a road problem to fix, not a bucket-height problem."},
+        {t:"High, so material can't spill onto the road surface.", ok:false,
+         fb:"Height doesn't stop spill — bucket attitude and not overfilling do. Carrying high on a 200 m run is how loaders roll over on a turn."},
+        {t:"Whatever height it happened to be at after loading.", ok:false,
+         fb:"Setting the travel height is a deliberate step between loading and moving off. That's what the kickout is for."}
+      ],
+      why:"Carrying low also gives you somewhere to go: if the machine starts to become unstable, dropping the bucket to the ground is your fastest stabilising action, and you can only do that quickly from a low carry.",
+      pcFull:"Travel and relocate the machine safely"
+    },
+    {
+      type:"mcq", id:"s5q4", xp:15, pc:"PC 3.1", title:"Down the grade",
+      stem:"You need to bring the loader down a steep temporary batter access with an empty bucket.",
+      options:[
+        {t:"First gear, reverse down the grade slowly and under control, bucket low.", ok:true,
+         fb:"Correct — face uphill, bucket low, first gear, controlled descent."},
+        {t:"First gear, drive down forwards with the bucket low.", ok:false,
+         fb:"Descending nose-first puts weight onto the front axle with the machine's mass pushing it downhill. The convention is to face uphill and reverse down."},
+        {t:"Second gear forwards, riding the service brake to control speed.", ok:false,
+         fb:"Two problems: wrong direction, and riding the service brake down a grade overheats the brake pack — which is exactly when you need it most."},
+        {t:"Neutral and coast down, braking as needed.", ok:false,
+         fb:"Never coast a machine down a grade. In neutral you have no engine braking and no driveline control at all."}
+      ],
+      why:"The rule 'always use first gear travelling down a steep slope' and 'reverse down steep grades slowly and under control' both come from the same principle — you want the drive line holding the machine back, not the brakes and not gravity.",
+      pcFull:"Relocate the machine on grades and uneven ground"
+    },
+    {
+      type:"sequence", id:"s5q5", xp:22, pc:"PC 2.5", title:"Emergency stopping",
+      stem:"An emergency requires you to stop and abandon the machine. Order the procedure.",
+      steps:[
+        "Stop in a safe location, away from traffic and other plant",
+        "Lower the implement to the ground",
+        "Reduce engine to idle",
+        "Apply the park brake",
+        "Place the transmission in NEUTRAL",
+        "Turn the engine start key to OFF",
+        "Notify your position and the nature of the emergency by radio if possible",
+        "Leave the cabin if it is safe to do so",
+        "Turn the isolation switch OFF"
+      ],
+      fb:"Safe location, implement down, idle, park brake, neutral, key off, notify, exit, isolate.",
+      why:"Implement down before anything else — an emergency is exactly when a raised bucket is most likely to be left hanging. And notify before you exit, because once you're on the ground you may not be able to.",
+      pcFull:"Respond to emergency situations"
+    },
+    {
+      type:"scenario", id:"s5q6", xp:40, pc:"PC 2.5", title:"Scenario — overhead contact",
+      stem:"Scenario: the one you rehearse and hope never to use.",
+      start:"a",
+      nodes:{
+        a:{ text:"You're relocating along Road 2 with the bucket carried low. Crossing under the LV overhead near the Lot 30 frontage there's a sharp crack and the machine's electrics flicker. Looking up, the conductor is resting against the top of the lift arm. The machine has stopped. You are still in the seat.",
+            q:"What is your first action?",
+            choices:[
+              {t:"Stay in the cabin. Do not touch any controls. Warn everyone to stay clear.", go:"b"},
+              {t:"Try to reverse the machine clear of the conductor.", go:"bad1"},
+              {t:"Get out immediately and move away from the machine.", go:"bad2"},
+              {t:"Lower the bucket to earth the machine.", go:"bad1"}
+            ]},
+        b:{ text:"You're in the cab, hands off the controls. Two workers are walking toward the machine to see what the noise was.",
+            q:"Next?",
+            choices:[
+              {t:"Shout and signal them to stay well clear, and call the emergency on the radio giving your location and the nature of the incident.", go:"c"},
+              {t:"Wave them over so someone can get the supervisor.", go:"bad2"}
+            ]},
+        c:{ text:"The area is being cleared and the network operator has been notified. Site emergency response is en route. You're still in the seat.",
+            q:"When do you get out?",
+            choices:[
+              {t:"Only when the supply has been isolated by the network operator and you're instructed that it's safe to step down.", go:"good"},
+              {t:"Once the machine's engine is off and the electrics are dead — that means the power's gone.", go:"bad3"},
+              {t:"As soon as the emergency crew arrives on scene.", go:"bad3"}
+            ]},
+        good:{ end:true, good:true, title:"Outcome: everyone goes home",
+            outcome:"The network operator isolates the supply, confirms it, and you're instructed to step down. The machine is quarantined for inspection and the incident is notified to the regulator.",
+            why:"Stay in the cabin. Don't touch the controls. Don't touch any conductor. Warn everyone clear. Wait until power is isolated and you are told to step down. That sequence is the entire procedure and it does not change." },
+        bad1:{ end:true, good:false, title:"Outcome: fatality risk",
+            outcome:"Operating the controls while in contact with a live conductor risks changing the contact point, arcing, or dropping the conductor onto the ground or onto people nearby.",
+            why:"Once contact is made, the machine is energised. Every control input is a gamble on where the current goes next. You do nothing but stay put and warn others." },
+        bad2:{ end:true, good:false, title:"Outcome: fatality",
+            outcome:"Stepping down — or letting someone walk up — while the machine is energised puts a person in contact with the machine and the ground simultaneously. Step and touch potential through the ground around an energised machine can kill several metres away.",
+            why:"The cab is the safest place you can be. The moment you bridge machine and ground, you become the path to earth. This is the single most common way people die in plant-to-powerline contact." },
+        bad3:{ end:true, good:false, title:"Outcome: near fatality",
+            outcome:"Dead electrics on the machine tells you nothing about the state of the network, and the arrival of an emergency crew is not isolation. Automatic reclosers can re-energise a line seconds after a fault.",
+            why:"Only the network operator can confirm isolation. 'It looks dead' and 'help has arrived' are not isolation, and lines can and do re-energise automatically." }
+      },
+      pcFull:"Respond to contact with electrical services"
+    },
+    {
+      type:"mcq", id:"s5q7", xp:15, pc:"PC 2.5", title:"Emergency radio call",
+      stem:"You need to raise an emergency on the site radio. What's the correct approach?",
+      options:[
+        {t:"Transmit 'emergency, emergency, emergency', wait for a response, then give your name, location, nature of the incident, injuries, number of people affected, assistance required and hazards present.", ok:true,
+         fb:"Correct — the triple call establishes priority, then the structured detail follows."},
+        {t:"Call the supervisor directly by name and explain what happened.", ok:false,
+         fb:"That treats an emergency as routine traffic. The triple emergency call clears the channel for everyone, not just the one person you're calling."},
+        {t:"Give all the detail in one transmission so nothing is missed.", ok:false,
+         fb:"Transmitting a wall of detail before you have a confirmed listener means it may not be heard at all. Establish contact first."},
+        {t:"Switch to a clear channel so you're not interrupting site traffic.", ok:false,
+         fb:"Backwards. An emergency belongs on the channel everyone monitors, and all non-emergency traffic must cease — not the other way around."}
+      ],
+      why:"Once contact is established, stay in contact if it's safe to do so until you're told to leave. All other radio traffic on the channel stops for the duration of the emergency.",
+      pcFull:"Apply emergency communication procedures"
+    },
+    {
+      type:"mcq", id:"s5q8", xp:15, pc:"PC 2.5", title:"Fire in the engine bay",
+      stem:"Mid-afternoon you see smoke from the engine compartment and the fire warning activates.",
+      options:[
+        {t:"Stop in a safe position, shut down, activate the suppression system from the cab if fitted, alert others by radio and evacuate — your safety comes first.", ok:true,
+         fb:"Correct. Shut down, actuate, alert, evacuate. Do not open the engine covers."},
+        {t:"Open the engine covers to see where the fire is before deciding what to do.", ok:false,
+         fb:"Opening covers feeds oxygen to the fire and puts your face and hands directly over it. Never open the compartment on a burning machine."},
+        {t:"Drive the machine away from other plant before shutting down.", ok:false,
+         fb:"Moving a burning machine feeds air to the fire and takes it toward whatever is downwind. Stop where it is safe and get out."},
+        {t:"Try to extinguish it with the hand extinguisher first, and only evacuate if that fails.", ok:false,
+         fb:"A hand extinguisher may be appropriate for a small, accessible fire — but the priority order is shut down, actuate the fixed system, alert, then consider whether it's safe to do anything else. Safety is the priority; the machine is not."}
+      ],
+      why:"The pre-start check matters here: the extinguisher and suppression system must be in place and serviceable before you operate, and packed material around a hot turbo is one of the leading causes of these fires.",
+      pcFull:"Respond to fire emergencies"
+    },
+    {
+      type:"mcq", id:"s5q9", xp:15, pc:"PC 1.2", title:"Working near overhead lines",
+      stem:"Tomorrow's task requires the loader to work close to the overhead line on Road 2. What has to be in place before that work starts?",
+      options:[
+        {t:"The network operator's clearance requirements confirmed, a permit or authority for work near the line, a task-specific SWMS, a trained spotter, and physical controls such as goal posts or barriers as required.", ok:true,
+         fb:"Correct. Written authority, confirmed distances, SWMS, spotter and physical controls."},
+        {t:"A toolbox talk and agreement between the operators to keep the bucket down.", ok:false,
+         fb:"A conversation isn't a control. Work near overhead lines is high risk construction work and requires documented authority and controls."},
+        {t:"Your own judgement of the clearance based on the height of the machine.", ok:false,
+         fb:"Clearance distances vary by voltage and jurisdiction and are set by the network operator — never estimated by the operator, and never judged by eye. Lines also sag with heat and load."},
+        {t:"A spotter, which is sufficient on its own to work inside the clearance zone.", ok:false,
+         fb:"A spotter is one control among several, and a spotter alone does not authorise entry into a clearance zone. That needs the asset owner's authority."}
+      ],
+      why:"Never assume a clearance number. Distances differ between states and between voltages, and conductors sag on hot days and under load. The only correct figure is the one the network operator gives you in writing for that specific line.",
+      pcFull:"Apply controls for work near overhead electrical services"
+    }
+  ],
+  takeaway:
+    "<ul>"+
+    "<li><b>Stable = level ground, straight frame, bucket low.</b> Everything else eats your margin.</li>"+
+    "<li><b>Articulation shifts the CG toward the short side</b> — and toward the inside front tyre with the bucket up.</li>"+
+    "<li><b>Down a steep grade: first gear, reverse, bucket low.</b></li>"+
+    "<li><b>Powerline contact: stay in the cab, touch nothing, warn everyone, wait for confirmed isolation.</b></li>"+
+    "<li><b>Never estimate an overhead clearance distance.</b> Get it from the network operator.</li>"+
+    "</ul>"
+},
+
+/* ============================================================
+   SHIFT 6 — SHUTDOWN, MAINTENANCE, RECORDS
+   ============================================================ */
+{
+  id:"s6",
+  title:"Knock-Off",
+  blurb:"1630. The shift is done. What you do in the next twenty minutes decides whether tomorrow's operator gets a machine or a problem.",
+  element:"Element 4–5 · Maintenance, records & housekeeping",
+  mechanic:"Sorting + handover scenario",
+  badge:"paperwork",
+  maps:"Shut down and secure, carry out operator maintenance, complete records, conduct housekeeping",
+  items:[
+    {
+      type:"sequence", id:"s6q1", xp:25, pc:"PC 4.1", title:"Park and shutdown",
+      stem:"Order the park and shutdown procedure.",
+      hint:"Nine steps, from slowing down to walking away.",
+      steps:[
+        "Select a safe designated park area, clear of traffic, plant and personnel, on level ground",
+        "Release the accelerator and apply the service brake",
+        "Move the transmission control to NEUTRAL",
+        "Engage the park brake",
+        "Lower the implement to the ground with slight downward pressure",
+        "Observe the five-minute idle-down period",
+        "Shut the engine down with the start switch",
+        "Conduct a brief walk-around for damage or leaks from the shift",
+        "Turn the isolator OFF and complete fault tags and records"
+      ],
+      fb:"Position, slow, neutral, park brake, implement down, idle down, off, walk around, isolate and record.",
+      why:"The post-operation walk-around is the step most often skipped and the one that catches damage while you still know what caused it. Discovering it tomorrow morning means nobody knows how it happened.",
+      pcFull:"Shut down and secure the machine"
+    },
+    {
+      type:"mcq", id:"s6q2", xp:12, pc:"PC 4.1", title:"Parking the implement",
+      stem:"Why is the machine never parked with the bucket raised and loaded?",
+      options:[
+        {t:"Because stored hydraulic energy and load can be released by a failure, a leak-down or an accidental lever movement — dropping material or the bucket onto whatever is underneath.", ok:true,
+         fb:"Correct. It's stored energy left live with nobody in the seat."},
+        {t:"Because it uses more fuel overnight.", ok:false,
+         fb:"The engine is off. The issue is stored energy, not consumption."},
+        {t:"Because it makes the machine harder to start next shift.", ok:false,
+         fb:"It doesn't. The issue is what happens if the raised load comes down unexpectedly."},
+        {t:"Because it puts the hydraulic oil under pressure and degrades it.", ok:false,
+         fb:"Not the reason. Hydraulic systems hold pressure routinely — the hazard is the suspended load above ground level."}
+      ],
+      why:"Lowering the implement fully to the ground with slight downward pressure is what makes a parked loader safe. Same principle as isolating electrical energy — you remove the stored energy rather than trusting the system to hold it.",
+      pcFull:"Secure the machine and implements"
+    },
+    {
+      type:"estimate", id:"s6q3", xp:15, pc:"PC 4.1", title:"Idle-down before shutdown",
+      stem:"How long should the engine idle before shutdown after normal operation?",
+      hint:"There's a minimum for a reason — and a maximum too.",
+      min:0, max:20, step:1, unit:" min",
+      answerMin:5, answerMax:7, answerLabel:"at least 5 minutes",
+      nudge:"Think about a turbocharger bearing that's been spinning at high speed under load.",
+      fb:"At least five minutes at idle — and no more than about fifteen.",
+      why:"Shutting down straight after heavy work leaves a red-hot turbo with no oil flow, which bakes the bearing. But prolonged idling is its own problem: it causes coking on pistons, valves and the turbo, so idling for half an hour to be safe is also wrong.",
+      pcFull:"Apply correct shutdown procedures"
+    },
+    {
+      type:"teach", id:"s6t1", kicker:"Scope of duty",
+      title:"What operator maintenance actually covers",
+      lead:"Operator maintenance is a defined scope, not a judgement call about what you feel confident doing.",
+      body:
+        "<ul>"+
+        "<li><b>Only authorised personnel carry out maintenance.</b> You may perform only the tasks you are trained and authorised for.</li>"+
+        "<li><b>You may assist</b> in major maintenance — moving or positioning the machine, operating functions on instruction, cleaning, assisting the tradesperson. Assisting is not performing.</li>"+
+        "<li><b>Isolation applies.</b> Any work on the machine requires shutdown, isolation and lock and tag in line with site procedure.</li>"+
+        "<li><b>Waste is controlled.</b> Oils, filters, rags, coolant and washdown water are disposed of in line with the site waste management plan — on a civil site that plan is usually an approval condition, not just good practice.</li>"+
+        "</ul>"+
+        "<div class='callout civil'><b>Civil environmental controls:</b> subdivisions discharge to public stormwater. A hydraulic spill, a washdown in the wrong place, or mud tracked onto the public road can be a notifiable environmental breach with penalties attached to the contractor.</div>"+
+        "<h4>Records you'll touch</h4><ul>"+
+        "<li>Plant pre-start / safety checklists</li>"+
+        "<li>Work requests and repair records</li>"+
+        "<li>Accident, incident and near-miss reports</li>"+
+        "<li>Load counts and production sheets</li>"+
+        "<li>Shift handover reports</li>"+
+        "<li>Training logbook entries</li>"+
+        "</ul>"+
+        "<p>Every one of them must carry the required level of detail, be legible, and be processed in a timely manner. A record that can't be read, or that arrives a week late, does not do the job it exists for.</p>"
+    },
+    {
+      type:"sort", id:"s6q4", xp:25, pc:"PC 4.2", title:"Who does what",
+      stem:"Sort each maintenance task by who is authorised to do it.",
+      hint:"The line is drawn by training and authorisation, not by difficulty.",
+      bins:[
+        {id:"op",   name:"Operator (if trained)", d:"Within normal operator maintenance scope"},
+        {id:"trade",name:"Trades / authorised only", d:"Requires a qualified maintainer"},
+        {id:"assist",name:"Operator assists only", d:"Operator supports a tradesperson"}
+      ],
+      entries:[
+        {t:"Daily pre-start visual inspection", bin:"op"},
+        {t:"Check fluid levels against sight glasses and dipsticks", bin:"op"},
+        {t:"Clean the cab and clear mud from access steps", bin:"op"},
+        {t:"Clean debris build-up from around the engine bay", bin:"op"},
+        {t:"Replace a hydraulic hose", bin:"trade"},
+        {t:"Adjust or repair the brake system", bin:"trade"},
+        {t:"Weld a cracked lift arm", bin:"trade"},
+        {t:"Diagnose and clear a monitoring system fault code", bin:"trade"},
+        {t:"Reposition the machine so the fitter can access a component", bin:"assist"},
+        {t:"Operate a machine function on the fitter's instruction during a repair", bin:"assist"}
+      ],
+      fb:"That's the boundary. Note that welding a lift arm is trades work no matter how good a welder you are — it's about authorisation, not skill.",
+      why:"Operators stepping outside their authorised maintenance scope is a recurring cause of both injury and defective repairs. The scope exists so the machine's structural and safety-critical systems are only touched by people whose competence is verified.",
+      pcFull:"Carry out operator maintenance within authorisation"
+    },
+    {
+      type:"multi", id:"s6q5", xp:18, pc:"PC 4.3", title:"Records to complete",
+      stem:"Which records are you likely to complete or contribute to as a loader operator?",
+      options:[
+        {t:"Plant pre-start / safety checklist", ok:true},
+        {t:"Work request for a defect requiring repair", ok:true},
+        {t:"Incident or near-miss report", ok:true},
+        {t:"Load count / production sheet", ok:true},
+        {t:"Shift handover report", ok:true},
+        {t:"Training logbook entry", ok:true},
+        {t:"The subcontractor's tax invoice", ok:false},
+        {t:"The surveyor's as-built certification", ok:false}
+      ],
+      fb:"Six operator records.",
+      why:"The two you rejected belong to other roles and other accountabilities. Signing something outside your role creates a false record — which is a compliance problem for you, not just for the person who asked.",
+      pcFull:"Complete and process records and documentation"
+    },
+    {
+      type:"mcq", id:"s6q6", xp:12, pc:"PC 4.3", title:"Quality of records",
+      stem:"You've written the pre-start checklist in a hurry and half of it is barely readable. Does it matter?",
+      options:[
+        {t:"Yes — records must carry the required level of detail, be legible, and be processed in a timely manner, or they can't serve their purpose.", ok:true,
+         fb:"Correct. An illegible record is functionally a missing record."},
+        {t:"No — the important thing is that the check was actually done.", ok:false,
+         fb:"Doing the check matters most in safety terms, but a record nobody can read cannot inform the next operator, the fitter or an investigation."},
+        {t:"Only if there was a defect to report.", ok:false,
+         fb:"A legible 'no defects' record is exactly what demonstrates the check happened. Nil returns carry evidentiary weight."},
+        {t:"Only if an auditor is coming.", ok:false,
+         fb:"Records exist for the next operator and the maintenance system first, and for auditors second."}
+      ],
+      why:"Records are how a machine's condition travels between people who never meet. The operator who reads your handover tomorrow morning has nothing else to go on.",
+      pcFull:"Maintain accurate and legible records"
+    },
+    {
+      type:"scenario", id:"s6q7", xp:35, pc:"PC 4.3", title:"Scenario — the handover",
+      stem:"Scenario: end of shift, and something's not right.",
+      start:"a",
+      nodes:{
+        a:{ text:"Late in the shift you noticed the machine pulling slightly to the left under braking, and the transmission oil temp ran higher than usual on the last three loads. Nothing red came up. Night shift's operator is walking across the pad now, and you're already fifteen minutes past knock-off.",
+            q:"What do you do?",
+            choices:[
+              {t:"Record both observations on the pre-start / handover, raise a work request, and brief the incoming operator face to face.", go:"good"},
+              {t:"Tell the incoming operator verbally — he'll write it up if it keeps happening.", go:"b", penalty:1},
+              {t:"Leave it. Nothing showed a warning, and you can't describe it precisely.", go:"bad1"},
+              {t:"Note it in your own phone and mention it to the supervisor tomorrow.", go:"bad2"}
+            ]},
+        b:{ text:"You tell him verbally. He nods, but he's already got a list of his own and no record exists anywhere.",
+            q:"Anything else?",
+            choices:[
+              {t:"Go back and write it on the handover and raise the work request as well.", go:"good"},
+              {t:"That'll do — he's been told.", go:"bad1"}
+            ]},
+        good:{ end:true, good:true, title:"Outcome: fault caught early",
+            outcome:"The work request goes in overnight. The fitter finds a partially seized brake caliper on the left front — which explains both the pull and the transmission heat. It's repaired before it becomes a brake failure on a grade.",
+            why:"Two vague symptoms that mean nothing separately can mean something specific together — but only if both are written down where a maintainer can see them. Your job isn't to diagnose; it's to report accurately." },
+        bad1:{ end:true, good:false, title:"Outcome: preventable failure",
+            outcome:"Nothing is recorded. Three shifts later the brake fails properly on the Road 2 grade with a loaded bucket. The investigation finds no record of any earlier symptom.",
+            why:"'It didn't throw a warning' is not a reason to stay silent. Monitoring systems detect defined faults — they do not detect a machine that feels wrong, and that's precisely what the operator's report is for." },
+        bad2:{ end:true, good:false, title:"Outcome: record gap",
+            outcome:"A note on your phone isn't a site record. Night shift runs the machine unaware, and the maintenance system has no trigger.",
+            why:"Records only work if they're in the system everyone uses, at the time. A personal note protects nobody — not the next operator, and not you." }
+      },
+      pcFull:"Report faults and conduct shift handover"
+    },
+    {
+      type:"mcq", id:"s6q8", xp:18, pc:"PC 5.1", title:"Housekeeping and environment",
+      stem:"During shutdown you notice a small hydraulic drip has left an oil stain on the pad near the stormwater inlet, and there's tracked mud across the stabilised site access.",
+      options:[
+        {t:"Contain and clean up the spill using the site spill kit, report it, and clean the access point — both are environmental controls, not cosmetic issues.", ok:true,
+         fb:"Correct. On a civil site both of those are reportable environmental matters."},
+        {t:"Note the oil for the morning and sweep the access when you get a chance.", ok:false,
+         fb:"Rain overnight moves oil straight into the stormwater system, and mud on the public road can trigger a complaint and an enforcement notice before anyone sweeps anything."},
+        {t:"Cover the oil with sand and leave the access — road cleaning is the traffic crew's job.", ok:false,
+         fb:"Absorbing the spill is a start, but it has to be collected, disposed of correctly and reported. And mud tracked out by your machine is your issue to raise."},
+        {t:"Hose the oil off the pad and wash the access down.", ok:false,
+         fb:"Hosing mobilises the contaminant into the drainage system — this turns a small contained spill into a discharge event. Never wash a spill away."}
+      ],
+      why:"Civil sites operate under development approval and environmental conditions with real penalties. Sediment and hydrocarbon release to stormwater are two of the most commonly enforced breaches, and the loader is often the machine that causes both.",
+      pcFull:"Conduct housekeeping and environmental control activities"
+    },
+    {
+      type:"multi", id:"s6q9", xp:18, pc:"PC 5.1", title:"Leaving the machine right",
+      stem:"Final checks before you walk away. Which of these belong to your end-of-shift responsibility?",
+      options:[
+        {t:"Machine parked in the designated area on level ground, implement down", ok:true},
+        {t:"Park brake engaged and isolator off", ok:true},
+        {t:"Wheels chocked or vee-drains used as the site requires", ok:true},
+        {t:"Refuelled if required", ok:true},
+        {t:"All faults noted during the shift tagged and reported", ok:true},
+        {t:"Cab cleaned out and access steps clear", ok:true},
+        {t:"Post-operation walk-around completed", ok:true},
+        {t:"Engine left running so the next operator doesn't have to warm it up", ok:false},
+        {t:"Machine left where it finished so you don't waste time repositioning", ok:false}
+      ],
+      fb:"Seven end-of-shift responsibilities.",
+      why:"The two wrong answers are both 'helpful' shortcuts, and both create hazards: running plant must never be left unattended, and a machine parked wherever it stopped ends up on a slope, in a traffic route, or over a service.",
+      pcFull:"Conduct housekeeping and secure the work area"
+    }
+  ],
+  takeaway:
+    "<ul>"+
+    "<li><b>Idle down at least 5 minutes, and no more than about 15.</b></li>"+
+    "<li><b>Never park with the implement raised.</b> Stored energy with nobody in the seat.</li>"+
+    "<li><b>Operator maintenance is a scope, not a confidence level.</b></li>"+
+    "<li><b>A record nobody can read is a record that doesn't exist.</b></li>"+
+    "<li><b>Spills and tracked mud are environmental breaches on a civil site</b>, not housekeeping.</li>"+
+    "</ul>"
+}
+
+];
+
+</script>
+
+<!-- ============================================================
+     ENGINE
+     ============================================================ -->
+<script>
+"use strict";
+
+const RANKS = [
+  {min:0,   name:"Trainee"},
+  {min:260, name:"Operator"},
+  {min:550, name:"Senior Op"},
+  {min:850, name:"Leading Hand"}
+];
+
+const BADGES = [
+  {id:"planner",  em:"🗺️", name:"The Planner",    desc:"Shift 1 cleared — planning & preparation"},
+  {id:"cabrat",   em:"🕹️", name:"Cab Rat",        desc:"Shift 2 cleared — controls & instruments"},
+  {id:"eagleeye", em:"🔍", name:"Eagle Eye",       desc:"Shift 3 cleared — pre-start & inspection"},
+  {id:"smoothop", em:"⚙️", name:"Smooth Operator", desc:"Shift 4 cleared — operating technique"},
+  {id:"steady",   em:"⚖️", name:"Steady Hand",     desc:"Shift 5 cleared — stability & emergencies"},
+  {id:"paperwork",em:"📋", name:"Paperwork Pro",   desc:"Shift 6 cleared — shutdown & records"},
+  {id:"flawless", em:"💎", name:"Flawless Pass",   desc:"Clear any shift with every call first-try"},
+  {id:"signoff",  em:"🎖️", name:"Sign-Off",        desc:"All six shifts cleared"}
+];
+
+const COURSE = window.COURSE_DATA || [];
+const SVGS = window.SVG_DATA || {};
+const GLOSSARY = window.GLOSSARY_DATA || [];
+
+/* ---------------- STATE ---------------- */
+const SAVE_KEY = "riimpo321f.site7.v1";
+
+const store = (function(){
+  let mem = {}, ok = true;
+  try { const t = "__t"; localStorage.setItem(t,"1"); localStorage.removeItem(t); }
+  catch(e){ ok = false; }
+  return {
+    get(k){ try{ return ok ? localStorage.getItem(k) : (mem[k]||null); }catch(e){ return mem[k]||null; } },
+    set(k,v){ try{ if(ok) localStorage.setItem(k,v); else mem[k]=v; }catch(e){ mem[k]=v; } },
+    del(k){ try{ if(ok) localStorage.removeItem(k); else delete mem[k]; }catch(e){ delete mem[k]; } }
+  };
+})();
+
+let S = { name:"", xp:0, badges:[], shifts:{}, started:false };
+
+function save(){ store.set(SAVE_KEY, JSON.stringify(S)); }
+function load(){
+  const raw = store.get(SAVE_KEY);
+  if(!raw) return false;
+  try{
+    const o = JSON.parse(raw);
+    if(o && typeof o === "object"){ S = Object.assign(S,o); return !!S.started; }
+  }catch(e){}
+  return false;
+}
+function shiftState(id){
+  if(!S.shifts[id]) S.shifts[id] = {done:false, items:{}};
+  if(!S.shifts[id].items) S.shifts[id].items = {};
+  return S.shifts[id];
+}
+
+/* ---------------- HELPERS ---------------- */
+const $  = (s,r)=> (r||document).querySelector(s);
+const $$ = (s,r)=> Array.prototype.slice.call((r||document).querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const clamp = (n,a,b)=> Math.max(a,Math.min(b,n));
+
+function shuffle(a){
+  const r = a.slice();
+  for(let i=r.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=r[i]; r[i]=r[j]; r[j]=t; }
+  return r;
+}
+function sameSet(a,b){
+  if(a.length !== b.length) return false;
+  const x = a.slice().sort(), y = b.slice().sort();
+  return x.every((v,i)=> v===y[i]);
+}
+function rank(xp){ let r = RANKS[0]; for(const k of RANKS){ if(xp >= k.min) r = k; } return r; }
+function rankIndex(xp){ return RANKS.indexOf(rank(xp)); }
+
+function gradedItems(sh){ return sh.items.filter(i => i.type !== "teach"); }
+function shiftMax(sh){ return gradedItems(sh).reduce((n,i)=> n + (i.xp||10), 0); }
+function shiftScore(sh){
+  const st = shiftState(sh.id);
+  return gradedItems(sh).reduce((n,i)=> n + ((st.items[i.id]||{}).score || 0), 0);
+}
+function totalMax(){ return COURSE.reduce((n,sh)=> n + shiftMax(sh), 0); }
+function isUnlocked(idx){ return idx === 0 ? true : !!shiftState(COURSE[idx-1].id).done; }
+
+/* ---------------- CHROME ---------------- */
+function toast(title, body){
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.innerHTML = "<b>"+esc(title)+"</b><span>"+esc(body)+"</span>";
+  $("#toasts").appendChild(el);
+  setTimeout(()=>{ el.classList.add("out"); setTimeout(()=> el.remove(), 320); }, 3800);
+}
+function modal(html){ $("#modal-box").innerHTML = html; $("#modal").classList.remove("hidden"); }
+function closeModal(){ $("#modal").classList.add("hidden"); }
+$("#modal").addEventListener("click", e => { if(e.target.id === "modal") closeModal(); });
+document.addEventListener("keydown", e => { if(e.key === "Escape") closeModal(); });
+
+function renderHUD(){
+  const r = rank(S.xp), ri = rankIndex(S.xp);
+  $("#hud-lvl").innerHTML = '🎖️ <b>'+(ri+1)+'</b> <span>'+esc(r.name)+'</span>';
+  $("#hud-xp").innerHTML  = '⚡ <b>'+S.xp+'</b> XP';
+  $("#hud-badge").innerHTML = '🏅 <b>'+S.badges.length+'</b>/'+BADGES.length;
+  const tm = totalMax() || 1;
+  $("#xpbar i").style.width = clamp((S.xp/tm)*100,0,100)+"%";
+}
+function awardBadge(id){
+  if(S.badges.indexOf(id) >= 0) return;
+  const b = BADGES.find(x => x.id === id);
+  if(!b) return;
+  S.badges.push(id); save(); renderHUD();
+  toast(b.em+"  Badge unlocked", b.name+" — "+b.desc);
+}
+function addXP(n){
+  if(n <= 0) return;
+  const before = rankIndex(S.xp);
+  S.xp += n;
+  const after = rankIndex(S.xp);
+  if(after > before) toast("🎖️  Rank up!", "You are now "+RANKS[after].name+".");
+  save(); renderHUD();
+}
+function show(id){
+  ["screen-start","screen-map","screen-play","screen-debrief"].forEach(s =>
+    $("#"+s).classList.toggle("hidden", s !== id));
+  window.scrollTo({top:0, behavior:"auto"});
+}
+
+/* ---------------- SHIFT BOARD ---------------- */
+function renderMap(){
+  $("#map-title").textContent = S.name ? (S.name+" — Northlink Site 7") : "Northlink Site 7";
+  const done = COURSE.filter(sh => shiftState(sh.id).done).length;
+  $("#map-sub").textContent = done === COURSE.length
+    ? "All shifts cleared. Head to the site office for your summary."
+    : done+" of "+COURSE.length+" shifts cleared. Select a shift to begin.";
+  const tm = totalMax() || 1;
+  const earned = COURSE.reduce((n,sh)=> n + shiftScore(sh), 0);
+  $("#map-pct").textContent = Math.round((earned/tm)*100)+"%";
+
+  const list = $("#shift-list");
+  list.innerHTML = "";
+  COURSE.forEach((sh,i) => {
+    const st = shiftState(sh.id);
+    const unlocked = isUnlocked(i);
+    const max = shiftMax(sh) || 1;
+    const sc = shiftScore(sh);
+    const pct = Math.round((sc/max)*100);
+    const el = document.createElement("button");
+    el.className = "shift"+(st.done?" done":"")+(!unlocked?" locked":"")+((unlocked&&!st.done)?" current":"");
+    el.disabled = !unlocked;
+    el.innerHTML =
+      '<div class="shift-num"><b>'+(st.done?"✓":(i+1))+'</b><span>Shift</span></div>'+
+      '<div class="shift-body">'+
+        '<h3>'+esc(sh.title)+'</h3>'+
+        '<p>'+esc(sh.blurb)+'</p>'+
+        '<div class="shift-meta">'+
+          '<span class="tag pc">'+esc(sh.element)+'</span>'+
+          '<span class="tag">'+gradedItems(sh).length+' activities</span>'+
+          '<span class="tag">'+esc(sh.mechanic)+'</span>'+
+        '</div>'+
+        '<div class="bar"><i style="width:'+pct+'%"></i></div>'+
+      '</div>'+
+      '<div class="shift-go">'+
+        (!unlocked ? '🔒<b>Locked</b>' : (st.done ? sc+'/'+max+'<b>Replay</b>' : (sc>0 ? sc+'/'+max+'<b>Resume</b>' : '<b>Start →</b>')))+
+      '</div>';
+    el.addEventListener("click", ()=>{ if(unlocked) startShift(sh.id); });
+    list.appendChild(el);
+  });
+
+  const shelf = $("#badge-shelf");
+  shelf.innerHTML = "";
+  BADGES.forEach(b => {
+    const has = S.badges.indexOf(b.id) >= 0;
+    const d = document.createElement("div");
+    d.className = "badge"+(has?" earned":"");
+    d.innerHTML = '<span class="em">'+b.em+'</span><b>'+esc(b.name)+'</b><span>'+esc(has?b.desc:"Locked")+'</span>';
+    shelf.appendChild(d);
+  });
+}
+
+/* ---------------- PLAYER ---------------- */
+let P = null;
+
+function startShift(id){
+  const sh = COURSE.find(x => x.id === id);
+  if(!sh) return;
+  P = { shift: sh, idx: 0 };
+  show("screen-play");
+  renderStep();
+}
+function renderPips(){
+  $("#play-pips").innerHTML = P.shift.items.map((it,i) => {
+    let cls = "pip";
+    if(i < P.idx) cls += " done"; else if(i === P.idx) cls += " now";
+    return '<span class="'+cls+'"></span>';
+  }).join("");
+}
+function renderStep(){
+  if(!P) return;
+  if(P.idx >= P.shift.items.length){ finishShift(); return; }
+  const it = P.shift.items[P.idx];
+  $("#play-title").textContent = "Shift "+(COURSE.indexOf(P.shift)+1)+" · "+P.shift.title;
+  renderPips();
+  const stage = $("#stage");
+  stage.innerHTML = "";
+  window.scrollTo({top:0, behavior:"auto"});
+  (RENDER[it.type] || RENDER.teach)(stage, it);
+}
+function next(){ P.idx++; renderStep(); }
+
+function record(item, score, max, firstTry){
+  const st = shiftState(P.shift.id);
+  const prev = st.items[item.id] || {score:0, max:max, attempts:0, firstTry:false};
+  const gain = Math.max(0, score - prev.score);
+  st.items[item.id] = {
+    score: Math.max(prev.score, score),
+    max: max,
+    attempts: (prev.attempts||0)+1,
+    firstTry: prev.firstTry || firstTry
+  };
+  addXP(gain);
+  save();
+}
+
+function fbBlock(state, title, body, why, pc){
+  const cls = state === 1 ? "ok" : state === 0 ? "no" : "part";
+  const icon = state === 1 ? "✔" : state === 0 ? "✘" : "◐";
+  return '<div class="fb '+cls+'"><h5>'+icon+' '+esc(title)+'</h5>'+
+    (body ? '<p>'+body+'</p>' : "")+
+    (why ? '<p class="why">'+why+'</p>' : "")+
+    (pc ? '<div class="pcref">↳ '+esc(pc)+'</div>' : "")+
+    '</div>';
+}
+function qHead(item, typeLabel){
+  return '<div class="q-type"><span>'+esc(typeLabel)+'</span><span class="xp">'+(item.xp||10)+' XP</span>'+
+      (item.pc ? '<span>'+esc(item.pc)+'</span>' : "")+'</div>'+
+    '<div class="q-stem">'+esc(item.stem)+'</div>'+
+    (item.hint ? '<div class="q-hint">'+esc(item.hint)+'</div>' : "")+
+    (item.scene ? '<div class="q-scene">'+esc(item.scene)+'</div>' : "");
+}
+
+/* ---------------- RENDERERS ---------------- */
+const RENDER = {};
+
+RENDER.teach = function(host, it){
+  const d = document.createElement("div");
+  d.className = "teach";
+  let h = "";
+  if(it.kicker) h += '<div class="kicker">'+esc(it.kicker)+'</div>';
+  h += '<h2>'+esc(it.title)+'</h2>';
+  if(it.lead) h += '<div class="lead">'+esc(it.lead)+'</div>';
+  h += it.body || "";
+  d.innerHTML = h;
+  host.appendChild(d);
+  const a = document.createElement("div");
+  a.className = "actions";
+  a.innerHTML = '<button class="btn" id="k-next">Continue →</button>';
+  host.appendChild(a);
+  $("#k-next").addEventListener("click", next);
+};
+
+RENDER.mcq = function(host, it){
+  const q = document.createElement("div");
+  q.className = "q";
+  q.innerHTML = qHead(it, it.label || "Decision call");
+  const wrap = document.createElement("div");
+  wrap.className = "opts";
+  const order = it.noShuffle ? it.options.map((_,i)=>i) : shuffle(it.options.map((_,i)=>i));
+  order.forEach((oi,n)=>{
+    const b = document.createElement("button");
+    b.className = "opt"; b.dataset.i = oi;
+    b.innerHTML = '<span class="key">'+String.fromCharCode(65+n)+'</span><span>'+esc(it.options[oi].t)+'</span>';
+    wrap.appendChild(b);
+  });
+  q.appendChild(wrap);
+  const act = document.createElement("div");
+  act.className = "actions";
+  q.appendChild(act);
+  host.appendChild(q);
+
+  let attempts = 0, locked = false;
+  wrap.addEventListener("click", e => {
+    const b = e.target.closest(".opt");
+    if(!b || locked || b.disabled) return;
+    const i = +b.dataset.i, o = it.options[i];
+    attempts++;
+    if(o.ok){
+      locked = true;
+      $$(".opt",wrap).forEach(x=>{ x.disabled = true; if(+x.dataset.i === i) x.classList.add("ok"); });
+      const first = attempts === 1, max = it.xp||10;
+      const score = first ? max : Math.max(Math.round(max*0.4),2);
+      record(it, score, max, first);
+      act.innerHTML = fbBlock(first?1:2, first?"Correct — clean call":"Correct on retry", o.fb||it.fb||"", it.why||"", it.pcFull)+
+        '<div class="actions"><button class="btn" id="k-next">Continue →</button><span class="attempt">+'+score+' XP · attempt '+attempts+'</span></div>';
+      $("#k-next").addEventListener("click", next);
+    } else {
+      b.classList.add("no"); b.disabled = true;
+      act.innerHTML = fbBlock(0,"Not this one", o.fb||"That call doesn't hold up on site.","","")+
+        '<div class="actions"><span class="attempt">attempt '+attempts+' · try again</span></div>';
+    }
+  });
+};
+
+RENDER.multi = function(host, it){
+  const q = document.createElement("div");
+  q.className = "q";
+  q.innerHTML = qHead(it, it.label || "Select all that apply");
+  const wrap = document.createElement("div");
+  wrap.className = "opts";
+  shuffle(it.options.map((_,i)=>i)).forEach((oi,n)=>{
+    const b = document.createElement("button");
+    b.className = "opt"; b.dataset.i = oi;
+    b.innerHTML = '<span class="key">'+String.fromCharCode(65+n)+'</span><span>'+esc(it.options[oi].t)+'</span>';
+    wrap.appendChild(b);
+  });
+  q.appendChild(wrap);
+  const act = document.createElement("div");
+  act.className = "actions";
+  act.innerHTML = '<button class="btn" id="k-check">Lock in answer</button><span class="attempt" id="k-count">0 selected</span>';
+  q.appendChild(act);
+  host.appendChild(q);
+
+  const sel = new Set();
+  let attempts = 0, locked = false;
+
+  wrap.addEventListener("click", e => {
+    const b = e.target.closest(".opt");
+    if(!b || locked || b.disabled) return;
+    const i = +b.dataset.i;
+    if(sel.has(i)){ sel.delete(i); b.classList.remove("sel"); }
+    else { sel.add(i); b.classList.add("sel"); }
+    const c = $("#k-count"); if(c) c.textContent = sel.size+" selected";
+  });
+
+  act.addEventListener("click", e => {
+    if(e.target.id !== "k-check" || locked) return;
+    if(sel.size === 0){ toast("Nothing selected","Pick at least one option before locking in."); return; }
+    attempts++;
+    const right = it.options.map((o,i)=> o.ok?i:-1).filter(i=>i>=0);
+    const chosen = Array.from(sel);
+    if(sameSet(chosen,right)){
+      locked = true;
+      $$(".opt",wrap).forEach(x=>{ x.disabled = true; if(it.options[+x.dataset.i].ok) x.classList.add("ok"); });
+      const first = attempts === 1, max = it.xp||15;
+      const score = first ? max : Math.max(Math.round(max*0.4),3);
+      record(it, score, max, first);
+      act.innerHTML = fbBlock(first?1:2, first?"All correct":"Correct on retry", it.fb||"", it.why||"", it.pcFull)+
+        '<div class="actions"><button class="btn" id="k-next">Continue →</button><span class="attempt">+'+score+' XP</span></div>';
+      $("#k-next").addEventListener("click", next);
+    } else {
+      const missed = right.filter(i=>!sel.has(i)).length;
+      const wrong = chosen.filter(i=>!it.options[i].ok);
+      wrong.forEach(i=>{
+        const el = $$(".opt",wrap).filter(x=> +x.dataset.i === i)[0];
+        if(el){ el.classList.remove("sel"); el.classList.add("no"); el.disabled = true; }
+        sel.delete(i);
+      });
+      const msg = (wrong.length ? wrong.length+" of your picks don't belong"+(missed?", and ":".") : "")+
+                  (missed ? missed+" correct option"+(missed>1?"s are":" is")+" still missing." : "");
+      act.innerHTML = fbBlock(0,"Not there yet", esc(msg),"","")+
+        '<div class="actions"><button class="btn" id="k-check">Lock in answer</button><span class="attempt" id="k-count">'+sel.size+' selected · attempt '+attempts+'</span></div>';
+    }
+  });
+};
+
+RENDER.sequence = function(host, it){
+  const q = document.createElement("div");
+  q.className = "q";
+  q.innerHTML = qHead(it, it.label || "Put it in order");
+  const list = document.createElement("div");
+  list.className = "seq";
+  q.appendChild(list);
+  const act = document.createElement("div");
+  act.className = "actions";
+  act.innerHTML = '<button class="btn" id="k-check">Check sequence</button><span class="attempt">Use ▲▼ to reorder</span>';
+  q.appendChild(act);
+  host.appendChild(q);
+
+  let order = shuffle(it.steps.map((_,i)=>i));
+  if(order.every((v,i)=> v===i) && order.length > 2) order = order.slice().reverse();
+  let attempts = 0, locked = false;
+
+  function paint(marks){
+    list.innerHTML = "";
+    order.forEach((si,pos)=>{
+      const row = document.createElement("div");
+      row.className = "seqitem"+(marks?(marks[pos]?" ok":" no"):"");
+      row.innerHTML =
+        '<span class="ord">'+(pos+1)+'</span>'+
+        '<span class="txt">'+esc(it.steps[si])+'</span>'+
+        (marks && !marks[pos] ? '<span class="corr">→ #'+(si+1)+'</span>' : "")+
+        (locked ? "" : '<span class="mv"><button data-d="-1" data-p="'+pos+'"'+(pos===0?" disabled":"")+' aria-label="Move up">▲</button>'+
+          '<button data-d="1" data-p="'+pos+'"'+(pos===order.length-1?" disabled":"")+' aria-label="Move down">▼</button></span>');
+      list.appendChild(row);
+    });
+  }
+  paint(null);
+
+  list.addEventListener("click", e => {
+    const b = e.target.closest("button[data-d]");
+    if(!b || locked) return;
+    const p = +b.dataset.p, d = +b.dataset.d, t = p+d;
+    if(t < 0 || t >= order.length) return;
+    const tmp = order[p]; order[p] = order[t]; order[t] = tmp;
+    paint(null);
+  });
+
+  act.addEventListener("click", e => {
+    if(e.target.id !== "k-check" || locked) return;
+    attempts++;
+    const marks = order.map((si,pos)=> si === pos);
+    const right = marks.filter(Boolean).length;
+    if(right === order.length){
+      locked = true; paint(marks);
+      const first = attempts === 1, max = it.xp||20;
+      const score = first ? max : Math.max(Math.round(max*0.45),4);
+      record(it, score, max, first);
+      act.innerHTML = fbBlock(first?1:2, first?"Sequence correct":"Correct on retry", it.fb||"", it.why||"", it.pcFull)+
+        '<div class="actions"><button class="btn" id="k-next">Continue →</button><span class="attempt">+'+score+' XP</span></div>';
+      $("#k-next").addEventListener("click", next);
+    } else {
+      paint(marks);
+      act.innerHTML = fbBlock(0, right+" of "+order.length+" in position",
+        "Steps marked red are out of place — the number shown is where that step actually belongs.","","")+
+        '<div class="actions"><button class="btn" id="k-check">Check sequence</button><span class="attempt">attempt '+attempts+'</span></div>';
+      setTimeout(()=>{ if(!locked) paint(null); }, 2200);
+    }
+  });
+};
+
+RENDER.sort = function(host, it){
+  const q = document.createElement("div");
+  q.className = "q";
+  q.innerHTML = qHead(it, it.label || "Sort into categories");
+  const pool = document.createElement("div"); pool.className = "pool"; q.appendChild(pool);
+  const bins = document.createElement("div"); bins.className = "bins"; q.appendChild(bins);
+  const act = document.createElement("div");
+  act.className = "actions";
+  act.innerHTML = '<button class="btn" id="k-check">Check sorting</button><span class="attempt">Tap an item, then tap a bin</span>';
+  q.appendChild(act);
+  host.appendChild(q);
+
+  const placed = {};
+  let armed = null, attempts = 0, locked = false;
+
+  function paint(marks){
+    pool.innerHTML = "";
+    const loose = it.entries.map((_,i)=>i).filter(i => placed[i] === undefined);
+    if(!loose.length) pool.innerHTML = '<span style="font-size:12.5px;color:#6f7c8f;font-family:var(--mono)">All items placed.</span>';
+    loose.forEach(i=>{
+      const c = document.createElement("button");
+      c.className = "chip"+(armed === i ? " sel" : "");
+      c.dataset.i = i; c.textContent = it.entries[i].t;
+      pool.appendChild(c);
+    });
+    bins.innerHTML = "";
+    it.bins.forEach(bn=>{
+      const bx = document.createElement("div");
+      bx.className = "bin"+(armed !== null ? " armed" : "");
+      bx.dataset.bin = bn.id;
+      const inner = it.entries.map((_,i)=>i).filter(i => placed[i] === bn.id).map(i=>{
+        let cls = "chip";
+        if(marks) cls += (it.entries[i].bin === bn.id ? " ok" : " no");
+        return '<button class="'+cls+'" data-i="'+i+'"'+(locked?" disabled":"")+'>'+esc(it.entries[i].t)+(marks && it.entries[i].bin !== bn.id ? " ↯":"")+'</button>';
+      }).join("");
+      bx.innerHTML = '<h5>'+esc(bn.name)+'</h5>'+(bn.d?'<div class="bd">'+esc(bn.d)+'</div>':"")+'<div class="items">'+inner+'</div>';
+      bins.appendChild(bx);
+    });
+  }
+  paint(null);
+
+  pool.addEventListener("click", e => {
+    const c = e.target.closest(".chip"); if(!c || locked) return;
+    armed = (armed === +c.dataset.i) ? null : +c.dataset.i;
+    paint(null);
+  });
+  bins.addEventListener("click", e => {
+    if(locked) return;
+    const chip = e.target.closest(".chip");
+    if(chip){ delete placed[+chip.dataset.i]; armed = null; paint(null); return; }
+    const bx = e.target.closest(".bin");
+    if(bx && armed !== null){ placed[armed] = bx.dataset.bin; armed = null; paint(null); }
+  });
+
+  act.addEventListener("click", e => {
+    if(e.target.id !== "k-check" || locked) return;
+    const unplaced = it.entries.map((_,i)=>i).filter(i => placed[i] === undefined);
+    if(unplaced.length){ toast("Items left over", unplaced.length+" item(s) still in the pool."); return; }
+    attempts++;
+    const right = it.entries.filter((en,i)=> placed[i] === en.bin).length;
+    if(right === it.entries.length){
+      locked = true; paint(true);
+      const first = attempts === 1, max = it.xp||20;
+      const score = first ? max : Math.max(Math.round(max*0.45),4);
+      record(it, score, max, first);
+      act.innerHTML = fbBlock(first?1:2, first?"Sorted correctly":"Correct on retry", it.fb||"", it.why||"", it.pcFull)+
+        '<div class="actions"><button class="btn" id="k-next">Continue →</button><span class="attempt">+'+score+' XP</span></div>';
+      $("#k-next").addEventListener("click", next);
+    } else {
+      paint(true);
+      act.innerHTML = fbBlock(0, right+" of "+it.entries.length+" correct",
+        "Items marked ↯ were in the wrong bin — they go back to the pool in a moment. Everything green stays put.","","")+
+        '<div class="actions"><button class="btn" id="k-check">Check sorting</button><span class="attempt">attempt '+attempts+'</span></div>';
+      setTimeout(()=>{
+        if(locked) return;
+        it.entries.forEach((en,i)=>{ if(placed[i] !== en.bin) delete placed[i]; });
+        paint(null);
+      }, 1800);
+    }
+  });
+};
+
+RENDER.match = function(host, it){
+  const q = document.createElement("div");
+  q.className = "q";
+  q.innerHTML = qHead(it, it.label || "Match the pairs");
+  const grid = document.createElement("div"); grid.className = "match"; q.appendChild(grid);
+  const act = document.createElement("div"); act.className = "actions"; q.appendChild(act);
+  host.appendChild(q);
+
+  const L = it.pairs.map((p,i)=>({i:i,t:p.a}));
+  const R = shuffle(it.pairs.map((p,i)=>({i:i,t:p.b})));
+  const found = {};
+  let armedL = null, misses = 0, done = 0, locked = false;
+
+  function paint(){
+    grid.innerHTML = "";
+    const lc = document.createElement("div"); lc.className = "matchcol";
+    const rc = document.createElement("div"); rc.className = "matchcol";
+    L.forEach(x=>{
+      const b = document.createElement("button");
+      b.className = "mcell"+(found[x.i]?" ok paired":(armedL === x.i ? " sel" : ""));
+      b.dataset.side = "L"; b.dataset.i = x.i; b.disabled = !!found[x.i];
+      b.innerHTML = esc(x.t)+(found[x.i]?'<span class="pin">✓</span>':"");
+      lc.appendChild(b);
+    });
+    R.forEach(x=>{
+      const b = document.createElement("button");
+      b.className = "mcell"+(found[x.i]?" ok paired":"");
+      b.dataset.side = "R"; b.dataset.i = x.i; b.disabled = !!found[x.i];
+      b.innerHTML = esc(x.t)+(found[x.i]?'<span class="pin">✓</span>':"");
+      rc.appendChild(b);
+    });
+    grid.appendChild(lc); grid.appendChild(rc);
+  }
+  paint();
+  act.innerHTML = '<span class="attempt">0 of '+it.pairs.length+' matched</span>';
+
+  grid.addEventListener("click", e => {
+    const b = e.target.closest(".mcell");
+    if(!b || b.disabled || locked) return;
+    const side = b.dataset.side, i = +b.dataset.i;
+    if(side === "L"){ armedL = (armedL === i) ? null : i; paint(); return; }
+    if(armedL === null){ toast("Pick a term first","Select an item on the left, then its partner on the right."); return; }
+    if(armedL === i){
+      found[i] = true; done++; armedL = null; paint();
+      act.innerHTML = '<div class="fb ok"><h5>✔ Matched</h5><p>'+esc(it.pairs[i].fb || (it.pairs[i].a+" → "+it.pairs[i].b))+'</p></div>'+
+        '<div class="actions"><span class="attempt">'+done+' of '+it.pairs.length+' matched</span></div>';
+      if(done === it.pairs.length){
+        locked = true;
+        const max = it.xp||20, first = misses === 0;
+        const score = Math.max(Math.round(max*clamp(1-misses*0.12,0.4,1)),4);
+        record(it, score, max, first);
+        act.innerHTML = fbBlock(first?1:2, first?"All pairs matched clean":"All pairs matched", it.fb||"", it.why||"", it.pcFull)+
+          '<div class="actions"><button class="btn" id="k-next">Continue →</button><span class="attempt">+'+score+' XP · '+misses+' misses</span></div>';
+        $("#k-next").addEventListener("click", next);
+      }
+    } else {
+      misses++;
+      b.classList.add("no");
+      const lb = grid.querySelector('.mcell[data-side="L"][data-i="'+armedL+'"]');
+      if(lb) lb.classList.add("no");
+      setTimeout(()=>{
+        armedL = null; paint();
+        act.innerHTML = '<span class="attempt">'+done+' of '+it.pairs.length+' matched · '+misses+' misses</span>';
+      }, 650);
+    }
+  });
+};
+
+RENDER.hotspot = function(host, it){
+  const q = document.createElement("div");
+  q.className = "q";
+  q.innerHTML = qHead(it, it.label || (it.mode === "findall" ? "Spot them all" : "Identify the part"));
+  const wrap = document.createElement("div");
+  wrap.className = "hotwrap";
+  wrap.innerHTML = SVGS[it.svg] || "<p style='color:#6f7c8f;padding:20px;text-align:center'>Diagram unavailable</p>";
+  q.appendChild(wrap);
+  const act = document.createElement("div"); act.className = "actions"; q.appendChild(act);
+  host.appendChild(q);
+
+  const targets = it.targets;
+  const found = {};
+  let misses = 0, qi = 0, locked = false;
+
+  function statusLine(){
+    return it.mode === "findall"
+      ? Object.keys(found).length+" of "+targets.length+" found · "+misses+" misses"
+      : qi+" of "+targets.length+" identified · "+misses+" misses";
+  }
+  function prompt(){
+    if(it.mode === "findall"){
+      act.innerHTML = '<div class="fb part"><h5>◐ Find</h5><p>'+esc(it.findLabel || "Click every matching item on the diagram.")+'</p></div>'+
+        '<div class="actions"><span class="attempt">'+statusLine()+'</span></div>';
+    } else {
+      act.innerHTML = '<div class="fb part"><h5>◐ Find</h5><p>'+esc(targets[qi].label)+'</p></div>'+
+        '<div class="actions"><span class="attempt">'+statusLine()+'</span></div>';
+    }
+  }
+  prompt();
+
+  function complete(){
+    locked = true;
+    const max = it.xp||20, first = misses === 0;
+    const score = Math.max(Math.round(max*clamp(1-misses*0.13,0.4,1)),4);
+    record(it, score, max, first);
+    act.innerHTML = fbBlock(first?1:2, first?"All identified — no misses":"All identified", it.fb||"", it.why||"", it.pcFull)+
+      '<div class="actions"><button class="btn" id="k-next">Continue →</button><span class="attempt">+'+score+' XP</span></div>';
+    $("#k-next").addEventListener("click", next);
+  }
+
+  wrap.addEventListener("click", e => {
+    if(locked) return;
+    const g = e.target.closest(".hs"); if(!g) return;
+    const id = g.dataset.hs;
+    if(found[id]) return;
+
+    if(it.mode === "findall"){
+      const t = targets.filter(x=>x.id === id)[0];
+      if(t){
+        found[id] = true; g.classList.add("found");
+        act.innerHTML = '<div class="fb ok"><h5>✔ '+esc(t.label)+'</h5><p>'+esc(t.fb||"")+'</p></div>'+
+          '<div class="actions"><span class="attempt">'+statusLine()+'</span></div>';
+        if(Object.keys(found).length === targets.length) setTimeout(complete, 300);
+      } else {
+        misses++;
+        g.classList.add("no"); setTimeout(()=> g.classList.remove("no"), 700);
+        act.innerHTML = '<div class="fb no"><h5>✘ Not a target</h5><p>'+esc(it.missFb || "That one isn\'t what you\'re hunting for here.")+'</p></div>'+
+          '<div class="actions"><span class="attempt">'+statusLine()+'</span></div>';
+      }
+    } else {
+      const t = targets[qi];
+      if(id === t.id){
+        found[id] = true; g.classList.add("ok"); qi++;
+        if(qi >= targets.length){
+          act.innerHTML = '<div class="fb ok"><h5>✔ Correct</h5><p>'+esc(t.fb||"")+'</p></div>';
+          setTimeout(complete, 500);
+        } else {
+          act.innerHTML = '<div class="fb ok"><h5>✔ Correct</h5><p>'+esc(t.fb||"")+'</p></div>'+
+            '<div class="actions"><button class="btn sm" id="k-nx">Next part →</button><span class="attempt">'+statusLine()+'</span></div>';
+          $("#k-nx").addEventListener("click", prompt);
+        }
+      } else {
+        misses++;
+        g.classList.add("no"); setTimeout(()=> g.classList.remove("no"), 700);
+        act.innerHTML = '<div class="fb no"><h5>✘ Wrong part</h5><p>Still looking for: <b>'+esc(t.label)+'</b></p></div>'+
+          '<div class="actions"><span class="attempt">'+statusLine()+'</span></div>';
+      }
+    }
+  });
+};
+
+RENDER.scenario = function(host, it){
+  const q = document.createElement("div");
+  q.className = "q";
+  q.innerHTML = qHead(it, it.label || "Site scenario");
+  const body = document.createElement("div");
+  q.appendChild(body);
+  host.appendChild(q);
+
+  let node = it.start, cost = 0, steps = 0;
+
+  function draw(){
+    const n = it.nodes[node];
+    let h = "";
+    if(n.text) h += '<div class="q-scene" style="font-style:normal;border-left-color:#ffb400">'+esc(n.text)+'</div>';
+    if(n.end){
+      const max = it.xp||25;
+      const score = n.good ? Math.max(Math.round(max*clamp(1-cost*0.22,0.35,1)),5) : Math.max(Math.round(max*0.25),3);
+      const st = n.good ? (cost === 0 ? 1 : 2) : 0;
+      record(it, score, max, n.good && cost === 0);
+      h += fbBlock(st, n.title || (n.good?"Outcome: safe":"Outcome: incident"), esc(n.outcome||""), esc(n.why||""), it.pcFull);
+      h += '<div class="actions"><button class="btn" id="k-next">Continue →</button>'+
+           (n.good ? "" : '<button class="btn ghost" id="k-retry">↺ Replay scenario</button>')+
+           '<span class="attempt">+'+score+' XP · '+steps+' decisions</span></div>';
+      body.innerHTML = h;
+      const kn = $("#k-next", body); if(kn) kn.addEventListener("click", next);
+      const kr = $("#k-retry", body); if(kr) kr.addEventListener("click", ()=>{ node = it.start; cost = 0; steps = 0; draw(); });
+      return;
+    }
+    h += '<div class="q-stem" style="font-size:16.5px;margin:14px 0 12px">'+esc(n.q)+'</div><div class="opts">';
+    n.choices.forEach((c,i)=>{
+      h += '<button class="opt" data-i="'+i+'"><span class="key">'+String.fromCharCode(65+i)+'</span><span>'+esc(c.t)+'</span></button>';
+    });
+    h += '</div><div class="actions"><span class="attempt">Decision '+(steps+1)+'</span></div>';
+    body.innerHTML = h;
+    $$(".opt", body).forEach(b => b.addEventListener("click", ()=>{
+      const c = n.choices[+b.dataset.i];
+      steps++;
+      if(c.penalty) cost += c.penalty;
+      node = c.go;
+      draw();
+    }));
+  }
+  draw();
+};
+
+RENDER.timed = function(host, it){
+  const q = document.createElement("div");
+  q.className = "q";
+  q.innerHTML = qHead(it, it.label || "Take 5 · timed");
+  const tm = document.createElement("div");
+  tm.className = "timer";
+  tm.innerHTML = '<span class="tt">'+it.seconds+'s</span><span class="tb"><i style="width:100%"></i></span>';
+  q.appendChild(tm);
+  const wrap = document.createElement("div"); wrap.className = "opts"; q.appendChild(wrap);
+  const act = document.createElement("div");
+  act.className = "actions";
+  act.innerHTML = '<button class="btn" id="k-done">Call it — submit</button><span class="attempt" id="k-c">0 flagged</span>';
+  q.appendChild(act);
+  host.appendChild(q);
+
+  shuffle(it.options.map((_,i)=>i)).forEach((oi,n)=>{
+    const b = document.createElement("button");
+    b.className = "opt"; b.dataset.i = oi;
+    b.innerHTML = '<span class="key">'+String.fromCharCode(65+n)+'</span><span>'+esc(it.options[oi].t)+'</span>';
+    wrap.appendChild(b);
+  });
+
+  const sel = new Set();
+  let left = it.seconds, ended = false;
+  const tick = setInterval(()=>{
+    left--;
+    $(".tb i", tm).style.width = clamp((left/it.seconds)*100,0,100)+"%";
+    $(".tt", tm).textContent = Math.max(left,0)+"s";
+    tm.classList.toggle("warn", left <= Math.ceil(it.seconds*0.25));
+    if(left <= 0){ clearInterval(tick); grade(true); }
+  }, 1000);
+
+  wrap.addEventListener("click", e => {
+    const b = e.target.closest(".opt"); if(!b || ended) return;
+    const i = +b.dataset.i;
+    if(sel.has(i)){ sel.delete(i); b.classList.remove("sel"); } else { sel.add(i); b.classList.add("sel"); }
+    const c = $("#k-c"); if(c) c.textContent = sel.size+" flagged";
+  });
+  act.addEventListener("click", e => { if(e.target.id === "k-done" && !ended){ clearInterval(tick); grade(false); } });
+
+  function grade(timeout){
+    ended = true;
+    $$(".opt", wrap).forEach(x=>{
+      x.disabled = true;
+      const i = +x.dataset.i;
+      x.classList.remove("sel");
+      if(it.options[i].ok) x.classList.add("ok");
+      else if(sel.has(i)) x.classList.add("no");
+    });
+    const hazards = it.options.map((o,i)=> o.ok?i:-1).filter(i=>i>=0);
+    const hits = hazards.filter(i=> sel.has(i)).length;
+    const falses = Array.from(sel).filter(i=> !it.options[i].ok).length;
+    const max = it.xp||25;
+    const raw = clamp((hits - falses*0.5)/hazards.length, 0, 1);
+    const score = Math.round(max*raw);
+    record(it, score, max, raw === 1 && !timeout);
+    const st = raw === 1 ? 1 : (raw >= 0.5 ? 2 : 0);
+    const detail = "You flagged <b>"+hits+" of "+hazards.length+"</b> genuine hazards"+
+      (falses ? " and raised <b>"+falses+"</b> false call"+(falses>1?"s":"")+"." : ".")+
+      (timeout ? " <em>Time ran out</em> — on a real Take 5 you don't get a second look once the wheels are moving." : "");
+    act.innerHTML = fbBlock(st, timeout?"Time up":(raw===1?"Every hazard caught":"Assessment complete"), detail, it.why||"", it.pcFull)+
+      '<div class="actions"><button class="btn" id="k-next">Continue →</button><span class="attempt">+'+score+' XP</span></div>';
+    $("#k-next").addEventListener("click", next);
+  }
+};
+
+RENDER.estimate = function(host, it){
+  const q = document.createElement("div");
+  q.className = "q";
+  q.innerHTML = qHead(it, it.label || "Judgement call");
+  const box = document.createElement("div");
+  box.innerHTML =
+    '<div style="display:flex;align-items:center;gap:14px;margin:6px 0 4px">'+
+      '<span style="font-family:var(--mono);font-size:12px;color:#6f7c8f">'+esc(it.min+it.unit)+'</span>'+
+      '<input id="k-rng" type="range" min="'+it.min+'" max="'+it.max+'" step="'+(it.step||1)+'" value="'+it.min+'" style="flex:1;accent-color:#ffb400">'+
+      '<span style="font-family:var(--mono);font-size:12px;color:#6f7c8f">'+esc(it.max+it.unit)+'</span>'+
+    '</div>'+
+    '<div style="text-align:center;font-size:34px;font-weight:800;color:#ffb400;font-family:var(--mono)" id="k-val">'+it.min+esc(it.unit)+'</div>';
+  q.appendChild(box);
+  const act = document.createElement("div");
+  act.className = "actions";
+  act.innerHTML = '<button class="btn" id="k-check">Lock in</button>';
+  q.appendChild(act);
+  host.appendChild(q);
+
+  const rng = $("#k-rng", q);
+  rng.addEventListener("input", ()=>{ $("#k-val", q).textContent = rng.value + it.unit; });
+
+  let attempts = 0, locked = false;
+  act.addEventListener("click", e => {
+    if(e.target.id !== "k-check" || locked) return;
+    attempts++;
+    const v = +rng.value;
+    if(v >= it.answerMin && v <= it.answerMax){
+      locked = true; rng.disabled = true;
+      const first = attempts === 1, max = it.xp||15;
+      const score = first ? max : Math.max(Math.round(max*0.45),3);
+      record(it, score, max, first);
+      act.innerHTML = fbBlock(first?1:2, "Correct — "+it.answerLabel, it.fb||"", it.why||"", it.pcFull)+
+        '<div class="actions"><button class="btn" id="k-next">Continue →</button><span class="attempt">+'+score+' XP</span></div>';
+      $("#k-next").addEventListener("click", next);
+    } else {
+      const dir = v < it.answerMin ? "too low" : "too high";
+      act.innerHTML = fbBlock(0, "Not quite — "+dir, esc(it.nudge||"Adjust and try again."),"","")+
+        '<div class="actions"><button class="btn" id="k-check">Lock in</button><span class="attempt">attempt '+attempts+'</span></div>';
+    }
+  });
+};
+
+/* ---------------- DEBRIEF ---------------- */
+function finishShift(){
+  const sh = P.shift;
+  const st = shiftState(sh.id);
+  const max = shiftMax(sh) || 1;
+  const sc = shiftScore(sh);
+  const pct = Math.round((sc/max)*100);
+  const items = gradedItems(sh);
+  const firstTryCount = items.filter(i => (st.items[i.id]||{}).firstTry).length;
+  const wasDone = st.done;
+  st.done = true; save();
+
+  if(sh.badge) awardBadge(sh.badge);
+  if(items.length && firstTryCount === items.length) awardBadge("flawless");
+  if(COURSE.every(x => shiftState(x.id).done)) awardBadge("signoff");
+
+  const r = 62, C = 2*Math.PI*r, dash = C*(pct/100);
+
+  let html =
+    '<div class="card" style="text-align:center">'+
+      '<div class="kicker">Shift '+(COURSE.indexOf(sh)+1)+' debrief</div>'+
+      '<h2 style="font-size:27px;margin-bottom:16px">'+esc(sh.title)+'</h2>'+
+      '<div class="score-ring"><svg viewBox="0 0 150 150">'+
+        '<circle cx="75" cy="75" r="'+r+'" fill="none" stroke="#333b48" stroke-width="11"/>'+
+        '<circle cx="75" cy="75" r="'+r+'" fill="none" stroke="'+(pct>=80?"#3ecf8e":pct>=50?"#ffb400":"#ff5f5f")+'" stroke-width="11" stroke-linecap="round" stroke-dasharray="'+dash+' '+C+'"/>'+
+      '</svg><div class="val"><b>'+pct+'%</b><span>Shift score</span></div></div>'+
+      '<p class="sub" style="max-width:540px;margin:0 auto">'+esc(
+        pct>=90 ? "Sharp work. That's the standard a supervisor expects before you're left alone in the cab."
+        : pct>=70 ? "Solid shift. A few calls needed a second look — worth revisiting before your practical."
+        : "You got through it, but too many calls needed correcting. Replay this shift before you move on."
+      )+'</p>'+
+      '<div class="statgrid">'+
+        '<div class="stat"><b>'+sc+'</b><span>XP this shift</span></div>'+
+        '<div class="stat"><b>'+firstTryCount+'/'+items.length+'</b><span>First-try calls</span></div>'+
+        '<div class="stat"><b>'+S.xp+'</b><span>Total XP</span></div>'+
+        '<div class="stat"><b>'+esc(rank(S.xp).name)+'</b><span>Rank</span></div>'+
+      '</div>'+
+      '<div class="btn-row" style="justify-content:center">'+
+        '<button class="btn" id="d-map">Back to shift board →</button>'+
+        '<button class="btn ghost" id="d-again">↺ Replay shift</button>'+
+      '</div>'+
+    '</div>';
+
+  html += '<div class="card"><div class="kicker">Call-by-call review</div><div class="review">'+
+    items.map(i=>{
+      const rec = st.items[i.id] || {score:0, max:(i.xp||10), attempts:0};
+      const p = rec.max ? rec.score/rec.max : 0;
+      const cls = p >= 1 ? "ok" : (p > 0 ? "part" : "no");
+      return '<div class="rev '+cls+'"><span class="dot"></span><div class="t">'+esc(i.title || i.stem || "Activity")+
+        '<span>'+rec.score+'/'+rec.max+' XP · '+(rec.attempts||0)+' attempt'+((rec.attempts||0)===1?"":"s")+
+        (i.pc ? ' · '+esc(i.pc) : "")+'</span></div></div>';
+    }).join("")+'</div></div>';
+
+  if(sh.takeaway) html += '<div class="card"><div class="kicker">Take it to the cab</div>'+sh.takeaway+'</div>';
+
+  if(COURSE.every(x => shiftState(x.id).done)){
+    const tmax = totalMax()||1, tsc = COURSE.reduce((n,x)=> n+shiftScore(x), 0);
+    html += '<div class="card" style="border-color:#ffb400;background:linear-gradient(165deg,rgba(255,180,0,.08),#1e232c)">'+
+      '<div class="kicker">Program complete</div>'+
+      '<h2 style="font-size:24px;margin-bottom:10px">🎖️ Site 7 cleared</h2>'+
+      '<p class="sub">'+esc(S.name||"Operator")+' — you\'ve worked all six shifts at Northlink and finished on <b>'+Math.round((tsc/tmax)*100)+'%</b> at the rank of <b>'+esc(rank(S.xp).name)+'</b>.</p>'+
+      '<p class="sub">This module built your underpinning knowledge for RIIMPO321F. Competency itself is decided by your RTO through the unit\'s theory assessment and supervised practical assessment on a real machine, across the repeated occurrences the unit requires.</p>'+
+      '<div class="btn-row"><button class="btn ghost sm" id="d-print">🖨️ Print progress summary</button></div>'+
+    '</div>';
+  }
+
+  $("#debrief-body").innerHTML = html;
+  show("screen-debrief");
+  $("#d-map").addEventListener("click", ()=>{ renderMap(); show("screen-map"); });
+  $("#d-again").addEventListener("click", ()=> startShift(sh.id));
+  const dp = $("#d-print"); if(dp) dp.addEventListener("click", ()=> window.print());
+  if(!wasDone) toast("✅  Shift cleared", sh.title+" — "+pct+"%");
+}
+
+/* ---------------- SITE OFFICE ---------------- */
+function summaryModal(){
+  const rows = COURSE.map((sh,i)=>{
+    const st = shiftState(sh.id), max = shiftMax(sh)||1, sc = shiftScore(sh);
+    return '<div class="rev '+(st.done?"ok":(sc>0?"part":"no"))+'"><span class="dot"></span><div class="t">Shift '+(i+1)+' · '+esc(sh.title)+
+      '<span>'+sc+'/'+max+' XP · '+(st.done?"cleared":"not cleared")+'</span></div></div>';
+  }).join("");
+  const tmax = totalMax()||1, tsc = COURSE.reduce((n,x)=> n+shiftScore(x),0);
+  modal('<h3>📋 Progress summary</h3>'+
+    '<p>'+esc(S.name||"Operator")+' · '+esc(rank(S.xp).name)+' · '+S.xp+' XP · '+S.badges.length+'/'+BADGES.length+' badges</p>'+
+    '<div class="statgrid"><div class="stat"><b>'+Math.round((tsc/tmax)*100)+'%</b><span>Overall</span></div>'+
+    '<div class="stat"><b>'+COURSE.filter(x=>shiftState(x.id).done).length+'/'+COURSE.length+'</b><span>Shifts cleared</span></div></div>'+
+    '<div class="review">'+rows+'</div>'+
+    '<p style="font-size:12.5px;color:#6f7c8f;margin-top:14px">Formative record only. Not assessment evidence for RIIMPO321F.</p>'+
+    '<div class="btn-row" style="margin-top:14px"><button class="btn sm" id="m-print">Print</button><button class="btn ghost sm" id="m-x">Close</button></div>');
+  $("#m-x").addEventListener("click", closeModal);
+  $("#m-print").addEventListener("click", ()=> window.print());
+}
+function glossaryModal(){
+  const rows = GLOSSARY.map(g => '<div class="rev part"><span class="dot"></span><div class="t"><b>'+esc(g.t)+'</b><span style="font-family:var(--sans);font-size:13px;color:#a5b0c0;letter-spacing:0;text-transform:none">'+esc(g.d)+'</span></div></div>').join("");
+  modal('<h3>📖 Civil site glossary</h3><p>Terms you\'ll hear on a civil construction job — several differ from mining and quarry language.</p><div class="review">'+rows+'</div>'+
+    '<div class="btn-row" style="margin-top:14px"><button class="btn ghost sm" id="m-x">Close</button></div>');
+  $("#m-x").addEventListener("click", closeModal);
+}
+function mappingModal(){
+  const rows = COURSE.map((sh,i)=> '<div class="rev part"><span class="dot"></span><div class="t"><b>Shift '+(i+1)+': '+esc(sh.title)+'</b><span style="font-family:var(--sans);font-size:13px;color:#a5b0c0;letter-spacing:0;text-transform:none">'+esc(sh.element)+' — '+esc(sh.maps||"")+'</span></div></div>').join("");
+  modal('<h3>🗂️ Unit alignment</h3>'+
+    '<p><b>RIIMPO321F</b> — Conduct civil construction wheeled front end loader operations.</p>'+
+    '<div class="review">'+rows+'</div>'+
+    '<p style="font-size:12.5px;color:#6f7c8f;margin-top:14px">Indicative learning-content map for design purposes only. Formal mapping to elements, performance criteria, performance evidence, knowledge evidence and assessment conditions must be verified against the current unit release on training.gov.au and recorded in the RTO\'s mapping document.</p>'+
+    '<div class="btn-row" style="margin-top:14px"><button class="btn ghost sm" id="m-x">Close</button></div>');
+  $("#m-x").addEventListener("click", closeModal);
+}
+function resetAll(){
+  modal('<h3>↺ Reset all progress?</h3><p>This clears your XP, badges and every shift result on this device. It cannot be undone.</p>'+
+    '<div class="btn-row" style="margin-top:16px"><button class="btn" id="m-yes" style="background:#ff5f5f;color:#fff">Yes, reset</button><button class="btn ghost" id="m-x">Cancel</button></div>');
+  $("#m-x").addEventListener("click", closeModal);
+  $("#m-yes").addEventListener("click", ()=>{
+    store.del(SAVE_KEY);
+    S = {name:"", xp:0, badges:[], shifts:{}, started:false};
+    closeModal(); renderHUD(); show("screen-start");
+    $("#in-name").value = "";
+    toast("Progress cleared","Starting fresh.");
+  });
+}
+
+/* ---------------- BOOT ---------------- */
+$("#btn-start").addEventListener("click", ()=>{
+  S.name = ($("#in-name").value||"").trim().slice(0,40);
+  S.started = true; save();
+  renderHUD(); renderMap(); show("screen-map");
+  toast("👷 Inducted", (S.name ? S.name+", you" : "You")+"'re on the board. Start with Shift 1.");
+});
+$("#in-name").addEventListener("keydown", e => { if(e.key === "Enter") $("#btn-start").click(); });
+$("#btn-home").addEventListener("click", ()=>{ if(!S.started){ show("screen-start"); return; } renderMap(); show("screen-map"); });
+$("#btn-quit").addEventListener("click", ()=>{ renderMap(); show("screen-map"); });
+$("#btn-summary").addEventListener("click", summaryModal);
+$("#btn-glossary").addEventListener("click", glossaryModal);
+$("#btn-mapping").addEventListener("click", mappingModal);
+$("#btn-reset").addEventListener("click", resetAll);
+$("#btn-reset-start").addEventListener("click", resetAll);
+
+(function boot(){
+  const resumed = load();
+  renderHUD();
+  if(resumed){
+    $("#in-name").value = S.name || "";
+    renderMap(); show("screen-map");
+  } else {
+    show("screen-start");
+  }
+})();
+</script>
+
+</body>
+</html>
