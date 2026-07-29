@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A formative, gamified RPAS privacy learning experience for Australian drone operators.">
+  <title>RPAS Privacy Mission</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to learning content</a>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">RP</span>
+      <div><strong>RPAS Privacy Mission</strong><small>Formative field practice</small></div>
+    </div>
+    <div class="status-cluster">
+      <span id="levelLabel">LEVEL 01 · OBSERVER</span>
+      <strong id="xpLabel">0 XP</strong>
+    </div>
+  </header>
+
+  <div class="shell">
+    <aside class="sidebar" aria-label="Mission navigation">
+      <div class="readiness">
+        <div class="eyebrow">PRIVACY READINESS</div>
+        <div class="meter" role="progressbar" aria-label="Mission progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <span id="meterFill"></span>
+        </div>
+        <div class="meter-row"><strong id="progressLabel">0%</strong><span id="missionCount">0 of 6 missions</span></div>
+      </div>
+      <nav id="missionNav"></nav>
+      <div class="sidebar-note">
+        <strong>Practice, not a test</strong>
+        <p>Try, check the consequence, and retry. No answer affects a formal result.</p>
+      </div>
+      <button class="text-button" id="resetProgress">Reset local progress</button>
+    </aside>
+
+    <main id="main">
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">OPERATION BRIEF · AUSTRALIA</div>
+          <h1>Protect the mission.<br>Protect the people.</h1>
+          <p>You make privacy decisions before take-off, while flying, and after the data lands. Build operational judgement through six short field missions.</p>
+          <div class="hero-actions">
+            <button class="primary" id="startMission">Choose your role</button>
+            <button class="secondary" data-scroll="#missionGrid">View mission map</button>
+          </div>
+          <p class="microcopy">Progress stays in this browser. No personal data is sent anywhere.</p>
+        </div>
+        <img src="assets/images/drone-privacy-hero.png" alt="Drone operator reviewing privacy and data risks before a mission">
+      </section>
+
+      <section class="role-panel" id="rolePanel" aria-labelledby="roleHeading">
+        <div>
+          <div class="eyebrow">SELECT OPERATING CONTEXT</div>
+          <h2 id="roleHeading">Make the scenarios relevant to your work</h2>
+          <p>Your role changes the case mission and the recommended field resources. You can switch at any time.</p>
+        </div>
+        <div class="role-grid" id="roleGrid"></div>
+      </section>
+
+      <section class="dashboard" id="missionGrid" aria-labelledby="missionHeading">
+        <div class="section-heading">
+          <div><div class="eyebrow">MISSION CONTROL</div><h2 id="missionHeading">Your learning route</h2></div>
+          <p>Each mission takes approximately 5 to 10 minutes.</p>
+        </div>
+        <div class="mission-grid" id="missionCards"></div>
+      </section>
+
+      <section class="badges" aria-labelledby="badgeHeading">
+        <div class="section-heading">
+          <div><div class="eyebrow">FIELD RECOGNITION</div><h2 id="badgeHeading">Practice badges</h2></div>
+          <p>Badges mark completed practice. They are not credentials.</p>
+        </div>
+        <div class="badge-grid" id="badgeGrid"></div>
+      </section>
+
+      <section class="resources" aria-labelledby="resourceHeading">
+        <div class="section-heading">
+          <div><div class="eyebrow">FIELD KIT</div><h2 id="resourceHeading">Use it on the next job</h2></div>
+          <label>Filter resources
+            <select id="resourceFilter">
+              <option value="all">All operators</option>
+              <option value="surveyor">Land surveyor</option>
+              <option value="engineer">Engineer</option>
+              <option value="farmer">Farmer</option>
+              <option value="photographer">Commercial photographer</option>
+            </select>
+          </label>
+        </div>
+        <div class="resource-grid" id="resourceGrid"></div>
+      </section>
+
+      <section class="sources" aria-labelledby="sourceHeading">
+        <div><div class="eyebrow">VERIFY THE RULE</div><h2 id="sourceHeading">Official Australian sources</h2></div>
+        <div class="source-links">
+          <a href="https://www.oaic.gov.au/privacy/your-privacy-rights/surveillance-and-monitoring/drones" target="_blank" rel="noopener">OAIC. Drones and privacy</a>
+          <a href="https://www.oaic.gov.au/privacy/australian-privacy-principles" target="_blank" rel="noopener">OAIC. Australian Privacy Principles</a>
+          <a href="https://www.oaic.gov.au/privacy/notifiable-data-breaches/about-the-notifiable-data-breaches-scheme" target="_blank" rel="noopener">OAIC. NDB scheme</a>
+          <a href="https://www.legislation.gov.au/C2004A03712/latest" target="_blank" rel="noopener">Federal Register. Privacy Act 1988</a>
+        </div>
+        <p class="legal-note">General educational information only. Coverage and obligations depend on the operator, the activity and applicable Commonwealth, state or territory law.</p>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="activityDialog">
+    <div class="dialog-bar">
+      <div><span class="eyebrow" id="dialogKicker">FIELD ACTIVITY</span><strong id="dialogTitle">Activity</strong></div>
+      <button class="icon-button" id="closeDialog" aria-label="Close activity">×</button>
+    </div>
+    <div class="dialog-brief" id="dialogBrief"></div>
+    <iframe id="activityFrame" title="Interactive learning activity" loading="lazy"></iframe>
+    <div class="reflection">
+      <label for="reflectionText">Bank one operational insight <span>(stored only in this browser)</span></label>
+      <textarea id="reflectionText" rows="2" placeholder="On my next mission, I will…"></textarea>
+      <div class="reflection-actions">
+        <button class="secondary" id="retryActivity">Reload activity</button>
+        <button class="primary" id="completeMission">Save insight and complete practice</button>
+      </div>
+    </div>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
+
